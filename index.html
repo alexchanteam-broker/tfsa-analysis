@@ -85,7 +85,7 @@
             <div class="w-full bg-gray-100 rounded-full h-1.5 overflow-hidden">
                 <div id="progress-bar" class="loading-bar"></div>
             </div>
-            <p id="loading-hint" class="text-[10px] text-slate-400 italic">正在對比歷史最大跌幅數據...</p>
+            <p id="loading-hint" class="text-[10px] text-slate-400 italic">正在對比歷史最大回撤與購買力數據...</p>
         </div>
 
         <!-- 第三步：分析結果 -->
@@ -101,18 +101,18 @@
                     <div class="chart-container"><canvas id="wealthChart"></canvas></div>
                 </div>
 
-                <!-- 風險對比區塊 (新增) -->
+                <!-- 風險對比區塊 -->
                 <div class="grid grid-cols-2 gap-3">
                     <div class="p-4 bg-red-50 rounded-2xl border border-red-100">
-                        <p class="text-[10px] font-black text-red-400 uppercase mb-2">歷史最大回撤風險</p>
+                        <p class="text-[10px] font-black text-red-400 uppercase mb-2">下行/購買力風險</p>
                         <p id="ui-max-drawdown" class="text-xl font-black text-red-600">- --%</p>
-                        <p class="text-[9px] text-red-400 mt-1 italic">若遇市場崩盤，本金可能受損</p>
+                        <p id="ui-risk-note" class="text-[9px] text-red-400 mt-1 italic text-wrap leading-tight">若遇市場波動或通脹，資產將受損</p>
                     </div>
                     <div class="p-4 bg-green-50 rounded-2xl border border-green-100 relative overflow-hidden">
                         <div class="absolute -right-2 -top-2 opacity-10 text-green-600">🛡️</div>
                         <p class="text-[10px] font-black text-green-500 uppercase mb-2">專業配置保障機制</p>
                         <p class="text-xl font-black text-green-600">本金保證</p>
-                        <p class="text-[9px] text-green-500 mt-1 italic">具備 Segregated Fund 特性</p>
+                        <p class="text-[9px] text-green-500 mt-1 italic leading-tight">具備合約級別安全墊</p>
                     </div>
                 </div>
                 
@@ -122,7 +122,7 @@
                     <p class="text-blue-900 text-[11px] font-black flex items-center mb-1">
                         <span class="mr-2">💡</span> 數據備註
                     </p>
-                    <p class="text-blue-700 text-[10px] leading-relaxed italic">目前配置數據參考加拿大五大行及標普/TSX歷史平均。專業配置採用具備保證機制 (Guarantee) 的資產組合。</p>
+                    <p class="text-blue-700 text-[10px] leading-relaxed italic">目前配置數據參考加拿大市場歷史平均。專業配置採用具備「本金保證」機制的收益優化組合。</p>
                 </div>
             </div>
 
@@ -152,11 +152,10 @@
 
         let currentLang = 'tc';
         let wealthChart = null;
-        // 定義利率與最大跌幅 (Max Drawdown)
         const rates = { 
-            cash: { yield: 0.020, risk: "0.0%" }, 
-            fund: { yield: 0.045, risk: "25.4%" }, 
-            stock: { yield: 0.060, risk: "38.2%" }, 
+            cash: { yield: 0.020, risk: "通脹侵蝕", riskDetail: "雖然無下行風險，但購買力會因通脹令增長歸零" }, 
+            fund: { yield: 0.045, risk: "25.4%", riskDetail: "若遇市場崩盤，本金將面臨顯著損失" }, 
+            stock: { yield: 0.060, risk: "38.2%", riskDetail: "高度市場波動，無任何保本保障" }, 
             pro: { yield: 0.110, risk: "保證" } 
         };
 
@@ -218,7 +217,6 @@
 
             document.getElementById('step-form').classList.add('hidden');
             document.getElementById('step-loading').classList.remove('hidden');
-            document.getElementById('progress-bar').style.width = "40%";
 
             const accType = document.getElementById('account-type').value;
             const assetType = document.getElementById('asset-type').value;
@@ -226,21 +224,23 @@
             const finalPro = balance * Math.pow(1 + rates.pro.yield, 17);
             const gap = finalPro - finalCurrent;
 
-            document.getElementById('ui-max-drawdown').innerText = `-${rates[assetType].risk}`;
+            // 更新 UI 上的風險提示
+            const isCash = assetType === 'cash';
+            document.getElementById('ui-max-drawdown').innerText = isCash ? rates[assetType].risk : `-${rates[assetType].risk}`;
+            document.getElementById('ui-risk-note').innerText = rates[assetType].riskDetail;
 
-            const msg = `你好！我係 ${name}，我剛剛完成咗個人稅務帳戶收益分析 (${accType})。我對具備「最大跌幅保障」嘅專業管理組合好有興趣，想諮詢細節。`;
+            const msg = `你好！我係 ${name}，我剛剛完成咗個人稅務帳戶收益分析 (${accType})。我對具備「下行風險保障」且能「抗衡通脹」嘅專業管理組合好有興趣。`;
             document.getElementById('cta-wa-link').href = `https://wa.me/17783198129?text=${encodeURIComponent(msg)}`;
 
             const promptText = `
                 你是一位負責「個人稅務帳戶收益與風險分析」的專業顧問助手。
                 請為 ${name} 寫一份 180 字廣東話分析。
-                場景：客戶在 ${accType} 存入 $${balance.toLocaleString()}，目前配置是 ${assetType}（歷史最大跌幅可能達 ${rates[assetType].risk}）。
-                關鍵：若轉向「專業管理配置」（具備 Segregated Fund 的本金保證機制），收益差距高達 $${parseInt(gap).toLocaleString()}，且能規避市場崩潰時的本金損失。
-                要求：
-                1. 用震撼比喻說明這筆收益的價值（如置業首期）。
-                2. 具體對比「銀行互惠基金/股票」在金融海嘯時的跌幅與「專業配置保本機制」的安全性。
-                3. 強調：這是「進可攻、退可守」的策略。
-                禁止使用『診斷』，不要過度提及個人，重點在於「專業配置系統的風險防禦」。
+                場景：客戶在 ${accType} 存入 $${balance.toLocaleString()}，目前配置是 ${assetType}。
+                對比分析：
+                1. 若目前是銀行存款/GIC：雖然看似無風險，但請指出通脹（約 3%）會令實質購買力不增反減，組合形同虛設。
+                2. 若目前是基金/股票：指出歷史最大跌幅可能達 ${rates[assetType].risk}。
+                3. 專業配置優勢：回報差距達 $${parseInt(gap).toLocaleString()}，且具備「合約級別的本金保證」，實現真正的「進可攻、退可守」。
+                要求：語氣專業理性，用震撼比喻（如置業首期）說明收益價值。不要提及特定產品名稱（如 Seg Fund），保持專業系統的神秘感與權威感。
             `;
 
             try {
@@ -248,7 +248,9 @@
                 document.getElementById('report-content').innerHTML = aiText.replace(/\n/g, '<br>');
                 finish(finalCurrent, finalPro, rates[assetType].yield);
             } catch (e) { 
-                const backupReport = `你好 ${name}，根據 17 年模擬，您的 ${accType} 潛在收益缺口高達 <b>$${parseInt(gap).toLocaleString()}</b>。更重要的是，您目前的配置在市場波動時面臨高達 ${rates[assetType].risk} 的回撤風險。專業配置系統不僅優化增長，更提供「本金保證」機制，確保您的退休金不被市場波動蠶食。請聯繫顧問獲取詳細分析。`;
+                const backupReport = isCash ? 
+                    `你好 ${name}，根據 17 年模擬，您的 ${accType} 雖然穩定，但預計收益缺口仍高達 <b>$${parseInt(gap).toLocaleString()}</b>。請注意，銀行存款在通脹環境下，實質購買力的增長幾乎停滯。專業配置系統不僅提供更高增長，更具備「本金保證」合約，確保您的退休儲蓄在抗通脹的同時絕對安全。` :
+                    `你好 ${name}，您的 ${accType} 潛在收益缺口高達 <b>$${parseInt(gap).toLocaleString()}</b>，且目前配置面臨高達 ${rates[assetType].risk} 的回撤風險。專業配置系統提供「本金保證」機制，確保您的財富不被市場波動或通脹蠶食。`;
                 document.getElementById('report-content').innerHTML = backupReport;
                 finish(finalCurrent, finalPro, rates[assetType].yield);
             }
