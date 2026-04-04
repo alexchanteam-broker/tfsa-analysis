@@ -12,7 +12,7 @@
         .glass { background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(12px); }
         .loading-bar { width: 0%; height: 4px; background: #3b82f6; transition: width 0.4s ease-out; }
         .lang-btn-active { background-color: #3b82f6; color: white; }
-        .chart-container { position: relative; height: 320px; width: 100%; }
+        .chart-container { position: relative; height: 340px; width: 100%; }
         @keyframes fadeInScale { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
         .modal-animate { animation: fadeInScale 0.3s ease-out forwards; }
         .profile-img { object-fit: cover; }
@@ -106,7 +106,8 @@
         <div id="step-result" class="hidden flex flex-col h-[700px] bg-white">
             <div class="p-6 space-y-6 flex-grow overflow-y-auto">
                 <div class="flex items-center justify-between text-blue-600 border-b border-blue-50 pb-3">
-                    <span id="ui-result-label" class="font-black text-sm italic tracking-widest uppercase">分析報告</span>
+                    <span id="ui-result-label" class="font-black text-sm italic tracking-widest uppercase text-blue-600">分析報告</span>
+                    <span class="text-[9px] bg-blue-50 px-2 py-1 rounded font-bold">ANALYSIS</span>
                 </div>
 
                 <div class="bg-slate-50 p-4 rounded-3xl border border-slate-100 shadow-inner">
@@ -236,44 +237,6 @@
                 wcTitle: "已成功複製微信號", wcTip: "請前往微信搜索並添加 Alex 為好友。", wcBtn: "前往微信",
                 chartLabelTarget: "專業管理的投資組合*",
                 chartLabelCurrent: "目前策略模擬表現",
-                closing: "<br><br>如果您希望全面審視財務現狀，在風險可控的前提下追求資產回報最大化，並極大化稅務帳戶的優勢，誠邀您聯絡 Alex 進行初步諮詢。憑藉逾 20 年深耕銀行體系及獨立理財顧問的深厚經驗，Alex 將為您的財富增值提供精確且具價值的專業導航。"
-            },
-            sc: {
-                title: "个人税务账户收益分析", headerTag: "Alex Chan | Individual Insurance Broker",
-                subtitle: "逾20年专业管理经验导航",
-                quote: "「通过精确的数据分析，了解您的资产在市场波动中的表现。」",
-                labelName: "您的称呼", labelAccType: "账户类型", labelAssetType: "目前存放方式",
-                labelBalanceTFSA: "CRA 累计供款额度 (CAD)", labelBalanceRRSP: "RRSP 扣税额度 (CAD)",
-                optCash: "银行定期 / GIC", optFund: "互惠基金", optStock: "蓝筹股票",
-                btnScan: "⚡ 启动 AI 收益与风险分析", footerNote: "* 本分析系统仅供模拟参考用途。过往回报并不代表未来收益。",
-                loadingTitle: "正在模拟市场波动场景...", loadingHint: "正在对比历史最大回撤与具体生活价值...",
-                resultLabel: "分析报告", chartHeader: "17年模拟累计收益增长轨迹", riskTitle: "下行/购买力风险",
-                safeTitle: "配置保障機制", safeStatus: "合约级别保证", safeNote: "受保单/合约条款约束",
-                noteTitle: "数据备注与披露",
-                noteDesc: "目前配置数据参考加拿大市场历史平均。专业配置采用具备「本金保证」机制的收益优化组合。",
-                sigRole: "Individual Insurance Broker (Canada)",
-                sigExp: "20+ Years Excellence in Wealth Management",
-                btnReset: "↺ 重新開始分析", msgTitle: "系统提示", msgBtn: "了解",
-                scBtn: "微信联系顾问獲取分析",
-                wcTitle: "已成功复制微信号", wcTip: "请前往微信搜索并添加 Alex 为好友。", wcBtn: "前往微信",
-                chartLabelTarget: "专业管理的投资组合*",
-                chartLabelCurrent: "目前策略模拟表现",
-                closing: "<br><br>如果您希望全面审视财务现状，在风险可控的前提下追求资产回报最大化，并极大化税务账户的优势，诚邀您联络 Alex 进行初步咨询。凭借逾 20 年深耕银行体系及獨立理財顧問的深厚經驗，Alex 將為您提供精確且具價值的專業導航。"
-            },
-            en: {
-                title: "Tax-Account Analysis", headerTag: "Alex Chan | Individual Insurance Broker",
-                subtitle: "Guided by 20+ Years of Professional Management",
-                quote: "「Analyze assets with precision and understand your performance against market volatility.」",
-                labelName: "Your Name", labelAccType: "Account Type", labelAssetType: "Current Method",
-                labelBalanceTFSA: "CRA Contribution Room (CAD)", labelBalanceRRSP: "RRSP Deduction Limit (CAD)",
-                optCash: "Bank Savings / GIC", optFund: "Mutual Funds", optStock: "Blue-chip Stocks",
-                btnScan: "⚡ Launch AI Yield & Risk Analysis", footerNote: "* This system is for simulation purposes only. Past performance does not guarantee future results.",
-                loadingTitle: "Simulating market scenarios...", loadingHint: "Comparing historical performance and lifestyle impacts...",
-                resultLabel: "Analysis Report", chartHeader: "17-Year Simulated Growth Trajectory", riskTitle: "Downside / Inflation Risk",
-                safeTitle: "Protection Mechanism", safeStatus: "Contractual Guarantee", safeNote: "Subject to policy terms",
-                noteTitle: "Disclosure & References",
-                noteDesc: "Current allocation data refers to historical market averages. Professional allocation uses guaranteed yield-optimized portfolios.",
-                sigRole: "Individual Insurance Broker (Canada)",
-                sigExp: "20+ Years Excellence in Wealth Management",
-                btnReset: "↺ Start New Analysis", msgTitle: "System Notification", msgBtn: "Got it",
-                waBtn: "Text Alex for
+                closing: "<br><br>如果您希望全面審視財務現狀，在風險可控的前提下追求資產回報最大化，並極大化稅務帳戶的優勢，誠邀您聯絡 Alex 進行初步諮詢。憑藉逾 20 年深耕銀行體系及獨立理財顧問的深厚經驗，Alex 將為您的財富增值提供精確且具價值的專業導航。",
+                backupText: (name, gap, acc, asset, risk) => {
+                    const gapNum = parseFloat(gap.replace(/,/g
