@@ -121,7 +121,7 @@
     </div>
 
     <script>
-        // 已預填您截圖中正確的 API Key
+        // 已預填以 AG0o 結尾的正確 Key
         const apiKey = "AIzaSyCx5OJu8NnZhNSsh1e0-6iKkW-mpUUAG0o"; 
 
         let currentLang = 'tc';
@@ -152,6 +152,33 @@
             label.innerText = accType === 'TFSA' ? (currentLang === 'tc' ? "CRA 累積供款額度 (CAD)" : "CRA 累计供款额度 (CAD)") : (currentLang === 'tc' ? "RRSP 扣稅額度 (CAD)" : "RRSP 扣税额度 (CAD)");
         }
 
+        async function fetchAIResponse(prompt, key) {
+            // 嘗試多重路徑，確保避開「Model not found」
+            const endpoints = [
+                `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`,
+                `https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=${key}`
+            ];
+
+            let lastErr = "";
+            for (let url of endpoints) {
+                try {
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+                    });
+                    const data = await response.json();
+                    if (data.candidates && data.candidates[0].content.parts[0].text) {
+                        return data.candidates[0].content.parts[0].text;
+                    }
+                    if (data.error) lastErr = data.error.message;
+                } catch (e) {
+                    lastErr = e.message;
+                }
+            }
+            throw new Error(lastErr || "API 無回應");
+        }
+
         async function startAnalysis() {
             const nameInput = document.getElementById('user-name').value.trim();
             const name = nameInput || "客戶";
@@ -176,38 +203,18 @@
             const msg = `你好 Alex！我係 ${name}，我剛剛完成了您的 AI 財富分析 (${accType})，想諮詢您的專業配置建議。`;
             document.getElementById('cta-wa-link').href = `https://wa.me/17783198129?text=${encodeURIComponent(msg)}`;
 
-            // 使用最穩定的模型名稱
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
-            
             const promptText = `
-                你是一位擁有 18 年經驗的理財專家 Alex Chan 的助手。
-                客戶 ${name} 在 ${accType} 存入 $${balance.toLocaleString()}，目前年回報 ${(rates[assetType]*100).toFixed(1)}%。
-                計算顯示，若轉為 Alex 建議的 11% 配置，17年後的財富差距高達 $${parseInt(gap).toLocaleString()}。
-                請用廣東話撰寫 180 字內的震撼分析。
-                1. 強調這筆差額足以買一部保時捷或支付物業首期。
-                2. 說明這是「免稅空間」的浪費。
-                3. 語氣專業、理性但具備吸引力。
-                嚴格禁止使用「診斷」，統一使用「分析」。
+                你是專業理財顧問 Alex Chan 的助手。Alex 有 18 年管理經驗。
+                請為客戶 ${name} 寫一份 180 字廣東話分析。
+                背景：他在 ${accType} 有 $${balance.toLocaleString()}，目前配置是 ${assetType}。
+                重點：計算出的 17 年財富差距是 $${parseInt(gap).toLocaleString()}。
+                要求：用震撼的比喻（如物業首期或名車）說明這筆錢的價值。強調 Alex 的『增長與保證』策略。
+                禁止使用『診斷』，統一用『分析』。
             `;
 
             try {
-                // 發送高度簡化的請求，確保最大成功率
-                const response = await fetch(url, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        contents: [{ parts: [{ text: promptText }] }]
-                    })
-                });
-
-                const data = await response.json();
-                
-                if (data.candidates && data.candidates[0].content.parts[0].text) {
-                    const aiText = data.candidates[0].content.parts[0].text;
-                    document.getElementById('report-content').innerHTML = aiText.replace(/\n/g, '<br>');
-                } else {
-                    throw new Error("Empty Response");
-                }
+                const aiText = await fetchAIResponse(promptText, apiKey);
+                document.getElementById('report-content').innerHTML = aiText.replace(/\n/g, '<br>');
                 
                 document.getElementById('progress-bar').style.width = "100%";
                 setTimeout(() => {
@@ -217,9 +224,9 @@
                 }, 800);
 
             } catch (e) { 
-                console.error("AI Text Generation Failed, using precision backup:", e);
-                // 數據精準備援方案：即便文字生成失敗，數字也會精準顯示
-                const backupReport = `抱歉 ${name}，AI 引擎分析流量較高，目前為您顯示核心精算數據：<br><br>根據 17 年複利模擬，您的 ${accType} 潛在財富缺口高達 <b>$${parseInt(gap).toLocaleString()}</b>。這筆差額足夠讓您在退休時多擁有一份豐厚的免稅資產。請點擊下方按鈕聯繫 Alex 獲取完整手動分析報告。`;
+                console.error(e);
+                // 數據精準備援方案
+                const backupReport = `抱歉 ${name}，AI 引擎正在同步您的權限，目前為您顯示核心精算數據：<br><br>根據模擬，您的 ${accType} 潛在財富缺口高達 <b>$${parseInt(gap).toLocaleString()}</b>。這筆差額足夠讓您在退休時擁有一份非常豐厚的資產。請點擊下方按鈕聯繫 Alex 獲取完整手動分析報告。`;
                 document.getElementById('report-content').innerHTML = backupReport;
                 
                 setTimeout(() => {
@@ -247,7 +254,7 @@
                 options: {
                     responsive: true, maintainAspectRatio: false,
                     plugins: { legend: { display: false } },
-                    scales: { y: { display: false }, x: { grid: { display: false }, ticks: { font: { weight: 'bold' } } } }
+                    scales: { y: { display: false }, x: { grid: { display: false } } }
                 },
                 plugins: [{
                     id: 'valueLabel',
