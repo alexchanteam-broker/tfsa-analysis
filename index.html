@@ -133,7 +133,7 @@
                     微信聯系顧問 (catholicalex)
                 </button>
                 <button id="ui-btn-reset" onclick="resetApp()" class="w-full bg-slate-700 text-white font-bold py-3 rounded-xl active:scale-95 transition-all text-xs">
-                    ↺ 重新分析其他配置
+                    ↺ 重新開始分析
                 </button>
             </div>
         </div>
@@ -143,11 +143,11 @@
     <div id="wechat-modal" class="fixed inset-0 bg-black/70 z-[300] hidden items-center justify-center p-6 backdrop-blur-md">
         <div class="bg-white p-8 rounded-[2.5rem] max-w-xs w-full text-center shadow-2xl modal-animate border border-slate-100">
             <div class="text-6xl mb-6">✅</div>
-            <h3 class="text-xl font-black text-slate-900 mb-2">已成功複製微信號</h3>
+            <h3 id="wechat-modal-title" class="text-xl font-black text-slate-900 mb-2">已成功複製微信號</h3>
             <p class="text-slate-500 text-[13px] mb-8 leading-relaxed italic">
-                WeChat ID: <span class="font-bold text-blue-600">catholicalex</span><br>請前往微信搜索並添加 Alex 為好友。
+                WeChat ID: <span class="font-bold text-blue-600">catholicalex</span><br><span id="wechat-modal-tip">請前往微信搜索並添加 Alex 為好友。</span>
             </p>
-            <button onclick="closeWechatModal()" class="w-full bg-slate-900 text-white py-4 rounded-2xl font-black">前往微信</button>
+            <button id="wechat-modal-btn" onclick="closeWechatModal()" class="w-full bg-slate-900 text-white py-4 rounded-2xl font-black">前往微信</button>
         </div>
     </div>
 
@@ -157,7 +157,7 @@
             <div class="text-5xl mb-4">⚠️</div>
             <h3 id="msg-modal-title" class="text-lg font-black text-slate-900 mb-2">系統提示</h3>
             <p id="msg-text" class="text-slate-500 text-sm mb-6 leading-relaxed italic text-left"></p>
-            <button onclick="closeMsg()" class="w-full bg-slate-900 text-white py-3 rounded-xl font-bold active:scale-95 transition-transform">了解</button>
+            <button id="msg-modal-btn" onclick="closeMsg()" class="w-full bg-slate-900 text-white py-3 rounded-xl font-bold active:scale-95 transition-transform">了解</button>
         </div>
     </div>
 
@@ -166,63 +166,55 @@
 
         let currentLang = 'tc';
         let wealthChart = null;
+        
+        // 用於記錄分析狀態以便在切換語言時更新圖表和文字
+        let analysisState = {
+            isFinished: false,
+            isAiGenerated: false,
+            v1: 0, v2: 0, r1: 0,
+            name: "", gap: "", risk: "", assetType: "", accType: ""
+        };
 
         const dictionary = {
             tc: {
                 title: "個人稅務帳戶收益分析",
                 subtitle: "收益增長與風險保障深度系統",
                 quote: "「透過精確的數據分析，了解您的資產在市場波動中的防禦力。」",
-                labelName: "您的稱呼",
-                labelAccType: "帳戶類型",
-                labelAssetType: "目前存放方式",
-                labelBalanceTFSA: "CRA 累積供款額度 (CAD)",
-                labelBalanceRRSP: "RRSP 扣稅額度 (CAD)",
-                optCash: "銀行定期 / GIC",
-                optFund: "互惠基金",
-                optStock: "藍籌股票",
+                labelName: "您的稱呼", labelAccType: "帳戶類型", labelAssetType: "目前存放方式",
+                labelBalanceTFSA: "CRA 累積供款額度 (CAD)", labelBalanceRRSP: "RRSP 扣稅額度 (CAD)",
+                optCash: "銀行定期 / GIC", optFund: "互惠基金", optStock: "藍籌股票",
                 btnScan: "⚡ 啟動 AI 收益與風險分析",
-                loadingTitle: "正在模擬市場波動場景...",
-                loadingHint: "正在對比歷史最大回撤與購買力數據...",
-                chartHeader: "17年預期累積收益對比",
-                riskTitle: "下行/購買力風險",
-                safeTitle: "專業配置保障機制",
-                safeStatus: "本金保證",
-                safeNote: "具備合約級別安全墊",
+                loadingTitle: "正在模擬市場波動場景...", loadingHint: "正在對比歷史最大回撤與購買力數據...",
+                chartHeader: "17年預期累積收益對比", riskTitle: "下行/購買力風險",
+                safeTitle: "專業配置保障機制", safeStatus: "本金保證", safeNote: "具備合約級別安全墊",
                 noteTitle: "數據備註",
                 noteDesc: "目前配置數據參考加拿大市場歷史平均。專業配置採用具備「本金保證」機制的收益優化組合。",
-                btnReset: "↺ 重新分析其他配置",
-                msgTitle: "系統提示",
+                btnReset: "↺ 重新開始分析", msgTitle: "系統提示", msgBtn: "了解",
                 waBtn: "WhatsApp 聯繫顧問獲取分析",
-                backupCash: (name, gap) => `你好 ${name}，根據 17 年模擬，您的帳戶雖然穩定，但預計收益缺口仍高達 $${gap}。請注意，銀行存款在通脹環境下，實質購買力的增長幾乎停滯。專業配置系統不僅提供更高增長，更具備「本金保證」合約。`,
-                backupRisk: (name, gap, risk) => `你好 ${name}，您的潛在收益缺口高達 $${gap}，且目前配置面臨高達 ${risk} 的回撤風險。專業配置系統提供「本金保證」機制，確保您的財富不被市場波動或通脹蠶食。`
+                wcTitle: "已成功複製微信號", wcTip: "請前往微信搜索並添加 Alex 為好友。", wcBtn: "前往微信",
+                chartLabels: ["目前策略", "專業配置系統"],
+                backupCash: (name, gap, acc) => `你好 ${name}，根據 17 年模擬，您的 ${acc} 帳戶雖然穩定，但預計收益缺口仍高達 $${gap}。請注意，銀行存款在通脹環境下，實質購買力的增長幾乎停滯。專業配置系統不僅提供更高增長，更具備「本金保證」合約。`,
+                backupRisk: (name, gap, risk, acc) => `你好 ${name}，您的 ${acc} 潛在收益缺口高達 $${gap}，且目前配置面臨高達 ${risk} 的回撤風險。專業配置系統提供「本金保證」機制，確保您的財富不被市場波動或通脹蠶食。`
             },
             sc: {
                 title: "个人税务账户收益分析",
                 subtitle: "收益增长与风险保障深度系统",
                 quote: "「通过精确的数据分析，了解您的资产在市场波动中的防御力。」",
-                labelName: "您的称呼",
-                labelAccType: "账户类型",
-                labelAssetType: "目前存放方式",
-                labelBalanceTFSA: "CRA 累计供款额度 (CAD)",
-                labelBalanceRRSP: "RRSP 扣税额度 (CAD)",
-                optCash: "银行定期 / GIC",
-                optFund: "互惠基金",
-                optStock: "蓝筹股票",
+                labelName: "您的称呼", labelAccType: "账户类型", labelAssetType: "目前存放方式",
+                labelBalanceTFSA: "CRA 累计供款额度 (CAD)", labelBalanceRRSP: "RRSP 扣税额度 (CAD)",
+                optCash: "银行定期 / GIC", optFund: "互惠基金", optStock: "蓝筹股票",
                 btnScan: "⚡ 启动 AI 收益与风险分析",
-                loadingTitle: "正在模拟市场波动场景...",
-                loadingHint: "正在对比历史最大回撤与购买力数据...",
-                chartHeader: "17年预期累计收益对比",
-                riskTitle: "下行/购买力风险",
-                safeTitle: "专业配置保障机制",
-                safeStatus: "本金保证",
-                safeNote: "具备合约级别安全垫",
+                loadingTitle: "正在模拟市场波动场景...", loadingHint: "正在对比历史最大回撤与购买力数据...",
+                chartHeader: "17年预期累计收益对比", riskTitle: "下行/购买力风险",
+                safeTitle: "专业配置保障机制", safeStatus: "本金保证", safeNote: "具备合约级别安全垫",
                 noteTitle: "数据备注",
                 noteDesc: "目前配置数据参考加拿大市场历史平均。专业配置采用具备「本金保证」机制的收益优化组合。",
-                btnReset: "↺ 重新分析其他配置",
-                msgTitle: "系统提示",
+                btnReset: "↺ 重新开始分析", msgTitle: "系统提示", msgBtn: "了解",
                 scBtn: "微信联系顾问獲取分析",
-                backupCash: (name, gap) => `你好 ${name}，根据 17 年模拟，您的账户虽然稳定，但预计收益缺口仍高达 $${gap}。请注意，银行存款在通胀环境下，实质购买力的增长几乎停滞。专业配置系统不仅提供更高增长，更具备「本金保证」合约。`,
-                backupRisk: (name, gap, risk) => `你好 ${name}，您的潜在收益缺口高达 $${gap}，且目前配置面临高达 ${risk} 的回撤风险。专业配置系统提供「本金保证」机制，确保您的财富不被市场波动或通胀蚕食。`
+                wcTitle: "已成功复制微信号", wcTip: "请前往微信搜索并添加 Alex 为好友。", wcBtn: "前往微信",
+                chartLabels: ["目前策略", "专业配置系统"],
+                backupCash: (name, gap, acc) => `你好 ${name}，根据 17 年模拟，您的 ${acc} 账户虽然稳定，但预计收益缺口仍高达 $${gap}。请注意，银行存款在通胀环境下，实质购买力的增长几乎停滞。专业配置系统不仅提供更高增长，更具备「本金保证」合约。`,
+                backupRisk: (name, gap, risk, acc) => `你好 ${name}，您的 ${acc} 潜在收益缺口高达 $${gap}，且目前配置面临高达 ${risk} 的回撤风险。专业配置系统提供「本金保证」机制，确保您的财富不被市场波动或通胀蚕食。`
             }
         };
 
@@ -237,6 +229,7 @@
             currentLang = lang;
             const d = dictionary[lang];
             
+            // 更新 UI 文字
             document.getElementById('ui-title').innerText = d.title;
             document.getElementById('ui-subtitle').innerText = d.subtitle;
             document.getElementById('ui-quote').innerText = d.quote;
@@ -258,19 +251,42 @@
             document.getElementById('ui-note-desc').innerText = d.noteDesc;
             document.getElementById('ui-btn-reset').innerText = d.btnReset;
             document.getElementById('msg-modal-title').innerText = d.msgTitle;
+            document.getElementById('msg-modal-btn').innerText = d.msgBtn;
+            document.getElementById('wechat-modal-title').innerText = d.wcTitle;
+            document.getElementById('wechat-modal-tip').innerText = d.wcTip;
+            document.getElementById('wechat-modal-btn').innerText = d.wcBtn;
 
             updateLabelByAccount();
 
+            // 更新按鈕狀態
             document.getElementById('btn-tc').classList.toggle('lang-btn-active', lang === 'tc');
             document.getElementById('btn-sc').classList.toggle('lang-btn-active', lang === 'sc');
 
-            // 聯絡方式切換
+            // 聯絡按鈕切換
             if (lang === 'sc') {
                 document.getElementById('cta-wa-link').classList.add('hidden');
                 document.getElementById('cta-wechat-btn').classList.remove('hidden');
             } else {
                 document.getElementById('cta-wa-link').classList.remove('hidden');
                 document.getElementById('cta-wechat-btn').classList.add('hidden');
+            }
+
+            // 如果已經出結果，切換語言時更新圖表與備援文本
+            if (analysisState.isFinished) {
+                renderChart(analysisState.v1, analysisState.v2, analysisState.r1);
+                
+                // 更新風險提示文字
+                const isCash = analysisState.assetType === 'cash';
+                document.getElementById('ui-max-drawdown').innerText = isCash ? (currentLang === 'tc' ? "通脹侵蝕" : "通胀侵蚀") : `-${analysisState.risk}`;
+                document.getElementById('ui-risk-note').innerText = rates[analysisState.assetType].riskDetail[currentLang];
+
+                // 如果是顯示備援報告（非 AI 原始生成的文字），則同步切換語言
+                if (!analysisState.isAiGenerated) {
+                    const backup = isCash ? 
+                        d.backupCash(analysisState.name, analysisState.gap, analysisState.accType) :
+                        d.backupRisk(analysisState.name, analysisState.gap, analysisState.risk, analysisState.accType);
+                    document.getElementById('report-content').innerHTML = backup;
+                }
             }
         }
 
@@ -306,6 +322,7 @@
         }
 
         function resetApp() {
+            analysisState.isFinished = false;
             document.getElementById('step-result').classList.add('hidden');
             document.getElementById('step-form').classList.remove('hidden');
             window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -347,12 +364,16 @@
             const assetType = document.getElementById('asset-type').value;
             const finalCurrent = balance * Math.pow(1 + rates[assetType].yield, 17);
             const finalPro = balance * Math.pow(1 + rates.pro.yield, 17);
-            const gap = parseInt(finalPro - finalCurrent).toLocaleString();
+            const gapStr = parseInt(finalPro - finalCurrent).toLocaleString();
 
-            // 更新 UI 上的風險提示
-            const isCash = assetType === 'cash';
-            document.getElementById('ui-max-drawdown').innerText = isCash ? (currentLang === 'tc' ? "通脹侵蝕" : "通胀侵蚀") : `-${rates[assetType].risk}`;
-            document.getElementById('ui-risk-note').innerText = rates[assetType].riskDetail[currentLang];
+            // 存入全局狀態
+            analysisState = {
+                isFinished: true,
+                isAiGenerated: false, // 預設先設為 false，成功獲取 AI 文字後再改為 true
+                v1: finalCurrent, v2: finalPro, r1: rates[assetType].yield,
+                name: name, gap: gapStr, risk: rates[assetType].risk, 
+                assetType: assetType, accType: accType
+            };
 
             const langName = currentLang === 'tc' ? "廣東話 (繁體中文)" : "簡體中文";
             const msg = currentLang === 'tc' ? 
@@ -367,42 +388,52 @@
                 語言要求：必須使用 ${langName}。
                 場景：客戶在 ${accType} 存入 $${balance.toLocaleString()}，目前配置是 ${assetType}。
                 對比分析：
-                1. 若目前是銀行存款/GIC：雖然看似無風險，但請指出通脹（約 3%）會令實質購買力不增反減，組合形同虛設。
+                1. 若目前是銀行存款/GIC：指出通脹會令實質購買力受損。
                 2. 若目前是基金/股票：指出歷史最大跌幅可能達 ${rates[assetType].risk}。
-                3. 專業配置優勢：回報差距達 $${gap}，且具備「合約級別的本金保證」，實現真正的「進可攻、退可守」。
-                要求：語氣專業理性，用震撼比喻（如置業首期）說明收益價值。保持專業系統的神秘感與權威感。
-                禁止使用『診斷』，統一用『分析』。
+                3. 專業配置優勢：回報差距達 $${gapStr}，具備「本金保證」。
+                禁止使用『診斷』，統一用『分析』。保持專業神秘感。
             `;
 
             try {
                 const aiText = await fetchAIResponse(promptText, apiKey);
                 document.getElementById('report-content').innerHTML = aiText.replace(/\n/g, '<br>');
-                finish(finalCurrent, finalPro, rates[assetType].yield);
+                analysisState.isAiGenerated = true; // AI 成功生成，切換語言時將不覆蓋此文本
+                finish();
             } catch (e) { 
-                const backupReport = isCash ? 
-                    dictionary[currentLang].backupCash(name, gap) :
-                    dictionary[currentLang].backupRisk(name, gap, rates[assetType].risk);
-                document.getElementById('report-content').innerHTML = backupReport;
-                finish(finalCurrent, finalPro, rates[assetType].yield);
+                const d = dictionary[currentLang];
+                const backup = (assetType === 'cash') ? 
+                    d.backupCash(name, gapStr, accType) :
+                    d.backupRisk(name, gapStr, rates[assetType].risk, accType);
+                document.getElementById('report-content').innerHTML = backup;
+                analysisState.isAiGenerated = false; // 使用備援，切換語言時會同步更新
+                finish();
             }
         }
 
-        function finish(v1, v2, r1) {
+        function finish() {
             document.getElementById('progress-bar').style.width = "100%";
             setTimeout(() => {
                 document.getElementById('step-loading').classList.add('hidden');
                 document.getElementById('step-result').classList.remove('hidden');
-                renderChart(v1, v2, r1);
+                renderChart(analysisState.v1, analysisState.v2, analysisState.r1);
+                
+                // 更新風險提示 UI
+                const isCash = analysisState.assetType === 'cash';
+                document.getElementById('ui-max-drawdown').innerText = isCash ? (currentLang === 'tc' ? "通脹侵蝕" : "通胀侵蚀") : `-${analysisState.risk}`;
+                document.getElementById('ui-risk-note').innerText = rates[analysisState.assetType].riskDetail[currentLang];
             }, 800);
         }
 
         function renderChart(v1, v2, r1) {
             const ctx = document.getElementById('wealthChart').getContext('2d');
             if (wealthChart) wealthChart.destroy();
+            
+            const labels = dictionary[currentLang].chartLabels;
+            
             wealthChart = new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: currentLang === 'tc' ? ["目前策略", "專業配置系統"] : ["目前策略", "专业配置系统"],
+                    labels: labels,
                     datasets: [{
                         data: [v1.toFixed(0), v2.toFixed(0)],
                         backgroundColor: ['#cbd5e1', '#3b82f6'],
