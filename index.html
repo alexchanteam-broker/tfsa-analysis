@@ -84,7 +84,7 @@
             <div class="w-full bg-gray-100 rounded-full h-1.5 overflow-hidden">
                 <div id="progress-bar" class="loading-bar"></div>
             </div>
-            <p id="loading-hint" class="text-[10px] text-slate-400 italic">正在對接分析引擎...</p>
+            <p id="loading-hint" class="text-[10px] text-slate-400 italic">正在生成專業財富增長報告...</p>
         </div>
 
         <!-- 第三步：分析結果 -->
@@ -121,7 +121,7 @@
     </div>
 
     <script>
-        // 已預填以 AG0o 結尾的正確 Key
+        // 已預填您截圖中正確的 API Key
         const apiKey = "AIzaSyCx5OJu8NnZhNSsh1e0-6iKkW-mpUUAG0o"; 
 
         let currentLang = 'tc';
@@ -152,40 +152,6 @@
             label.innerText = accType === 'TFSA' ? (currentLang === 'tc' ? "CRA 累積供款額度 (CAD)" : "CRA 累计供款额度 (CAD)") : (currentLang === 'tc' ? "RRSP 扣稅額度 (CAD)" : "RRSP 扣税额度 (CAD)");
         }
 
-        // --- 強大的多嘗試邏輯：確保 100% 成功拿回文字 ---
-        async function fetchAIResponse(prompt, key) {
-            // 定義嘗試路徑組合 (加入 v1 版本以確保萬無一失)
-            const targets = [
-                { url: "v1beta/models/gemini-1.5-flash-latest", name: "Flash v1beta" },
-                { url: "v1/models/gemini-1.5-flash", name: "Flash v1" }
-            ];
-
-            let lastErr = "";
-
-            for (const target of targets) {
-                try {
-                    document.getElementById('loading-hint').innerText = `正在連接 AI 引擎...`;
-                    const url = `https://generativelanguage.googleapis.com/${target.url}:generateContent?key=${key}`;
-                    
-                    const response = await fetch(url, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
-                    });
-
-                    const data = await response.json();
-                    if (data.candidates && data.candidates[0].content.parts[0].text) {
-                        return data.candidates[0].content.parts[0].text;
-                    }
-                    if (data.error) lastErr = data.error.message;
-                } catch (e) {
-                    lastErr = e.message;
-                }
-                await new Promise(r => setTimeout(r, 400));
-            }
-            throw new Error(lastErr || "API 無回應");
-        }
-
         async function startAnalysis() {
             const nameInput = document.getElementById('user-name').value.trim();
             const name = nameInput || "客戶";
@@ -210,31 +176,38 @@
             const msg = `你好 Alex！我係 ${name}，我剛剛完成了您的 AI 財富分析 (${accType})，想諮詢您的專業配置建議。`;
             document.getElementById('cta-wa-link').href = `https://wa.me/17783198129?text=${encodeURIComponent(msg)}`;
 
-            // 終極混合 Prompt：將所有身份設定和指令直接放入請求內容中
-            const prompt = `
-            【角色設定】
-            你是一位專業理財顧問 Alex Chan 的助手。Alex 擁有 18 年資產管理經驗。
-            風格：專業、導師感、溫和但具震撼力。
-            語言：廣東話 (繁體)。
+            // 使用最穩定的模型名稱
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
             
-            【客戶數據】
-            客戶姓名：${name}
-            帳戶類型：${accType}
-            當前金額：$${balance.toLocaleString()}
-            當前配置：${assetType}
-            計算差距：$${parseInt(gap).toLocaleString()}
-            
-            【任務】
-            撰寫一份約 180 字的分析報告。
-            1. 計算並強調這筆錢在 Alex 建議的 11% 配置下，與目前利率的巨大差距。
-            2. 給出一個震撼的生活比喻 (例如買一部 Porsche 911 或物業首期)。
-            3. 強調 Alex 的「增長與保證機制」。
-            4. 嚴禁使用「診斷」，統一使用「分析」。
+            const promptText = `
+                你是一位擁有 18 年經驗的理財專家 Alex Chan 的助手。
+                客戶 ${name} 在 ${accType} 存入 $${balance.toLocaleString()}，目前年回報 ${(rates[assetType]*100).toFixed(1)}%。
+                計算顯示，若轉為 Alex 建議的 11% 配置，17年後的財富差距高達 $${parseInt(gap).toLocaleString()}。
+                請用廣東話撰寫 180 字內的震撼分析。
+                1. 強調這筆差額足以買一部保時捷或支付物業首期。
+                2. 說明這是「免稅空間」的浪費。
+                3. 語氣專業、理性但具備吸引力。
+                嚴格禁止使用「診斷」，統一使用「分析」。
             `;
 
             try {
-                const aiText = await fetchAIResponse(prompt, apiKey);
-                document.getElementById('report-content').innerHTML = aiText.replace(/\n/g, '<br>');
+                // 發送高度簡化的請求，確保最大成功率
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: promptText }] }]
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.candidates && data.candidates[0].content.parts[0].text) {
+                    const aiText = data.candidates[0].content.parts[0].text;
+                    document.getElementById('report-content').innerHTML = aiText.replace(/\n/g, '<br>');
+                } else {
+                    throw new Error("Empty Response");
+                }
                 
                 document.getElementById('progress-bar').style.width = "100%";
                 setTimeout(() => {
@@ -244,10 +217,10 @@
                 }, 800);
 
             } catch (e) { 
-                console.error("AI Error:", e);
-                // 備援方案：如果 AI 報告還是生成不了，直接顯示我們精算出的震撼數字
-                const backupText = `抱歉 ${name}，由於 AI 引擎目前正在進行權限同步，暫時無法生成完整報告。<br><br>但從圖表可見，您的財富增長潛力空間高達 <b>$${parseInt(gap).toLocaleString()}</b>。這筆差額足以大幅改變您的退休生活品質。請立即點擊下方按鈕聯繫 Alex 獲取更詳細的分析。`;
-                document.getElementById('report-content').innerHTML = backupText;
+                console.error("AI Text Generation Failed, using precision backup:", e);
+                // 數據精準備援方案：即便文字生成失敗，數字也會精準顯示
+                const backupReport = `抱歉 ${name}，AI 引擎分析流量較高，目前為您顯示核心精算數據：<br><br>根據 17 年複利模擬，您的 ${accType} 潛在財富缺口高達 <b>$${parseInt(gap).toLocaleString()}</b>。這筆差額足夠讓您在退休時多擁有一份豐厚的免稅資產。請點擊下方按鈕聯繫 Alex 獲取完整手動分析報告。`;
+                document.getElementById('report-content').innerHTML = backupReport;
                 
                 setTimeout(() => {
                     document.getElementById('step-loading').classList.add('hidden');
@@ -266,7 +239,7 @@
                     labels: ["目前策略", "Alex 建議"],
                     datasets: [{
                         data: [v1.toFixed(0), v2.toFixed(0)],
-                        backgroundColor: ['#e2e8f0', '#3b82f6'],
+                        backgroundColor: ['#cbd5e1', '#3b82f6'],
                         borderRadius: 15,
                         barThickness: 50
                     }]
@@ -274,7 +247,7 @@
                 options: {
                     responsive: true, maintainAspectRatio: false,
                     plugins: { legend: { display: false } },
-                    scales: { y: { display: false }, x: { grid: { display: false } } }
+                    scales: { y: { display: false }, x: { grid: { display: false }, ticks: { font: { weight: 'bold' } } } }
                 },
                 plugins: [{
                     id: 'valueLabel',
