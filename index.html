@@ -121,7 +121,7 @@
     </div>
 
     <script>
-        // 已預填以 AG0o 結尾的正確 Key
+        // 您的專屬 API Key
         const apiKey = "AIzaSyCx5OJu8NnZhNSsh1e0-6iKkW-mpUUAG0o"; 
 
         let currentLang = 'tc';
@@ -153,10 +153,10 @@
         }
 
         async function fetchAIResponse(prompt, key) {
-            // 嘗試多重路徑，確保避開「Model not found」
+            // 定義嘗試路徑：優先使用更兼容的 v1 穩定管道
             const endpoints = [
-                `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`,
-                `https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=${key}`
+                `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${key}`,
+                `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`
             ];
 
             let lastErr = "";
@@ -168,13 +168,15 @@
                         body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
                     });
                     const data = await response.json();
-                    if (data.candidates && data.candidates[0].content.parts[0].text) {
+                    
+                    if (data.candidates && data.candidates[0].content && data.candidates[0].content.parts[0].text) {
                         return data.candidates[0].content.parts[0].text;
                     }
                     if (data.error) lastErr = data.error.message;
                 } catch (e) {
                     lastErr = e.message;
                 }
+                await new Promise(r => setTimeout(r, 200));
             }
             throw new Error(lastErr || "API 無回應");
         }
@@ -203,12 +205,13 @@
             const msg = `你好 Alex！我係 ${name}，我剛剛完成了您的 AI 財富分析 (${accType})，想諮詢您的專業配置建議。`;
             document.getElementById('cta-wa-link').href = `https://wa.me/17783198129?text=${encodeURIComponent(msg)}`;
 
+            // 包含所有規則的高質量 Prompt
             const promptText = `
-                你是專業理財顧問 Alex Chan 的助手。Alex 有 18 年管理經驗。
+                你是專業理財顧問 Alex Chan 的助手。Alex 有 18 年管理經驗。風格專業、感性且具說服力。
                 請為客戶 ${name} 寫一份 180 字廣東話分析。
-                背景：他在 ${accType} 有 $${balance.toLocaleString()}，目前配置是 ${assetType}。
+                背景：他在 ${accType} 有 $${balance.toLocaleString()}，目前配置是 ${assetType}（回報率約 ${(rates[assetType]*100).toFixed(1)}%）。
                 重點：計算出的 17 年財富差距是 $${parseInt(gap).toLocaleString()}。
-                要求：用震撼的比喻（如物業首期或名車）說明這筆錢的價值。強調 Alex 的『增長與保證』策略。
+                要求：用震撼的比喻（如買一輛名車或支付物業首期）說明這筆錢的價值。強調 Alex 的『增長與保證』策略，說明留在銀行是浪費免稅空間。
                 禁止使用『診斷』，統一用『分析』。
             `;
 
@@ -224,9 +227,9 @@
                 }, 800);
 
             } catch (e) { 
-                console.error(e);
+                console.error("AI Error:", e);
                 // 數據精準備援方案
-                const backupReport = `抱歉 ${name}，AI 引擎正在同步您的權限，目前為您顯示核心精算數據：<br><br>根據模擬，您的 ${accType} 潛在財富缺口高達 <b>$${parseInt(gap).toLocaleString()}</b>。這筆差額足夠讓您在退休時擁有一份非常豐厚的資產。請點擊下方按鈕聯繫 Alex 獲取完整手動分析報告。`;
+                const backupReport = `抱歉 ${name}，AI 引擎正忙於處理權限請求，目前為您顯示核心精算數據：<br><br>根據模擬，您的 ${accType} 潛在財富缺口高達 <b>$${parseInt(gap).toLocaleString()}</b>。這筆差額足夠讓您在退休時擁有一份非常豐厚的免稅資產。請點擊下方按鈕聯繫 Alex 獲取完整手動分析報告。`;
                 document.getElementById('report-content').innerHTML = backupReport;
                 
                 setTimeout(() => {
