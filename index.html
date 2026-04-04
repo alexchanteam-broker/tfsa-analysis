@@ -22,6 +22,7 @@
 
     <div class="max-w-md w-full glass rounded-[2.5rem] shadow-2xl overflow-hidden border border-gray-200 relative flex flex-col">
         
+        <!-- 語言切換 -->
         <div class="bg-gray-100 border-b border-gray-200 px-6 py-2 flex justify-end items-center">
             <div class="flex bg-gray-200 p-1 rounded-full text-[11px] font-bold shadow-sm space-x-1">
                 <button id="btn-tc" onclick="setLanguage('tc')" class="px-3 py-1 rounded-full transition-all lang-btn-active">繁</button>
@@ -30,10 +31,13 @@
             </div>
         </div>
 
+        <!-- Header (展示 Alex 樣貌) -->
         <div class="bg-slate-900 p-8 text-white">
             <div class="flex items-center space-x-4">
                 <div class="relative">
-                    <img src="profile.jpg" alt="Alex Chan" onerror="this.src='https://ui-avatars.com/api/?name=Alex+Chan&background=3b82f6&color=fff'" 
+                    <!-- 正式使用時請確保目錄下有 profile.jpg。若讀取不到，onerror 會調用備份頭像服務。 -->
+                    <img id="header-avatar" src="profile.jpg" alt="Alex Chan" 
+                         onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=Alex+Chan&background=3b82f6&color=fff&size=128'" 
                          class="w-16 h-16 rounded-full profile-img shadow-lg border-2 border-blue-400/50">
                     <div class="absolute bottom-0 right-0 w-4 h-4 bg-green-500 border-2 border-slate-900 rounded-full"></div>
                 </div>
@@ -45,6 +49,7 @@
             </div>
         </div>
 
+        <!-- 第一步：輸入表單 -->
         <div id="step-form" class="p-8 space-y-5">
             <div class="text-center">
                 <p id="ui-quote" class="text-slate-500 text-sm italic font-bold leading-relaxed">「透過精確的數據分析，了解您的資產在市場波動中的防禦力。」</p>
@@ -88,6 +93,7 @@
             </p>
         </div>
 
+        <!-- 第二步：載入中 -->
         <div id="step-loading" class="hidden p-16 text-center space-y-8">
             <div class="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
             <h3 id="ui-loading-title" class="text-xl font-black text-slate-800">正在模擬市場波動場景...</h3>
@@ -97,6 +103,7 @@
             <p id="loading-hint" class="text-[10px] text-slate-400 italic">正在對比歷史最大回撤與具體生活價值...</p>
         </div>
 
+        <!-- 第三步：分析結果 -->
         <div id="step-result" class="hidden flex flex-col h-[700px] bg-white">
             <div class="p-6 space-y-6 flex-grow overflow-y-auto">
                 <div class="flex items-center justify-between text-blue-600 border-b border-blue-50 pb-3">
@@ -124,8 +131,10 @@
                 
                 <div id="report-content" class="text-slate-700 leading-relaxed text-[15px] space-y-4 px-2 italic"></div>
 
+                <!-- 專家簽名區 -->
                 <div class="flex items-start space-x-3 pt-6 border-t border-slate-100 mb-4">
-                    <img src="profile.jpg" alt="Alex Chan" onerror="this.src='https://ui-avatars.com/api/?name=Alex+Chan&background=3b82f6&color=fff'" 
+                    <img id="signature-avatar" src="profile.jpg" alt="Alex Chan" 
+                         onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=Alex+Chan&background=3b82f6&color=fff&size=128'" 
                          class="w-12 h-12 rounded-xl object-cover shadow-md">
                     <div>
                         <p class="text-blue-900 font-black text-sm italic">Alex Chan</p>
@@ -159,6 +168,7 @@
         </div>
     </div>
 
+    <!-- WeChat Modal -->
     <div id="wechat-modal" class="fixed inset-0 bg-black/70 z-[300] hidden items-center justify-center p-6 backdrop-blur-md">
         <div class="bg-white p-8 rounded-[2.5rem] max-w-xs w-full text-center shadow-2xl modal-animate border border-slate-100">
             <div class="text-6xl mb-6">✅</div>
@@ -170,6 +180,7 @@
         </div>
     </div>
 
+    <!-- Info Modal -->
     <div id="msg-modal" class="fixed inset-0 bg-black/70 z-[200] hidden items-center justify-center p-6 backdrop-blur-md">
         <div class="bg-white p-8 rounded-[2.5rem] max-w-xs w-full text-center shadow-2xl modal-animate border border-slate-100">
             <div class="text-5xl mb-4">⚠️</div>
@@ -196,7 +207,7 @@
                 house_rm: { tc: "足以在列治文 (Richmond) 全款購置一間全新且寬敞的聯排別墅 (Townhouse)", sc: "足以在列治文 (Richmond) 全款购置一间全新且宽敞的联排别墅 (Townhouse)", en: "equivalent to the full cash price of a spacious new Townhouse in Richmond." },
                 rv_classa: { tc: "足以購買一部頂級豪華的 Class A 大型露營車 (Luxury Motorhome)", sc: "足以购买一部顶级豪华的 Class A 大型露營车 (Luxury Motorhome)", en: "enough to purchase a top-tier Class A Luxury Motorhome for your continental travels." },
                 pickup_pro: { tc: "足以全款購置一部頂配版的豪華重型皮卡 (Premium Pick-up Truck)", sc: "足以全款购置一部顶配版的豪华重型皮卡 (Premium Pick-up Truck)", en: "enough to pay full cash for a top-spec Premium Pick-up Truck." },
-                ev_suv: { tc: "足以購買一部全新款式的高性能全電動 SUV", sc: "足以购买一部全新款式的高性能全电动 SUV", en: "enough to buy a brand new high-performance All-Electric SUV." }
+                ev_suv: { tc: "足以購買一部全新款式的高性能全電動 SUV", sc: "足以購買一部全新款式的高性能全电动 SUV", en: "enough to buy a brand new high-performance All-Electric SUV." }
             };
             if (gapNum > 1500000) return tiers.house_wv[lang];
             if (gapNum > 800000) return tiers.house_rm[lang];
