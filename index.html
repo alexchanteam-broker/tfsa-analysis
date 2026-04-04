@@ -41,7 +41,7 @@
                     <div class="absolute bottom-0 right-0 w-4 h-4 bg-green-500 border-2 border-slate-900 rounded-full"></div>
                 </div>
                 <div class="flex-grow">
-                    <div id="ui-header-tag" class="text-blue-400 font-black tracking-widest text-[9px] uppercase italic leading-tight">Individual Insurance Broker</div>
+                    <div id="ui-header-tag" class="text-blue-400 font-black tracking-widest text-[9px] uppercase italic leading-tight">Alex Chan | Individual Insurance Broker</div>
                     <h1 id="ui-title" class="text-xl font-black italic text-yellow-400 tracking-tight">個人稅務帳戶收益分析</h1>
                     <div id="ui-subtitle" class="text-[9px] opacity-60 italic tracking-widest">逾20年專業管理經驗導航</div>
                 </div>
@@ -179,7 +179,7 @@
         </div>
     </div>
 
-    <!-- Info Modal -->
+    <!-- Error/Info Modal -->
     <div id="msg-modal" class="fixed inset-0 bg-black/70 z-[200] hidden items-center justify-center p-6 backdrop-blur-md">
         <div class="bg-white p-8 rounded-[2.5rem] max-w-xs w-full text-center shadow-2xl modal-animate border border-slate-100">
             <div class="text-5xl mb-4">⚠️</div>
@@ -217,24 +217,25 @@
 
         const dictionary = {
             tc: {
-                title: "個人稅務帳戶收益分析", headerTag: "Individual Insurance Broker",
+                title: "個人稅務帳戶收益分析", headerTag: "Alex Chan | Individual Insurance Broker",
                 subtitle: "逾20年專業管理經驗導航",
                 quote: "「透過精確的數據分析，了解您的資產在市場波動中的表現。」",
                 labelName: "您的稱呼", labelAccType: "帳戶類型", labelAssetType: "目前存放方式",
                 labelBalanceTFSA: "CRA 累積供款額度 (CAD)", labelBalanceRRSP: "RRSP 扣稅額度 (CAD)",
                 optCash: "銀行定期 / GIC", optFund: "互惠基金", optStock: "藍籌股票",
-                btnScan: "⚡ 啟動 AI 收益與風險分析", footerNote: "* 本分析系統僅供模擬參考用途過往回報並不代表未來收益。",
+                btnScan: "⚡ 啟動 AI 收益與風險分析", footerNote: "* 本分析系統僅供模擬參考用途。過往回報並不代表未來收益。",
                 loadingTitle: "正在模擬市場波動場景...", loadingHint: "正在對比歷史最大回撤與具體生活價值...",
                 resultLabel: "Analysis Report", chartHeader: "17年模擬累積收益增長軌跡", riskTitle: "下行/購買力風險",
                 safeTitle: "配置保障機制", safeStatus: "合約級別保證", safeNote: "受保單/合約條款約束",
                 noteTitle: "數據備註與披露",
-                noteDesc: "目前配置數據參考加拿大市場歷史平均。專業配置採用具備「本金保證」機制的收益優化組合。",
+                noteDesc: "模擬數據參考加拿大市場歷史平均。專業配置採用具備「本金保證」機制的收益優化組合。",
                 sigRole: "Individual Insurance Broker (Canada)",
                 sigExp: "20+ Years Excellence in Wealth Management",
                 btnReset: "↺ 重新開始分析", msgTitle: "系統提示", msgBtn: "了解",
                 waBtn: "WhatsApp 聯繫顧問獲取分析",
                 wcTitle: "已成功複製微信號", wcTip: "請前往微信搜索並添加 Alex 為好友。", wcBtn: "前往微信",
-                chartLabels: ["目前策略", "專業配置系統*"],
+                chartLabelTarget: "專業管理的投資組合*",
+                chartLabelCurrent: "目前策略模擬表現",
                 closing: "<br><br>如果您希望全面審視財務現狀，在風險可控的前提下追求資產回報最大化，並極大化稅務帳戶的優勢，誠邀您聯絡 Alex 進行初步諮詢。憑藉逾 20 年深耕銀行體系及獨立理財顧問的深厚經驗，Alex 將為您的財富增值提供精確且具價值的專業導航。",
                 backupText: (name, gap, acc, asset, risk) => {
                     const gapNum = parseFloat(gap.replace(/,/g,''));
@@ -247,7 +248,7 @@
                 }
             },
             sc: {
-                title: "个人税务账户收益分析", headerTag: "Individual Insurance Broker",
+                title: "个人税务账户收益分析", headerTag: "Alex Chan | Individual Insurance Broker",
                 subtitle: "逾20年专业管理经验导航",
                 quote: "「通过精确的数据分析，了解您的资产在市场波动中的表现。」",
                 labelName: "您的称呼", labelAccType: "账户类型", labelAssetType: "目前存放方式",
@@ -264,12 +265,13 @@
                 btnReset: "↺ 重新开始分析", msgTitle: "系统提示", msgBtn: "了解",
                 scBtn: "微信联系顾问獲取分析",
                 wcTitle: "已成功复制微信号", wcTip: "请前往微信搜索并添加 Alex 为好友。", wcBtn: "前往微信",
-                chartLabels: ["目前策略", "专业配置系统*"],
-                closing: "<br><br>如果您希望全面审视财务现状，在风险可控的前提下追求资产回报最大化，并极大化税务账户的优势，诚邀您联络 Alex 进行初步咨询。凭借逾 20 年深耕银行体系及独立理财顾问的深厚经验，Alex 将为您的财富增值提供精确且具价值的专业导航。",
+                chartLabelTarget: "专业管理的投资组合*",
+                chartLabelCurrent: "目前策略模拟表现",
+                closing: "<br><br>如果您希望全面审视财务现状，在风险可控的前提下追求资产回报最大化，并极大化税务账户的优势，诚邀您联络 Alex 进行初步咨询。凭借逾 20 年深耕银行体系及独立理財顾问的深厚经验，Alex 将为您提供精确且具价值的专业导航。",
                 backupText: (name, gap, acc, asset, risk) => {
                     const gapNum = parseFloat(gap.replace(/,/g,''));
                     const analogy = getSingleAnalogy(gapNum, 'sc');
-                    let base = `你好 ${name}，选择存放 ${acc} 於银行存款是非常稳健的决定。但数据显示，17 年后的模拟复利缺口高达 $${gap}，<b>这笔钱${analogy}。</b>`;
+                    let base = `你好 ${name}，选择存放 ${acc} 於银行存款是非常稳健的决定。但数据显示，17 年後的模拟复利缺口高达 $${gap}，<b>这笔钱${analogy}。</b>`;
                     if (asset !== 'cash') {
                         base = `你好 ${name}，您的投资意识很好。目前配置面临历史高达 ${risk} 的下行风险。與「專業管理配置」相比，您正錯失約 $${gap} 的潛在收益空間，這金額<b>${analogy}。</b>`;
                     }
@@ -277,7 +279,7 @@
                 }
             },
             en: {
-                title: "Personal Tax-Account Yield Analysis", headerTag: "Individual Insurance Broker",
+                title: "Tax-Account Yield Analysis", headerTag: "Alex Chan | Individual Insurance Broker",
                 subtitle: "Guided by 20+ Years of Professional Management",
                 quote: "「Analyze assets with precision and understand your performance against market volatility.」",
                 labelName: "Your Name", labelAccType: "Account Type", labelAssetType: "Current Method",
@@ -294,14 +296,15 @@
                 btnReset: "↺ Start New Analysis", msgTitle: "System Notification", msgBtn: "Got it",
                 waBtn: "Text Alex for Consultation",
                 wcTitle: "WeChat ID Copied", wcTip: "Please search and add Alex on WeChat.", wcBtn: "Open WeChat",
-                chartLabels: ["Current Strategy", "Pro-Managed Portfolio*"],
+                chartLabelTarget: "Pro-Managed Portfolio*",
+                chartLabelCurrent: "Current Strategy Simulation",
                 closing: "<br><br>To gain a comprehensive understanding of your financial health, maximize your assets within risk tolerance, and fully leverage your tax-advantaged accounts, you are invited to connect with Alex for a consultation. With over 20 years of distinguished experience in banking and independent financial advisory, Alex provides precise insights to navigate your wealth optimization.",
                 backupText: (name, gap, acc, asset, risk) => {
                     const gapNum = parseFloat(gap.replace(/,/g,''));
                     const analogy = getSingleAnalogy(gapNum, 'en');
                     let base = `Hello ${name}, keeping ${acc} in savings is safe. However, the $${gap} simulated gap in 17 years is massive. <b>This sum is ${analogy}</b>`;
                     if (asset !== 'cash') {
-                        base = `Hello ${name}, your current setup captures growth but faces a ${risk} performance drawdown risk. Compared to a Pro-Managed portfolio, you are missing out on $${gap}, which is <b>${analogy}</b>`;
+                        base = `Hello ${name}, your current setup captures growth but faces a ${risk} drawdown risk. Compared to a Pro-Managed portfolio, you are missing out on $${gap}, which is <b>${analogy}</b>`;
                     }
                     return base + dictionary.en.closing;
                 }
@@ -348,13 +351,17 @@
             document.getElementById('wechat-modal-title').innerText = d.wcTitle;
             document.getElementById('wechat-modal-tip').innerText = d.wcTip;
             document.getElementById('wechat-modal-btn').innerText = d.wcBtn;
+            
             updateLabelByAccount();
+
             document.getElementById('btn-tc').classList.toggle('lang-btn-active', lang === 'tc');
             document.getElementById('btn-sc').classList.toggle('lang-btn-active', lang === 'sc');
             document.getElementById('btn-en').classList.toggle('lang-btn-active', lang === 'en');
+            
             document.getElementById('cta-wa-link').classList.add('hidden');
             document.getElementById('cta-wechat-btn').classList.add('hidden');
             document.getElementById('cta-sms-link').classList.add('hidden');
+            
             if (lang === 'sc') document.getElementById('cta-wechat-btn').classList.remove('hidden');
             else if (lang === 'en') document.getElementById('cta-sms-link').classList.remove('hidden');
             else document.getElementById('cta-wa-link').classList.remove('hidden');
@@ -422,7 +429,7 @@
                     if (data.candidates?.[0]?.content?.parts?.[0]?.text) return data.candidates[0].content.parts[0].text;
                 } catch (e) {}
             }
-            throw new Error("API 無回應");
+            throw new Error("API failed");
         }
 
         async function startAnalysis() {
@@ -460,6 +467,8 @@
                 Assistant for Alex Chan (20+ years experience). 
                 Report for ${name} regarding $${balance.toLocaleString()} in ${accType}.
                 Language: ${langName}.
+                
+                CRITICAL INSTRUCTION: Generate the report STRICTLY in the requested language (${langName}). DO NOT mix languages.
                 
                 ANALOGY (Choose ONE):
                 - Gap > $1.5M: Detached House in West Vancouver.
@@ -510,13 +519,17 @@
                 dataCurrent.push((p * Math.pow(1 + r1, t)).toFixed(0));
                 dataPro.push((p * Math.pow(1 + 0.11, t)).toFixed(0));
             }
+            
+            const targetLabel = dictionary[currentLang].chartLabelTarget;
+            const currentLabel = dictionary[currentLang].chartLabelCurrent;
+
             wealthChart = new Chart(ctx, {
                 type: 'line',
                 data: {
                     labels: labels,
                     datasets: [
-                        { label: dictionary[currentLang].chartLabels[1], data: dataPro, borderColor: '#3b82f6', backgroundColor: 'rgba(59, 130, 246, 0.1)', fill: true, tension: 0.4, borderWidth: 3, pointRadius: (c) => c.dataIndex === 17 ? 6 : 0, pointBackgroundColor: '#3b82f6' },
-                        { label: dictionary[currentLang].chartLabels[0], data: dataCurrent, borderColor: '#94a3b8', backgroundColor: 'transparent', fill: false, tension: 0.4, borderWidth: 2, borderDash: [5, 5], pointRadius: (c) => c.dataIndex === 17 ? 4 : 0, pointBackgroundColor: '#94a3b8' }
+                        { label: targetLabel, data: dataPro, borderColor: '#3b82f6', backgroundColor: 'rgba(59, 130, 246, 0.1)', fill: true, tension: 0.4, borderWidth: 3, pointRadius: (c) => c.dataIndex === 17 ? 6 : 0, pointBackgroundColor: '#3b82f6' },
+                        { label: currentLabel, data: dataCurrent, borderColor: '#94a3b8', backgroundColor: 'transparent', fill: false, tension: 0.4, borderWidth: 2, borderDash: [5, 5], pointRadius: (c) => c.dataIndex === 17 ? 4 : 0, pointBackgroundColor: '#94a3b8' }
                     ]
                 },
                 options: {
@@ -533,8 +546,8 @@
                         const metaPro = chart.getDatasetMeta(0); const lastPPro = metaPro.data[17];
                         const metaCurr = chart.getDatasetMeta(1); const lastPCurr = metaCurr.data[17];
                         ctx.font = 'bold 10px Inter'; ctx.textAlign = 'right';
-                        ctx.fillStyle = '#1d4ed8'; ctx.fillText(`Target: $${parseInt(v2).toLocaleString()}`, lastPPro.x - 5, lastPPro.y - 10);
-                        ctx.fillStyle = '#64748b'; ctx.fillText(`Simulated: $${parseInt(v1).toLocaleString()}`, lastPCurr.x - 5, lastPCurr.y + 15);
+                        ctx.fillStyle = '#1d4ed8'; ctx.fillText(targetLabel.replace('*',''), lastPPro.x - 5, lastPPro.y - 10);
+                        ctx.fillStyle = '#64748b'; ctx.fillText(currentLabel, lastPCurr.x - 5, lastPCurr.y + 15);
                         ctx.restore();
                     }
                 }]
