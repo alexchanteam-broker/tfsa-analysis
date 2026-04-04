@@ -12,7 +12,7 @@
         .glass { background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(12px); }
         .loading-bar { width: 0%; height: 4px; background: #3b82f6; transition: width 0.4s ease-out; }
         .lang-btn-active { background-color: #3b82f6; color: white; }
-        .chart-container { position: relative; height: 280px; width: 100%; }
+        .chart-container { position: relative; height: 300px; width: 100%; }
         @keyframes fadeInScale { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
         .modal-animate { animation: fadeInScale 0.3s ease-out forwards; }
         .profile-img { object-fit: cover; }
@@ -190,6 +190,7 @@
     </div>
 
     <script>
+        // 注意：此 API Key 已在 Google Cloud 控制台設定網域限制 (Domain Restriction)，僅能在特定網址下運行。
         const apiKey = "AIzaSyCx5OJu8NnZhNSsh1e0-6iKkW-mpUUAG0o"; 
 
         let currentLang = 'tc';
@@ -249,7 +250,7 @@
             },
             sc: {
                 title: "个人税务账户收益分析", headerTag: "Alex Chan | Individual Insurance Broker",
-                subtitle: "逾20年专业管理经验导航",
+                subtitle: "逾20年专业 management 经验导航",
                 quote: "「通过精确的数据分析，了解您的资产在市场波动中的表现。」",
                 labelName: "您的称呼", labelAccType: "账户类型", labelAssetType: "目前存放方式",
                 labelBalanceTFSA: "CRA 累计供款额度 (CAD)", labelBalanceRRSP: "RRSP 扣税额度 (CAD)",
@@ -262,12 +263,12 @@
                 noteDesc: "目前配置数据参考加拿大市场历史平均。专业配置采用具备「本金保证」机制的收益优化组合。",
                 sigRole: "Individual Insurance Broker (Canada)",
                 sigExp: "20+ Years Excellence in Wealth Management",
-                btnReset: "↺ 重新开始分析", msgTitle: "系统提示", msgBtn: "了解",
+                btnReset: "↺ 重新開始分析", msgTitle: "系统提示", msgBtn: "了解",
                 scBtn: "微信联系顾问獲取分析",
                 wcTitle: "已成功复制微信号", wcTip: "请前往微信搜索并添加 Alex 为好友。", wcBtn: "前往微信",
                 chartLabelTarget: "专业管理的投资组合*",
                 chartLabelCurrent: "目前策略模拟表现",
-                closing: "<br><br>如果您希望全面审视财务现状，在风险可控的前提下追求资产回报最大化，并极大化税务账户的优势，诚邀您联络 Alex 进行初步咨询。凭借逾 20 年深耕银行体系及独立理財顾问的深厚经验，Alex 将为您提供精确且具价值的专业导航。",
+                closing: "<br><br>如果您希望全面审视财务现状，在风险可控的前提下追求资产回报最大化，并极大化税务账户的优势，诚邀您联络 Alex 进行初步咨询。凭借逾 20 年深耕银行体系及獨立理財顧問的深厚經驗，Alex 將為您提供精確且具價值的專業導航。",
                 backupText: (name, gap, acc, asset, risk) => {
                     const gapNum = parseFloat(gap.replace(/,/g,''));
                     const analogy = getSingleAnalogy(gapNum, 'sc');
@@ -279,7 +280,7 @@
                 }
             },
             en: {
-                title: "Tax-Account Yield Analysis", headerTag: "Alex Chan | Individual Insurance Broker",
+                title: "Personal Tax-Account Yield Analysis", headerTag: "Alex Chan | Individual Insurance Broker",
                 subtitle: "Guided by 20+ Years of Professional Management",
                 quote: "「Analyze assets with precision and understand your performance against market volatility.」",
                 labelName: "Your Name", labelAccType: "Account Type", labelAssetType: "Current Method",
@@ -304,7 +305,7 @@
                     const analogy = getSingleAnalogy(gapNum, 'en');
                     let base = `Hello ${name}, keeping ${acc} in savings is safe. However, the $${gap} simulated gap in 17 years is massive. <b>This sum is ${analogy}</b>`;
                     if (asset !== 'cash') {
-                        base = `Hello ${name}, your current setup captures growth but faces a ${risk} drawdown risk. Compared to a Pro-Managed portfolio, you are missing out on $${gap}, which is <b>${analogy}</b>`;
+                        base = `Hello ${name}, your current setup captures growth but faces a ${risk} performance drawdown risk. Compared to a Pro-Managed portfolio, you are missing out on $${gap}, which is <b>${analogy}</b>`;
                     }
                     return base + dictionary.en.closing;
                 }
@@ -457,7 +458,7 @@
                 assetType: assetType, accType: accType
             };
 
-            const langName = { tc: "廣東話 (繁體)", sc: "簡體中文", en: "Professional English" }[currentLang];
+            const langName = { tc: "廣東話 (繁體中文)", sc: "簡體中文", en: "Professional English" }[currentLang];
             const smsBody = `Hi Alex, I finished my ${accType} analysis. I'm interested in the pro-managed portfolio.`;
             document.getElementById('cta-sms-link').href = `sms:+17783198129?body=${encodeURIComponent(smsBody)}`;
             const msgBodyTC = `你好！我係 ${name}，我剛剛完成咗個人稅務帳戶收益分析 (${accType})。我對具備合約保障嘅專業配置組合好有興趣。`;
@@ -483,6 +484,7 @@
                 3. Mention "Contractual Principal Guarantee" subject to policy terms.
                 4. CLOSING STATEMENT (MANDATORY): "${dictionary[currentLang].closing.replace('<br><br>', '')}"
                 5. Use "analysis", never "diagnosis". Authoritative tone.
+                6. IMPORTANT: THE ENTIRE RESPONSE MUST BE WRITTEN IN ${langName} ONLY.
             `;
 
             try {
@@ -533,7 +535,9 @@
                     ]
                 },
                 options: {
-                    responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } },
+                    responsive: true, maintainAspectRatio: false, 
+                    plugins: { legend: { display: false } },
+                    layout: { padding: { top: 40, right: 10 } },
                     scales: {
                         y: { display: true, position: 'right', grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { font: { size: 9 }, callback: (v) => '$' + (v/1000) + 'k' } },
                         x: { display: true, grid: { display: false }, ticks: { font: { size: 9 }, maxRotation: 0, autoSkip: true, maxTicksLimit: 6 } }
@@ -545,9 +549,19 @@
                         const { ctx } = chart; ctx.save();
                         const metaPro = chart.getDatasetMeta(0); const lastPPro = metaPro.data[17];
                         const metaCurr = chart.getDatasetMeta(1); const lastPCurr = metaCurr.data[17];
-                        ctx.font = 'bold 10px Inter'; ctx.textAlign = 'right';
-                        ctx.fillStyle = '#1d4ed8'; ctx.fillText(targetLabel.replace('*',''), lastPPro.x - 5, lastPPro.y - 10);
-                        ctx.fillStyle = '#64748b'; ctx.fillText(currentLabel, lastPCurr.x - 5, lastPCurr.y + 15);
+                        ctx.font = 'bold 11px Inter, "Noto Sans TC"'; 
+                        ctx.textAlign = 'right';
+                        ctx.textBaseline = 'bottom';
+                        
+                        // 專業配置標籤 (藍色)
+                        ctx.fillStyle = '#1d4ed8'; 
+                        const proText = targetLabel.replace('*','');
+                        ctx.fillText(proText, lastPPro.x - 8, lastPPro.y - 8);
+                        
+                        // 目前策略標籤 (灰色)
+                        ctx.fillStyle = '#64748b'; 
+                        ctx.textBaseline = 'top';
+                        ctx.fillText(currentLabel, lastPCurr.x - 8, lastPCurr.y + 12);
                         ctx.restore();
                     }
                 }]
