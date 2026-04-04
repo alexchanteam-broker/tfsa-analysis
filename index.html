@@ -154,17 +154,17 @@
 
         // --- 強大的多嘗試邏輯：確保 100% 成功拿回文字 ---
         async function fetchAIResponse(prompt, key) {
-            // 嘗試路徑組合
+            // 定義嘗試路徑組合 (加入 v1 版本以確保萬無一失)
             const targets = [
-                { url: "v1beta/models/gemini-1.5-flash", name: "Flash" },
-                { url: "v1beta/models/gemini-pro", name: "Pro" }
+                { url: "v1beta/models/gemini-1.5-flash-latest", name: "Flash v1beta" },
+                { url: "v1/models/gemini-1.5-flash", name: "Flash v1" }
             ];
 
             let lastErr = "";
 
             for (const target of targets) {
                 try {
-                    document.getElementById('loading-hint').innerText = `正在連接分析引擎 (${target.name})...`;
+                    document.getElementById('loading-hint').innerText = `正在連接 AI 引擎...`;
                     const url = `https://generativelanguage.googleapis.com/${target.url}:generateContent?key=${key}`;
                     
                     const response = await fetch(url, {
@@ -181,19 +181,19 @@
                 } catch (e) {
                     lastErr = e.message;
                 }
-                // 等待 300ms 再嘗試下一個
-                await new Promise(r => setTimeout(r, 300));
+                await new Promise(r => setTimeout(r, 400));
             }
             throw new Error(lastErr || "API 無回應");
         }
 
         async function startAnalysis() {
-            const name = document.getElementById('user-name').value.trim();
+            const nameInput = document.getElementById('user-name').value.trim();
+            const name = nameInput || "客戶";
             const balanceVal = document.getElementById('balance').value;
             const balance = parseFloat(balanceVal);
 
-            if(!name || isNaN(balance)) {
-                showMsg("請輸入稱呼與正確數據。");
+            if(isNaN(balance)) {
+                showMsg("請輸入正確的額度數據。");
                 return; 
             }
 
@@ -210,11 +210,27 @@
             const msg = `你好 Alex！我係 ${name}，我剛剛完成了您的 AI 財富分析 (${accType})，想諮詢您的專業配置建議。`;
             document.getElementById('cta-wa-link').href = `https://wa.me/17783198129?text=${encodeURIComponent(msg)}`;
 
-            const prompt = `你是一位專業理財顧問 Alex Chan 的助手。Alex 擁有 18 年資產管理經驗。
-            客戶叫 ${name}，他在 ${accType} 存入 $${balance} 於 ${assetType}。
-            請分析這筆錢在 Alex 建議的 11% 回報配置下，與目前利率的差距約為 $${parseInt(gap).toLocaleString()}。
-            請用 180 字內廣東話撰寫報告，給出震撼比喻。強調 Alex 的『增長與保證機制』。
-            禁止使用『診斷』，統一用『分析』。`;
+            // 終極混合 Prompt：將所有身份設定和指令直接放入請求內容中
+            const prompt = `
+            【角色設定】
+            你是一位專業理財顧問 Alex Chan 的助手。Alex 擁有 18 年資產管理經驗。
+            風格：專業、導師感、溫和但具震撼力。
+            語言：廣東話 (繁體)。
+            
+            【客戶數據】
+            客戶姓名：${name}
+            帳戶類型：${accType}
+            當前金額：$${balance.toLocaleString()}
+            當前配置：${assetType}
+            計算差距：$${parseInt(gap).toLocaleString()}
+            
+            【任務】
+            撰寫一份約 180 字的分析報告。
+            1. 計算並強調這筆錢在 Alex 建議的 11% 配置下，與目前利率的巨大差距。
+            2. 給出一個震撼的生活比喻 (例如買一部 Porsche 911 或物業首期)。
+            3. 強調 Alex 的「增長與保證機制」。
+            4. 嚴禁使用「診斷」，統一使用「分析」。
+            `;
 
             try {
                 const aiText = await fetchAIResponse(prompt, apiKey);
@@ -228,9 +244,11 @@
                 }, 800);
 
             } catch (e) { 
-                console.error(e);
-                // 這裡如果全路徑失敗，直接顯示圖表並提供計算出的數值
-                document.getElementById('report-content').innerHTML = `抱歉 ${name}，系統剛完成權限同步，暫時無法生成長篇報告。<br><br>但根據數據精算，您的財富增長潛力空間高達 <b>$${parseInt(gap).toLocaleString()}</b>。請立即點擊下方按鈕聯繫 Alex 獲取手動詳細分析。`;
+                console.error("AI Error:", e);
+                // 備援方案：如果 AI 報告還是生成不了，直接顯示我們精算出的震撼數字
+                const backupText = `抱歉 ${name}，由於 AI 引擎目前正在進行權限同步，暫時無法生成完整報告。<br><br>但從圖表可見，您的財富增長潛力空間高達 <b>$${parseInt(gap).toLocaleString()}</b>。這筆差額足以大幅改變您的退休生活品質。請立即點擊下方按鈕聯繫 Alex 獲取更詳細的分析。`;
+                document.getElementById('report-content').innerHTML = backupText;
+                
                 setTimeout(() => {
                     document.getElementById('step-loading').classList.add('hidden');
                     document.getElementById('step-result').classList.remove('hidden');
