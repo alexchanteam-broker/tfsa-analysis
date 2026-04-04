@@ -12,16 +12,16 @@
         .glass { background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(12px); }
         .loading-bar { width: 0%; height: 4px; background: #3b82f6; transition: width 0.4s ease-out; }
         .lang-btn-active { background-color: #3b82f6; color: white; }
-        .chart-container { position: relative; height: 260px; width: 100%; }
+        .chart-container { position: relative; height: 280px; width: 100%; }
         @keyframes fadeInScale { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
         .modal-animate { animation: fadeInScale 0.3s ease-out forwards; }
+        .profile-img { object-fit: cover; }
     </style>
 </head>
 <body class="min-h-screen flex items-center justify-center p-4">
 
     <div class="max-w-md w-full glass rounded-[2.5rem] shadow-2xl overflow-hidden border border-gray-200 relative flex flex-col">
         
-        <!-- 語言切換 -->
         <div class="bg-gray-100 border-b border-gray-200 px-6 py-2 flex justify-end items-center">
             <div class="flex bg-gray-200 p-1 rounded-full text-[11px] font-bold shadow-sm space-x-1">
                 <button id="btn-tc" onclick="setLanguage('tc')" class="px-3 py-1 rounded-full transition-all lang-btn-active">繁</button>
@@ -30,14 +30,21 @@
             </div>
         </div>
 
-        <!-- Header -->
-        <div class="bg-slate-900 p-8 text-center text-white">
-            <div id="ui-header-tag" class="text-blue-400 font-black tracking-widest text-[10px] mb-2 uppercase italic leading-tight">Alex Chan | Individual Insurance Broker</div>
-            <h1 id="ui-title" class="text-2xl font-black italic text-yellow-400 tracking-tight">個人稅務帳戶收益分析</h1>
-            <div id="ui-subtitle" class="text-[10px] opacity-60 mt-2 italic tracking-widest">收益增長與風險保障深度系統</div>
+        <div class="bg-slate-900 p-8 text-white">
+            <div class="flex items-center space-x-4">
+                <div class="relative">
+                    <img src="profile.jpg" alt="Alex Chan" onerror="this.src='https://ui-avatars.com/api/?name=Alex+Chan&background=3b82f6&color=fff'" 
+                         class="w-16 h-16 rounded-full profile-img shadow-lg border-2 border-blue-400/50">
+                    <div class="absolute bottom-0 right-0 w-4 h-4 bg-green-500 border-2 border-slate-900 rounded-full"></div>
+                </div>
+                <div class="flex-grow">
+                    <div id="ui-header-tag" class="text-blue-400 font-black tracking-widest text-[9px] uppercase italic leading-tight">Alex Chan | Broker</div>
+                    <h1 id="ui-title" class="text-xl font-black italic text-yellow-400 tracking-tight">個人稅務帳戶收益分析</h1>
+                    <div id="ui-subtitle" class="text-[9px] opacity-60 italic tracking-widest">逾20年專業管理經驗導航</div>
+                </div>
+            </div>
         </div>
 
-        <!-- 第一步：輸入表單 -->
         <div id="step-form" class="p-8 space-y-5">
             <div class="text-center">
                 <p id="ui-quote" class="text-slate-500 text-sm italic font-bold leading-relaxed">「透過精確的數據分析，了解您的資產在市場波動中的防禦力。」</p>
@@ -81,7 +88,6 @@
             </p>
         </div>
 
-        <!-- 第二步：載入中 -->
         <div id="step-loading" class="hidden p-16 text-center space-y-8">
             <div class="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
             <h3 id="ui-loading-title" class="text-xl font-black text-slate-800">正在模擬市場波動場景...</h3>
@@ -91,20 +97,17 @@
             <p id="loading-hint" class="text-[10px] text-slate-400 italic">正在對比歷史最大回撤與具體生活價值...</p>
         </div>
 
-        <!-- 第三步：分析結果 -->
         <div id="step-result" class="hidden flex flex-col h-[700px] bg-white">
             <div class="p-6 space-y-6 flex-grow overflow-y-auto">
                 <div class="flex items-center justify-between text-blue-600 border-b border-blue-50 pb-3">
                     <span id="ui-result-label" class="font-black text-sm italic tracking-widest uppercase">Analysis Report</span>
                 </div>
 
-                <!-- 收益增長圖 -->
                 <div class="bg-slate-50 p-4 rounded-3xl border border-slate-100 shadow-inner">
-                    <h4 id="ui-chart-header" class="text-[10px] font-black text-center text-slate-400 mb-4 uppercase tracking-widest italic">17年模擬累積收益對比</h4>
+                    <h4 id="ui-chart-header" class="text-[10px] font-black text-center text-slate-400 mb-4 uppercase tracking-widest italic">17年模擬累積收益增長軌跡</h4>
                     <div class="chart-container"><canvas id="wealthChart"></canvas></div>
                 </div>
 
-                <!-- 風險對比區塊 -->
                 <div class="grid grid-cols-2 gap-3">
                     <div class="p-4 bg-red-50 rounded-2xl border border-red-100">
                         <p id="ui-risk-title" class="text-[10px] font-black text-red-400 uppercase mb-2">下行/購買力風險</p>
@@ -121,11 +124,21 @@
                 
                 <div id="report-content" class="text-slate-700 leading-relaxed text-[15px] space-y-4 px-2 italic"></div>
 
+                <div class="flex items-start space-x-3 pt-6 border-t border-slate-100 mb-4">
+                    <img src="profile.jpg" alt="Alex Chan" onerror="this.src='https://ui-avatars.com/api/?name=Alex+Chan&background=3b82f6&color=fff'" 
+                         class="w-12 h-12 rounded-xl object-cover shadow-md">
+                    <div>
+                        <p class="text-blue-900 font-black text-sm italic">Alex Chan</p>
+                        <p class="text-[10px] text-slate-400 uppercase font-bold tracking-tighter">Individual Insurance Broker (Canada)</p>
+                        <p class="text-[9px] text-slate-400 italic">20+ Years Excellence in Wealth Management</p>
+                    </div>
+                </div>
+
                 <div class="p-5 bg-blue-50 rounded-3xl border border-blue-100 mb-4">
                     <p class="text-blue-900 text-[11px] font-black flex items-center mb-1">
                         <span class="mr-2">💡</span> <span id="ui-note-title">數據備註與披露</span>
                     </p>
-                    <p id="ui-note-desc" class="text-blue-700 text-[10px] leading-relaxed italic">模擬數據參考加拿大市場 2009-2026 歷史平均。專業配置採用具備保險合約保障機制 (Guarantee) 的優化組合，具體保證金額視到期日或死亡日期而定。</p>
+                    <p id="ui-note-desc" class="text-blue-700 text-[10px] leading-relaxed italic">模擬數據參考加拿大市場歷史平均。專業配置採用具備「本金保證」機制的收益優化組合。</p>
                 </div>
             </div>
 
@@ -140,13 +153,12 @@
                     Text Alex (Consultation)
                 </a>
                 <button id="ui-btn-reset" onclick="resetApp()" class="w-full bg-slate-700 text-white font-bold py-3 rounded-xl active:scale-95 transition-all text-xs">
-                    ↺ 重新分析其他配置
+                    ↺ 重新開始分析
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- WeChat Modal -->
     <div id="wechat-modal" class="fixed inset-0 bg-black/70 z-[300] hidden items-center justify-center p-6 backdrop-blur-md">
         <div class="bg-white p-8 rounded-[2.5rem] max-w-xs w-full text-center shadow-2xl modal-animate border border-slate-100">
             <div class="text-6xl mb-6">✅</div>
@@ -158,7 +170,6 @@
         </div>
     </div>
 
-    <!-- Info Modal -->
     <div id="msg-modal" class="fixed inset-0 bg-black/70 z-[200] hidden items-center justify-center p-6 backdrop-blur-md">
         <div class="bg-white p-8 rounded-[2.5rem] max-w-xs w-full text-center shadow-2xl modal-animate border border-slate-100">
             <div class="text-5xl mb-4">⚠️</div>
@@ -175,9 +186,7 @@
         let wealthChart = null;
         
         let analysisState = {
-            isFinished: false,
-            isAiGenerated: false,
-            v1: 0, v2: 0, r1: 0,
+            isFinished: false, isAiGenerated: false, v1: 0, v2: 0, r1: 0, initialBalance: 0,
             name: "", gapNum: 0, gapStr: "", risk: "", assetType: "", accType: ""
         };
 
@@ -198,18 +207,17 @@
 
         const dictionary = {
             tc: {
-                title: "個人稅務帳戶收益分析",
-                subtitle: "收益增長與風險保障深度系統",
+                title: "個人稅務帳戶收益分析", headerTag: "Alex Chan | Broker",
                 quote: "「透過精確的數據分析，了解您的資產在市場波動中的防禦力。」",
                 labelName: "您的稱呼", labelAccType: "帳戶類型", labelAssetType: "目前存放方式",
                 labelBalanceTFSA: "CRA 累積供款額度 (CAD)", labelBalanceRRSP: "RRSP 扣稅額度 (CAD)",
                 optCash: "銀行定期 / GIC", optFund: "互惠基金", optStock: "藍籌股票",
                 btnScan: "⚡ 啟動 AI 收益與風險分析",
                 loadingTitle: "正在模擬市場波動場景...", loadingHint: "正在對比歷史最大回撤與具體生活價值...",
-                resultLabel: "Analysis Report", chartHeader: "17年模擬累積收益對比", riskTitle: "下行/購買力風險",
+                resultLabel: "Analysis Report", chartHeader: "17年模擬累積收益增長軌跡", riskTitle: "下行/購買力風險",
                 safeTitle: "配置保障機制", safeStatus: "合約級別保證", safeNote: "受保單/合約條款約束",
                 noteTitle: "數據備註與披露",
-                noteDesc: "目前配置數據參考加拿大市場歷史平均。專業配置採用具備「本金保證」機制的收益優化組合。",
+                noteDesc: "模擬數據參考加拿大市場歷史平均。專業配置採用具備「本金保證」機制的收益優化組合。",
                 btnReset: "↺ 重新開始分析", msgTitle: "系統提示", msgBtn: "了解",
                 waBtn: "WhatsApp 聯繫顧問獲取分析",
                 wcTitle: "已成功複製微信號", wcTip: "請前往微信搜索並添加 Alex 為好友。", wcBtn: "前往微信",
@@ -218,23 +226,22 @@
                 backupText: (name, gap, acc, asset, risk) => {
                     const gapNum = parseFloat(gap.replace(/,/g,''));
                     const analogy = getSingleAnalogy(gapNum, 'tc');
-                    let base = `你好 ${name}，選擇存放 ${acc} 於銀行存款是一個非常穩健的決定。但數據顯示，17 年後的模擬複利缺口高達 $${gap}，<b>這筆錢${analogy}。</b>透過專業配置，您可以在保持本金合約保證安全的同時，追求更佳的退休生活。`;
+                    let base = `你好 ${name}，選擇存放 ${acc} 於銀行存款是一個非常穩健的決定。但數據顯示，17 年後的模擬複利缺口高達 $${gap}，<b>這筆錢${analogy}。</b>`;
                     if (asset !== 'cash') {
-                        base = `你好 ${name}，您的投資意識很好。然而，目前的配置在增長之餘卻面臨歷史高達 ${risk} 的下行風險。與「專業管理配置」相比，您正錯失約 $${gap} 的潛在收益空間，這金額<b>${analogy}。</b>專業配置系統提供「本金保證」機制（受條款約束），能消除此風險。`;
+                        base = `你好 ${name}，您的投資意識很好。目前配置面臨歷史高達 ${risk} 的下行風險。與「專業管理配置」相比，您正錯失約 $${gap} 的潛在收益空間，這金額<b>${analogy}。</b>`;
                     }
                     return base + dictionary.tc.closing;
                 }
             },
             sc: {
-                title: "个人税务账户收益分析",
-                subtitle: "收益增长与风险保障深度系统",
+                title: "个人税务账户收益分析", headerTag: "Alex Chan | Broker",
                 quote: "「通过精确的数据分析，了解您的资产在市场波动中的防御力。」",
                 labelName: "您的称呼", labelAccType: "账户类型", labelAssetType: "目前存放方式",
                 labelBalanceTFSA: "CRA 累计供款额度 (CAD)", labelBalanceRRSP: "RRSP 扣税额度 (CAD)",
                 optCash: "银行定期 / GIC", optFund: "互惠基金", optStock: "蓝筹股票",
                 btnScan: "⚡ 启动 AI 收益与风险分析",
                 loadingTitle: "正在模拟市场波动场景...", loadingHint: "正在对比历史最大回撤与具体生活价值...",
-                resultLabel: "Analysis Report", chartHeader: "17年模拟累计收益对比", riskTitle: "下行/购买力风险",
+                resultLabel: "Analysis Report", chartHeader: "17年模拟累计收益增长轨迹", riskTitle: "下行/购买力风险",
                 safeTitle: "配置保障机制", safeStatus: "合约级别保证", safeNote: "受保单/合约条款约束",
                 noteTitle: "数据备注与披露",
                 noteDesc: "目前配置数据参考加拿大市场历史平均。专业配置采用具备「本金保证」机制的收益优化组合。",
@@ -246,37 +253,36 @@
                 backupText: (name, gap, acc, asset, risk) => {
                     const gapNum = parseFloat(gap.replace(/,/g,''));
                     const analogy = getSingleAnalogy(gapNum, 'sc');
-                    let base = `你好 ${name}，选择存放 ${acc} 於银行存款是非常稳健的决定。但数据显示，17 年后的模拟复利缺口高达 $${gap}，<b>这笔钱${analogy}。</b>通过专业配置，您可以在保持本金合约保证安全的同时，追求更佳的退休生活。`;
+                    let base = `你好 ${name}，选择存放 ${acc} 於银行存款是非常稳健的决定。但数据显示，17 年后的模拟复利缺口高达 $${gap}，<b>这笔钱${analogy}。</b>`;
                     if (asset !== 'cash') {
-                        base = `你好 ${name}，您的投资意识很好。然而，目前的配置在增长之余却面临历史高达 ${risk} 的下行风险。与「专业管理配置」相比，您正错失约 $${gap} 的潜在收益空间，这金额<b>${analogy}。</b>专业配置系统提供「本金保证」机制（受条款约束），能消除此风险。`;
+                        base = `你好 ${name}，您的投资意识很好。目前配置面临历史高达 ${risk} 的下行风险。與「專業管理配置」相比，您正錯失約 $${gap} 的潛在收益空間，這金額<b>${analogy}。</b>`;
                     }
                     return base + dictionary.sc.closing;
                 }
             },
             en: {
-                title: "Personal Tax-Account Yield Analysis",
-                subtitle: "Yield Growth & Risk Protection System",
-                quote: "「Analyze your assets with precision and understand your defense against market volatility.」",
+                title: "Tax-Account Analysis", headerTag: "Alex Chan | Broker",
+                quote: "「Analyze assets with precision and understand defense against market volatility.」",
                 labelName: "Your Name", labelAccType: "Account Type", labelAssetType: "Current Method",
                 labelBalanceTFSA: "CRA Contribution Room (CAD)", labelBalanceRRSP: "RRSP Deduction Limit (CAD)",
                 optCash: "Bank Savings / GIC", optFund: "Mutual Funds", optStock: "Blue-chip Stocks",
                 btnScan: "⚡ Launch AI Yield & Risk Analysis",
                 loadingTitle: "Simulating market scenarios...", loadingHint: "Comparing drawdown risks and lifestyle impacts...",
-                resultLabel: "Analysis Report", chartHeader: "17-Year Simulated Yield Comparison", riskTitle: "Downside / Inflation Risk",
-                safeTitle: "Protection Mechanism", safeStatus: "Contractual Guarantee", safeNote: "Subject to policy/contract terms",
+                resultLabel: "Analysis Report", chartHeader: "17-Year Simulated Growth Trajectory", riskTitle: "Downside / Inflation Risk",
+                safeTitle: "Protection Mechanism", safeStatus: "Contractual Guarantee", safeNote: "Subject to policy terms",
                 noteTitle: "Disclosure & References",
-                noteDesc: "Current allocation data refers to Canadian market historical averages. Professional allocation uses guaranteed yield-optimized portfolios.",
+                noteDesc: "Current allocation data refers to historical averages. Professional allocation uses guaranteed yield-optimized portfolios.",
                 btnReset: "↺ Start New Analysis", msgTitle: "System Notification", msgBtn: "Got it",
                 waBtn: "Text Alex for Consultation",
                 wcTitle: "WeChat ID Copied", wcTip: "Please search and add Alex on WeChat.", wcBtn: "Open WeChat",
                 chartLabels: ["Current Strategy", "Pro-Managed Portfolio*"],
-                closing: "<br><br>To gain a comprehensive understanding of your financial health, maximize your assets within your risk tolerance, and fully leverage your tax-advantaged accounts, you are invited to connect with Alex for an initial consultation. With over 20 years of distinguished experience in both the banking sector and independent financial advisory, Alex is dedicated to providing the precise insights and professional guidance necessary to navigate your path toward wealth optimization.",
+                closing: "<br><br>To gain a comprehensive understanding of your financial health, maximize your assets within risk tolerance, and leverage tax-advantaged accounts, you are invited to connect with Alex. With over 20 years of experience in banking and financial advisory, Alex provides precise insights to navigate your wealth optimization.",
                 backupText: (name, gap, acc, asset, risk) => {
                     const gapNum = parseFloat(gap.replace(/,/g,''));
                     const analogy = getSingleAnalogy(gapNum, 'en');
-                    let base = `Hello ${name}, keeping ${acc} in savings is safe. However, the $${gap} simulated gap in 17 years is massive. <b>This sum is ${analogy}</b> Our system allows you to seek higher growth with contractual security.`;
+                    let base = `Hello ${name}, keeping ${acc} in savings is safe. However, the $${gap} simulated gap in 17 years is massive. <b>This sum is ${analogy}</b>`;
                     if (asset !== 'cash') {
-                        base = `Hello ${name}, your current ${acc} setup captures growth but faces a ${risk} drawdown risk. Compared to a Pro-Managed portfolio, you are missing out on $${gap}, which is <b>${analogy}</b> Our system offers a Principal Guarantee (subject to terms) to eliminate this risk.`;
+                        base = `Hello ${name}, your current setup captures growth but faces a ${risk} drawdown risk. Compared to a Pro-Managed portfolio, you are missing out on $${gap}, which is <b>${analogy}</b>`;
                     }
                     return base + dictionary.en.closing;
                 }
@@ -284,9 +290,9 @@
         };
 
         const rates = { 
-            cash: { yield: 0.020, risk: "通脹侵蝕", riskDetail: { tc: "雖然無下行風險，但購買力會因通脹令增長歸零", sc: "虽然无下行风险，但购买力会因通胀令增长归零", en: "No downside risk, but purchasing power will be eroded by inflation." } }, 
-            fund: { yield: 0.045, risk: "25.4%", riskDetail: { tc: "若遇市場崩盤，本金將面臨顯著損失", sc: "若遇市场崩盘，本金将面临显著损失", en: "In the event of a market crash, principal will face significant losses." } }, 
-            stock: { yield: 0.060, risk: "38.2%", riskDetail: { tc: "高度市場波動，無任何保本保障", sc: "高度市场波动，无任何保本保障", en: "High market volatility with no principal protection." } }, 
+            cash: { yield: 0.020, risk: "通脹侵蝕", riskDetail: { tc: "雖然無下行風險，但購買力會因通脹令增長歸零", sc: "虽然无下行风险，但购买力会因通胀令增长归零", en: "Inflation will erode purchasing power." } }, 
+            fund: { yield: 0.045, risk: "25.4%", riskDetail: { tc: "若遇市場崩盤，本金將面臨顯著損失", sc: "若遇市场崩盘，本金将面临显著损失", en: "Significant potential loss in a market crash." } }, 
+            stock: { yield: 0.060, risk: "38.2%", riskDetail: { tc: "高度市場波動，無任何保本保障", sc: "高度市场波动，无任何保本保障", en: "High volatility with no principal protection." } }, 
             pro: { yield: 0.110 } 
         };
 
@@ -294,7 +300,7 @@
             currentLang = lang;
             const d = dictionary[lang];
             document.getElementById('ui-title').innerText = d.title;
-            document.getElementById('ui-subtitle').innerText = d.subtitle;
+            document.getElementById('ui-header-tag').innerText = d.headerTag;
             document.getElementById('ui-quote').innerText = d.quote;
             document.getElementById('label-name').innerText = d.labelName;
             document.getElementById('label-acc-type').innerText = d.labelAccType;
@@ -413,37 +419,35 @@
 
             analysisState = {
                 isFinished: true, isAiGenerated: false, 
-                v1: finalCurrent, v2: finalPro, r1: rates[assetType].yield,
+                v1: finalCurrent, v2: finalPro, r1: rates[assetType].yield, initialBalance: balance,
                 name: name, gapNum: gapVal, gapStr: gapStr, risk: rates[assetType].risk, 
                 assetType: assetType, accType: accType
             };
 
-            const langName = { tc: "廣東話 (繁體中文)", sc: "簡體中文", en: "Professional English" }[currentLang];
-            const smsBody = `Hi Alex, I just completed my ${accType} yield analysis. I'm interested in the pro-managed portfolio with contractual protection. Let's discuss.`;
+            const langName = { tc: "廣東話 (繁體)", sc: "簡體中文", en: "Professional English" }[currentLang];
+            const smsBody = `Hi Alex, I finished my ${accType} analysis. I'm interested in the pro-managed portfolio.`;
             document.getElementById('cta-sms-link').href = `sms:+17783198129?body=${encodeURIComponent(smsBody)}`;
-            const msgBodyTC = `你好！我係 ${name}，我剛剛完成咗個人稅務帳戶收益分析 (${accType})。我對具備合約保障且能優化回報嘅專業配置組合好有興趣。`;
+            const msgBodyTC = `你好！我係 ${name}，我剛剛完成咗個人稅務帳戶收益分析 (${accType})。我對具備合約保障嘅專業配置組合好有興趣。`;
             document.getElementById('cta-wa-link').href = `https://wa.me/17783198129?text=${encodeURIComponent(msgBodyTC)}`;
 
             const promptText = `
-                You are a professional advisor's assistant for the "Personal Tax-Account Yield & Risk Analysis" system. 
-                Advisor Background: Alex Chan, with over 20 years of banking and independent financial advisory experience.
-                Generate a 220-word report for ${name}.
-                Language Requirement: Must be in ${langName}.
-                Scenario: $${balance.toLocaleString()} in ${accType}, currently in ${assetType}.
+                Assistant for Alex Chan (20+ years experience). 
+                Report for ${name} regarding $${balance.toLocaleString()} in ${accType}.
+                Language: ${langName}.
                 
-                STRICT REGULATORY COMPLIANCE INSTRUCTIONS:
-                1. DO NOT promise specific future returns. Use terms like "Hypothetical Simulation", "Historical Benchmark", or "Potential Gap".
-                2. Acknowledge current stability first (praise the client's cautiousness/investing intent).
-                3. Analogy (Use ONE only):
-                   - If gap > $1.5M: Detached House down payment in West Vancouver.
-                   - If gap $800k-$1.5M: New Townhouse in Richmond.
-                   - If gap $350k-$800k: Luxury Motorhome.
-                   - If gap $150k-$350k: Premium Pick-up Truck.
-                   - Otherwise: High-performance EV SUV.
-                4. Guarantee: Must state that "Principal Guarantees" are contractual and subject to terms (maturity/death).
-                5. Tone: Insightful, balanced, authoritative. Avoid "diagnosis", use "analysis".
-                6. CLOSING STATEMENT (MANDATORY): 
-                   "${dictionary[currentLang].closing.replace('<br><br>', '')}"
+                ANALOGY (Choose ONE):
+                - Gap > $1.5M: Detached House in West Vancouver.
+                - Gap $800k-$1.5M: New Townhouse in Richmond.
+                - Gap $350k-$800k: Luxury Motorhome.
+                - Gap $150k-$350k: Premium Pick-up Truck.
+                - Else: High-performance All-Electric SUV.
+                
+                STRICT INSTRUCTIONS:
+                1. Praise the client's current intent/stability first.
+                2. Expose the "Opportunity Cost" using ONE analogy above.
+                3. Mention "Contractual Principal Guarantee" subject to policy terms.
+                4. CLOSING STATEMENT (MANDATORY): "${dictionary[currentLang].closing.replace('<br><br>', '')}"
+                5. Use "analysis", never "diagnosis". Authoritative tone.
             `;
 
             try {
@@ -474,26 +478,37 @@
         function renderChart(v1, v2, r1) {
             const ctx = document.getElementById('wealthChart').getContext('2d');
             if (wealthChart) wealthChart.destroy();
+            const labels = Array.from({length: 18}, (_, i) => i === 0 ? "0" : `Y${i}`);
+            const dataCurrent = []; const dataPro = []; const p = analysisState.initialBalance;
+            for (let t = 0; t <= 17; t++) {
+                dataCurrent.push((p * Math.pow(1 + r1, t)).toFixed(0));
+                dataPro.push((p * Math.pow(1 + 0.11, t)).toFixed(0));
+            }
             wealthChart = new Chart(ctx, {
-                type: 'bar',
+                type: 'line',
                 data: {
-                    labels: dictionary[currentLang].chartLabels,
-                    datasets: [{ data: [v1.toFixed(0), v2.toFixed(0)], backgroundColor: ['#cbd5e1', '#3b82f6'], borderRadius: 15, barThickness: 50 }]
+                    labels: labels,
+                    datasets: [
+                        { label: dictionary[currentLang].chartLabels[1], data: dataPro, borderColor: '#3b82f6', backgroundColor: 'rgba(59, 130, 246, 0.1)', fill: true, tension: 0.4, borderWidth: 3, pointRadius: (c) => c.dataIndex === 17 ? 6 : 0, pointBackgroundColor: '#3b82f6' },
+                        { label: dictionary[currentLang].chartLabels[0], data: dataCurrent, borderColor: '#94a3b8', backgroundColor: 'transparent', fill: false, tension: 0.4, borderWidth: 2, borderDash: [5, 5], pointRadius: (c) => c.dataIndex === 17 ? 4 : 0, pointBackgroundColor: '#94a3b8' }
+                    ]
                 },
                 options: {
-                    responsive: true, maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: { y: { display: false }, x: { grid: { display: false } } }
+                    responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } },
+                    scales: {
+                        y: { display: true, position: 'right', grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { font: { size: 9 }, callback: (v) => '$' + (v/1000) + 'k' } },
+                        x: { display: true, grid: { display: false }, ticks: { font: { size: 9 }, maxRotation: 0, autoSkip: true, maxTicksLimit: 6 } }
+                    }
                 },
                 plugins: [{
-                    id: 'val',
-                    afterDraw: (c) => {
-                        const { ctx } = c; ctx.save(); ctx.textAlign = 'center'; ctx.font = 'bold 10px sans-serif';
-                        const meta = c.getDatasetMeta(0);
-                        ctx.fillStyle = '#64748b'; ctx.fillText(`Simulated Value`, meta.data[0].x, meta.data[0].y - 25);
-                        ctx.fillText(`${(r1*100).toFixed(1)}% p.a.`, meta.data[0].x, meta.data[0].y - 12);
-                        ctx.fillStyle = '#3b82f6'; ctx.fillText(`Target Benchmark`, meta.data[1].x, meta.data[1].y - 25);
-                        ctx.fillText(`11.0% p.a.*`, meta.data[1].x, meta.data[1].y - 12);
+                    id: 'customLabels',
+                    afterDraw: (chart) => {
+                        const { ctx } = chart; ctx.save();
+                        const metaPro = chart.getDatasetMeta(0); const lastPPro = metaPro.data[17];
+                        const metaCurr = chart.getDatasetMeta(1); const lastPCurr = metaCurr.data[17];
+                        ctx.font = 'bold 10px Inter'; ctx.textAlign = 'right';
+                        ctx.fillStyle = '#1d4ed8'; ctx.fillText(`Target: $${parseInt(v2).toLocaleString()}`, lastPPro.x - 5, lastPPro.y - 10);
+                        ctx.fillStyle = '#64748b'; ctx.fillText(`Simulated: $${parseInt(v1).toLocaleString()}`, lastPCurr.x - 5, lastPCurr.y + 15);
                         ctx.restore();
                     }
                 }]
