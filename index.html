@@ -178,6 +178,21 @@
             name: "", gapNum: 0, gapStr: "", risk: "", assetType: "", accType: ""
         };
 
+        const getSingleAnalogy = (gapNum, lang) => {
+            const tiers = {
+                house_wv: { tc: "足以在西溫哥華 (West Vancouver) 購置一間海景獨立屋的優厚首期", sc: "足以在西温哥华 (West Vancouver) 购置一间海景独立屋的优厚首期", en: "enough to afford a significant down payment for a detached house in West Vancouver." },
+                house_rm: { tc: "足以在列治文 (Richmond) 全款購置一間全新且寬敞的聯排別墅 (Townhouse)", sc: "足以在列治文 (Richmond) 全款购置一间全新且宽敞的联排别墅 (Townhouse)", en: "equivalent to the full cash price of a spacious new Townhouse in Richmond." },
+                rv_classa: { tc: "足以購買一部頂級豪華的 Class A 大型露營車 (Luxury Motorhome)", sc: "足以购买一部顶级豪华的 Class A 大型露營车 (Luxury Motorhome)", en: "enough to purchase a top-tier Class A Luxury Motorhome for your continental travels." },
+                pickup_pro: { tc: "足以全款購置一部頂配版的豪華重型皮卡 (Premium Pick-up Truck)", sc: "足以全款购置一部顶配版的豪华重型皮卡 (Premium Pick-up Truck)", en: "enough to pay full cash for a top-spec Premium Pick-up Truck." },
+                ev_suv: { tc: "足以購買一部全新款式的高性能全電動 SUV", sc: "足以购买一部全新款式的高性能全电动 SUV", en: "enough to buy a brand new high-performance All-Electric SUV." }
+            };
+            if (gapNum > 1500000) return tiers.house_wv[lang];
+            if (gapNum > 800000) return tiers.house_rm[lang];
+            if (gapNum > 350000) return tiers.rv_classa[lang];
+            if (gapNum > 150000) return tiers.pickup_pro[lang];
+            return tiers.ev_suv[lang];
+        };
+
         const dictionary = {
             tc: {
                 title: "個人稅務帳戶收益分析",
@@ -197,10 +212,11 @@
                 wcTitle: "已成功複製微信號", wcTip: "請前往微信搜索並添加 Alex 為好友。", wcBtn: "前往微信",
                 chartLabels: ["目前策略", "專業配置系統"],
                 backupText: (name, gap, acc, asset, risk) => {
-                    const teslas = (parseFloat(gap.replace(/,/g,'')) / 85000).toFixed(1);
-                    let base = `你好 ${name}，選擇存放 ${acc} 於銀行存款是一個非常穩健的決定。但數據顯示，17 年後的複利缺口高達 $${gap}，<b>這筆錢足以買下 ${teslas} 部頂配版 Tesla Model Y，或是支付一筆可觀的物業首期。</b>`;
+                    const gapNum = parseFloat(gap.replace(/,/g,''));
+                    const analogy = getSingleAnalogy(gapNum, 'tc');
+                    let base = `你好 ${name}，選擇存放 ${acc} 於銀行存款是一個非常穩健的決定。但數據顯示，17 年後的複利缺口高達 $${gap}，<b>這筆錢${analogy}。</b>透過專業配置，您可以在保持本金絕對安全的同時，追求更佳的退休生活。`;
                     if (asset !== 'cash') {
-                        base = `你好 ${name}，您的投資意識很好。然而，目前的配置在增長之餘卻面臨歷史高達 ${risk} 的下行風險。與「專業管理配置」相比，您正錯失約 $${gap} 的免稅增長空間，這相當於<b>一部頂配 Tesla 加上數年的環球豪華旅行支出。</b>專業配置系統提供「本金保證」機制，能消除此風險。`;
+                        base = `你好 ${name}，您的投資意識很好。然而，目前的配置在增長之餘卻面臨歷史高達 ${risk} 的下行風險。與「專業管理配置」相比，您正錯失約 $${gap} 的免稅增長空間，這金額<b>${analogy}。</b>專業配置系統提供「本金保證」機制，能消除此風險。`;
                     }
                     return base;
                 }
@@ -223,10 +239,11 @@
                 wcTitle: "已成功复制微信号", wcTip: "请前往微信搜索并添加 Alex 为好友。", wcBtn: "前往微信",
                 chartLabels: ["目前策略", "专业配置系统"],
                 backupText: (name, gap, acc, asset, risk) => {
-                    const teslas = (parseFloat(gap.replace(/,/g,'')) / 85000).toFixed(1);
-                    let base = `你好 ${name}，选择存放 ${acc} 於银行存款是非常稳健的决定。但数据显示，17 年后的复利缺口高达 $${gap}，<b>这笔钱足以买下 ${teslas} 部顶配版 Tesla Model Y，或是支付一笔可观的物业首期。</b>`;
+                    const gapNum = parseFloat(gap.replace(/,/g,''));
+                    const analogy = getSingleAnalogy(gapNum, 'sc');
+                    let base = `你好 ${name}，选择存放 ${acc} 於银行存款是非常稳健的决定。但数据显示，17 年后的复利缺口高达 $${gap}，<b>这笔钱${analogy}。</b>通过专业配置，您可以在保持本金绝对安全的同时，追求更佳的退休生活。`;
                     if (asset !== 'cash') {
-                        base = `你好 ${name}，您的投资意识很好。然而，目前的配置在增长之余却面临历史高达 ${risk} 的下行风险。与「专业管理配置」相比，您正错失约 $${gap} 的免税增长空间，这相当于<b>一部顶配 Tesla 加上数年的环球豪华旅行支出。</b>专业配置系统提供「本金保证」机制，能消除此风险。`;
+                        base = `你好 ${name}，您的投资意识很好。然而，目前的配置在增长之余却面临历史高达 ${risk} 的下行风险。与「专业管理配置」相比，您正错失约 $${gap} 的免税增长空间，这金额<b>${analogy}。</b>专业配置系统提供「本金保证」机制，能消除此风险。`;
                     }
                     return base;
                 }
@@ -249,10 +266,11 @@
                 wcTitle: "WeChat ID Copied", wcTip: "Please search and add Alex on WeChat.", wcBtn: "Open WeChat",
                 chartLabels: ["Current Strategy", "Pro-Managed Portfolio"],
                 backupText: (name, gap, acc, asset, risk) => {
-                    const teslas = (parseFloat(gap.replace(/,/g,'')) / 85000).toFixed(1);
-                    let base = `Hello ${name}, keeping ${acc} in savings is safe. However, the $${gap} gap in 17 years is massive. <b>This is equivalent to buying ${teslas} top-spec Tesla Model Ys, or a substantial real estate down payment.</b>`;
+                    const gapNum = parseFloat(gap.replace(/,/g,''));
+                    const analogy = getSingleAnalogy(gapNum, 'en');
+                    let base = `Hello ${name}, keeping ${acc} in savings is safe. However, the $${gap} gap in 17 years is massive. <b>This sum is ${analogy}</b> Our system allows you to seek higher growth without sacrificing security.`;
                     if (asset !== 'cash') {
-                        base = `Hello ${name}, your current ${acc} setup captures growth but faces a ${risk} drawdown risk. Compared to a Pro-Managed portfolio, you are missing out on $${gap}, which is <b>one top-spec Tesla plus several years of luxury global travel.</b> Our system offers a Principal Guarantee to eliminate this risk.`;
+                        base = `Hello ${name}, your current ${acc} setup captures growth but faces a ${risk} drawdown risk. Compared to a Pro-Managed portfolio, you are missing out on $${gap}, which is <b>${analogy}</b> Our system offers a Principal Guarantee to eliminate this risk.`;
                     }
                     return base;
                 }
@@ -397,7 +415,7 @@
             const langName = { tc: "廣東話 (繁體中文)", sc: "簡體中文", en: "Professional English" }[currentLang];
             const smsBody = `Hi Alex, I just completed my ${accType} yield analysis. I'm interested in the pro-managed portfolio with principal protection. Let's discuss.`;
             document.getElementById('cta-sms-link').href = `sms:+17783198129?body=${encodeURIComponent(smsBody)}`;
-            const msgBodyTC = `你好！我係 ${name}，我剛剛完成咗個人稅務帳戶收益分析 (${accType})。我對具備「具體生活價值」且有「本金保證」嘅專業管理組合好有興趣。`;
+            const msgBodyTC = `你好！我係 ${name}，我剛剛完成咗個人稅務帳戶收益分析 (${accType})。我對具備「下行風險保障」且能「抗衡通脹」嘅專業管理組合好有興趣。`;
             document.getElementById('cta-wa-link').href = `https://wa.me/17783198129?text=${encodeURIComponent(msgBodyTC)}`;
 
             const promptText = `
@@ -406,12 +424,19 @@
                 Language Requirement: Must be in ${langName}.
                 Scenario: $${balance.toLocaleString()} in ${accType}, currently in ${assetType}.
                 
-                CRITICAL INSTRUCTION:
-                1. Visualize the gap of $${gapStr}. DO NOT just mention the number.
-                2. Use impact analogies: How many Tesla Model Y Performance (approx. $85k each) can this gap buy? Or equate it to a home down payment in Canada, or years of luxury global travel.
-                3. Acknowledge current stability, then expose the "Opportunity Cost" of not using pro-managed protection systems.
-                4. Tone: Insightful, balanced, but shocking regarding the loss. Keep the system mysterious, focus on "Contractual Guarantee".
-                Avoid "diagnosis", use "analysis".
+                CRITICAL INSTRUCTION FOR ANALOGY (Choose ONLY ONE based on the gap of $${gapStr}):
+                - If gap > $1.5M: Focus on a Detached House in West Vancouver (海景獨立屋首期).
+                - If gap is $800k - $1.5M: Focus on a spacious brand new Townhouse in Richmond (全新聯排別墅).
+                - If gap is $350k - $800k: Focus on a top-tier Class A Luxury Motorhome (豪華露營車).
+                - If gap is $150k - $350k: Focus on a top-spec Premium Pick-up Truck (豪華重型皮卡).
+                - If gap is less: Focus on a brand new high-performance All-Electric SUV (高性能電動 SUV).
+                
+                MANDATORY: 
+                - DO NOT use specific brand names (No Tesla, Ferrari, etc.). Use generic high-value descriptions.
+                - Choose ONLY ONE analogy. DO NOT mix them.
+                - Acknowledge current stability first (praise the client's cautiousness/investing intent), then expose the massive "Opportunity Cost".
+                - Tone: Insightful, balanced, but shocking regarding the loss. Keep the system mysterious.
+                - Avoid "diagnosis", use "analysis".
             `;
 
             try {
