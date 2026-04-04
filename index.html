@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Alex Chan | 個人稅務帳戶收益與風險保障分析</title>
+    <title>Alex Chan | Personal Tax-Advantaged Account Analysis</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&family=Noto+Sans+SC:wght@400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&family=Noto+Sans+SC:wght@400;700;900&family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Noto Sans TC', 'Noto Sans SC', sans-serif; background-color: #f1f5f9; }
+        body { font-family: 'Inter', 'Noto Sans TC', 'Noto Sans SC', sans-serif; background-color: #f1f5f9; }
         .glass { background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(12px); }
         .loading-bar { width: 0%; height: 4px; background: #3b82f6; transition: width 0.4s ease-out; }
         .lang-btn-active { background-color: #3b82f6; color: white; }
@@ -23,9 +23,10 @@
         
         <!-- 語言切換 -->
         <div class="bg-gray-100 border-b border-gray-200 px-6 py-2 flex justify-end items-center">
-            <div class="flex bg-gray-200 p-1 rounded-full text-[11px] font-bold shadow-sm">
-                <button id="btn-tc" onclick="setLanguage('tc')" class="px-4 py-1 rounded-full transition-all lang-btn-active">繁</button>
-                <button id="btn-sc" onclick="setLanguage('sc')" class="px-4 py-1 rounded-full transition-all">简</button>
+            <div class="flex bg-gray-200 p-1 rounded-full text-[11px] font-bold shadow-sm space-x-1">
+                <button id="btn-tc" onclick="setLanguage('tc')" class="px-3 py-1 rounded-full transition-all lang-btn-active">繁</button>
+                <button id="btn-sc" onclick="setLanguage('sc')" class="px-3 py-1 rounded-full transition-all">简</button>
+                <button id="btn-en" onclick="setLanguage('en')" class="px-3 py-1 rounded-full transition-all text-[10px]">EN</button>
             </div>
         </div>
 
@@ -84,14 +85,14 @@
             <div class="w-full bg-gray-100 rounded-full h-1.5 overflow-hidden">
                 <div id="progress-bar" class="loading-bar"></div>
             </div>
-            <p id="loading-hint" class="text-[10px] text-slate-400 italic">正在對比歷史最大回撤與購買力數據...</p>
+            <p id="loading-hint" class="text-[10px] text-slate-400 italic">正在對比歷史最大回撤與具體生活價值...</p>
         </div>
 
         <!-- 第三步：分析結果 -->
         <div id="step-result" class="hidden flex flex-col h-[700px] bg-white">
             <div class="p-6 space-y-6 flex-grow overflow-y-auto">
                 <div class="flex items-center justify-between text-blue-600 border-b border-blue-50 pb-3">
-                    <span class="font-black text-sm italic tracking-widest uppercase">Analysis Report</span>
+                    <span id="ui-result-label" class="font-black text-sm italic tracking-widest uppercase">Analysis Report</span>
                 </div>
 
                 <!-- 收益增長圖 -->
@@ -132,6 +133,9 @@
                 <button id="cta-wechat-btn" onclick="copyWeChat()" class="hidden w-full bg-[#07C160] text-white font-black py-4 rounded-xl flex items-center justify-center shadow-lg active:scale-95 transition-all">
                     微信聯系顧問 (catholicalex)
                 </button>
+                <a id="cta-sms-link" href="sms:+17783198129" class="hidden w-full bg-blue-500 text-white font-black py-4 rounded-xl flex items-center justify-center no-underline shadow-lg active:scale-95 transition-all">
+                    Text Alex (Consultation)
+                </a>
                 <button id="ui-btn-reset" onclick="resetApp()" class="w-full bg-slate-700 text-white font-bold py-3 rounded-xl active:scale-95 transition-all text-xs">
                     ↺ 重新開始分析
                 </button>
@@ -171,7 +175,7 @@
             isFinished: false,
             isAiGenerated: false,
             v1: 0, v2: 0, r1: 0,
-            name: "", gap: "", risk: "", assetType: "", accType: ""
+            name: "", gapNum: 0, gapStr: "", risk: "", assetType: "", accType: ""
         };
 
         const dictionary = {
@@ -183,8 +187,8 @@
                 labelBalanceTFSA: "CRA 累積供款額度 (CAD)", labelBalanceRRSP: "RRSP 扣稅額度 (CAD)",
                 optCash: "銀行定期 / GIC", optFund: "互惠基金", optStock: "藍籌股票",
                 btnScan: "⚡ 啟動 AI 收益與風險分析",
-                loadingTitle: "正在模擬市場波動場景...", loadingHint: "正在對比歷史最大回撤與購買力數據...",
-                chartHeader: "17年預期累積收益對比", riskTitle: "下行/購買力風險",
+                loadingTitle: "正在模擬市場波動場景...", loadingHint: "正在對比歷史最大回撤與具體生活價值...",
+                resultLabel: "Analysis Report", chartHeader: "17年預期累積收益對比", riskTitle: "下行/購買力風險",
                 safeTitle: "專業配置保障機制", safeStatus: "本金保證", safeNote: "具備合約級別安全墊",
                 noteTitle: "數據備註",
                 noteDesc: "目前配置數據參考加拿大市場歷史平均。專業配置採用具備「本金保證」機制的收益優化組合。",
@@ -192,8 +196,14 @@
                 waBtn: "WhatsApp 聯繫顧問獲取分析",
                 wcTitle: "已成功複製微信號", wcTip: "請前往微信搜索並添加 Alex 為好友。", wcBtn: "前往微信",
                 chartLabels: ["目前策略", "專業配置系統"],
-                backupCash: (name, gap, acc) => `你好 ${name}，選擇存放 ${acc} 於銀行存款是一個非常穩健且流動性高的決定，這確保了本金的絕對安全。但在 17 年的長期視角下，複利增長的缺口預計達 $${gap}。更重要的是，通脹會逐漸侵蝕這筆錢的實質購買力，優化配置能讓您的穩健資產更具進攻力。`,
-                backupRisk: (name, gap, risk, acc) => `你好 ${name}，目前的 ${acc} 配置能讓您參與市場增長，這是一個具備投資意識的選擇。然而，歷史數據顯示這類配置曾面臨 ${risk} 的回撤風險。專業配置系統提供「本金保證」機制，在保留市場參與度的同時，能消除這筆約 $${gap} 的潛在收益差距並規避風險。`
+                backupText: (name, gap, acc, asset, risk) => {
+                    const teslas = (parseFloat(gap.replace(/,/g,'')) / 85000).toFixed(1);
+                    let base = `你好 ${name}，選擇存放 ${acc} 於銀行存款是一個非常穩健的決定。但數據顯示，17 年後的複利缺口高達 $${gap}，<b>這筆錢足以買下 ${teslas} 部頂配版 Tesla Model Y，或是支付一筆可觀的物業首期。</b>`;
+                    if (asset !== 'cash') {
+                        base = `你好 ${name}，您的投資意識很好。然而，目前的配置在增長之餘卻面臨歷史高達 ${risk} 的下行風險。與「專業管理配置」相比，您正錯失約 $${gap} 的免稅增長空間，這相當於<b>一部頂配 Tesla 加上數年的環球豪華旅行支出。</b>專業配置系統提供「本金保證」機制，能消除此風險。`;
+                    }
+                    return base;
+                }
             },
             sc: {
                 title: "个人税务账户收益分析",
@@ -203,8 +213,8 @@
                 labelBalanceTFSA: "CRA 累计供款额度 (CAD)", labelBalanceRRSP: "RRSP 扣税额度 (CAD)",
                 optCash: "银行定期 / GIC", optFund: "互惠基金", optStock: "蓝筹股票",
                 btnScan: "⚡ 启动 AI 收益与风险分析",
-                loadingTitle: "正在模拟市场波动场景...", loadingHint: "正在对比历史最大回撤与购买力数据...",
-                chartHeader: "17年预期累计收益对比", riskTitle: "下行/购买力风险",
+                loadingTitle: "正在模拟市场波动场景...", loadingHint: "正在对比历史最大回撤与具体生活价值...",
+                resultLabel: "Analysis Report", chartHeader: "17年预期累计收益对比", riskTitle: "下行/购买力风险",
                 safeTitle: "专业配置保障机制", safeStatus: "本金保证", safeNote: "具备合约级别安全垫",
                 noteTitle: "数据备注",
                 noteDesc: "目前配置数据参考加拿大市场历史平均。专业配置采用具备「本金保证」机制的收益优化组合。",
@@ -212,22 +222,53 @@
                 scBtn: "微信联系顾问獲取分析",
                 wcTitle: "已成功复制微信号", wcTip: "请前往微信搜索并添加 Alex 为好友。", wcBtn: "前往微信",
                 chartLabels: ["目前策略", "专业配置系统"],
-                backupCash: (name, gap, acc) => `你好 ${name}，选择存放 ${acc} 于银行存款是一个非常稳健且流动性高的决定，这确保了本金的绝对安全。但在 17 年的长期视角下，复利增长的缺口预计达 $${gap}。更重要的是，通胀会逐渐侵蚀这笔钱的实质购买力，优化配置能让您的稳健资产更具进攻力。`,
-                backupRisk: (name, gap, risk, acc) => `你好 ${name}，目前的 ${acc} 配置能让您参与市场增长，这是一个具备投资意识的选择。然而，历史数据显示这类配置曾面临 ${risk} 的回撤风险。专业配置系统提供「本金保证」机制，在保留市场参与度的同时，能消除这笔约 $${gap} 的潜在收益差距并规避风险。`
+                backupText: (name, gap, acc, asset, risk) => {
+                    const teslas = (parseFloat(gap.replace(/,/g,'')) / 85000).toFixed(1);
+                    let base = `你好 ${name}，选择存放 ${acc} 於银行存款是非常稳健的决定。但数据显示，17 年后的复利缺口高达 $${gap}，<b>这笔钱足以买下 ${teslas} 部顶配版 Tesla Model Y，或是支付一笔可观的物业首期。</b>`;
+                    if (asset !== 'cash') {
+                        base = `你好 ${name}，您的投资意识很好。然而，目前的配置在增长之余却面临历史高达 ${risk} 的下行风险。与「专业管理配置」相比，您正错失约 $${gap} 的免税增长空间，这相当于<b>一部顶配 Tesla 加上数年的环球豪华旅行支出。</b>专业配置系统提供「本金保证」机制，能消除此风险。`;
+                    }
+                    return base;
+                }
+            },
+            en: {
+                title: "Personal Tax-Account Yield Analysis",
+                subtitle: "Yield Growth & Risk Protection System",
+                quote: "「Analyze your assets with precision and understand your defense against market volatility.」",
+                labelName: "Your Name", labelAccType: "Account Type", labelAssetType: "Current Method",
+                labelBalanceTFSA: "CRA Contribution Room (CAD)", labelBalanceRRSP: "RRSP Deduction Limit (CAD)",
+                optCash: "Bank Savings / GIC", optFund: "Mutual Funds", optStock: "Blue-chip Stocks",
+                btnScan: "⚡ Launch AI Yield & Risk Analysis",
+                loadingTitle: "Simulating market scenarios...", loadingHint: "Comparing drawdown risks and lifestyle impacts...",
+                resultLabel: "Analysis Report", chartHeader: "17-Year Projected Yield Comparison", riskTitle: "Downside / Inflation Risk",
+                safeTitle: "Professional Protection Mechanism", safeStatus: "Principal Guarantee", safeNote: "Contract-level safety buffer",
+                noteTitle: "Data Reference",
+                noteDesc: "Current allocation data refers to Canadian market historical averages. Professional allocation uses guaranteed yield-optimized portfolios.",
+                btnReset: "↺ Start New Analysis", msgTitle: "System Notification", msgBtn: "Got it",
+                waBtn: "Text Alex for Consultation",
+                wcTitle: "WeChat ID Copied", wcTip: "Please search and add Alex on WeChat.", wcBtn: "Open WeChat",
+                chartLabels: ["Current Strategy", "Pro-Managed Portfolio"],
+                backupText: (name, gap, acc, asset, risk) => {
+                    const teslas = (parseFloat(gap.replace(/,/g,'')) / 85000).toFixed(1);
+                    let base = `Hello ${name}, keeping ${acc} in savings is safe. However, the $${gap} gap in 17 years is massive. <b>This is equivalent to buying ${teslas} top-spec Tesla Model Ys, or a substantial real estate down payment.</b>`;
+                    if (asset !== 'cash') {
+                        base = `Hello ${name}, your current ${acc} setup captures growth but faces a ${risk} drawdown risk. Compared to a Pro-Managed portfolio, you are missing out on $${gap}, which is <b>one top-spec Tesla plus several years of luxury global travel.</b> Our system offers a Principal Guarantee to eliminate this risk.`;
+                    }
+                    return base;
+                }
             }
         };
 
         const rates = { 
-            cash: { yield: 0.020, risk: "通脹侵蝕", riskDetail: { tc: "雖然無下行風險，但購買力會因通脹令增長歸零", sc: "虽然无下行风险，但购买力会因通胀令增长归零" } }, 
-            fund: { yield: 0.045, risk: "25.4%", riskDetail: { tc: "若遇市場崩盤，本金將面臨顯著損失", sc: "若遇市场崩盘，本金将面临显著损失" } }, 
-            stock: { yield: 0.060, risk: "38.2%", riskDetail: { tc: "高度市場波動，無任何保本保障", sc: "高度市场波动，无任何保本保障" } }, 
+            cash: { yield: 0.020, risk: "通脹侵蝕", riskDetail: { tc: "雖然無下行風險，但購買力會因通脹令增長歸零", sc: "虽然无下行风险，但购买力会因通胀令增长归零", en: "No downside risk, but purchasing power will be eroded by inflation." } }, 
+            fund: { yield: 0.045, risk: "25.4%", riskDetail: { tc: "若遇市場崩盤，本金將面臨顯著損失", sc: "若遇市场崩盘，本金将面临显著损失", en: "In the event of a market crash, principal will face significant losses." } }, 
+            stock: { yield: 0.060, risk: "38.2%", riskDetail: { tc: "高度市場波動，無任何保本保障", sc: "高度市场波动，无任何保本保障", en: "High market volatility with no principal protection." } }, 
             pro: { yield: 0.110 } 
         };
 
         function setLanguage(lang) {
             currentLang = lang;
             const d = dictionary[lang];
-            
             document.getElementById('ui-title').innerText = d.title;
             document.getElementById('ui-subtitle').innerText = d.subtitle;
             document.getElementById('ui-quote').innerText = d.quote;
@@ -240,6 +281,7 @@
             document.getElementById('ui-btn-scan').innerText = d.btnScan;
             document.getElementById('ui-loading-title').innerText = d.loadingTitle;
             document.getElementById('loading-hint').innerText = d.loadingHint;
+            document.getElementById('ui-result-label').innerText = d.resultLabel;
             document.getElementById('ui-chart-header').innerText = d.chartHeader;
             document.getElementById('ui-risk-title').innerText = d.riskTitle;
             document.getElementById('ui-safe-title').innerText = d.safeTitle;
@@ -250,34 +292,25 @@
             document.getElementById('ui-btn-reset').innerText = d.btnReset;
             document.getElementById('msg-modal-title').innerText = d.msgTitle;
             document.getElementById('msg-modal-btn').innerText = d.msgBtn;
-            document.getElementById('wechat-modal-title').innerText = d.wcTitle;
-            document.getElementById('wechat-modal-tip').innerText = d.wcTip;
-            document.getElementById('wechat-modal-btn').innerText = d.wcBtn;
-
             updateLabelByAccount();
-
             document.getElementById('btn-tc').classList.toggle('lang-btn-active', lang === 'tc');
             document.getElementById('btn-sc').classList.toggle('lang-btn-active', lang === 'sc');
-
-            if (lang === 'sc') {
-                document.getElementById('cta-wa-link').classList.add('hidden');
-                document.getElementById('cta-wechat-btn').classList.remove('hidden');
-            } else {
-                document.getElementById('cta-wa-link').classList.remove('hidden');
-                document.getElementById('cta-wechat-btn').classList.add('hidden');
-            }
+            document.getElementById('btn-en').classList.toggle('lang-btn-active', lang === 'en');
+            document.getElementById('cta-wa-link').classList.add('hidden');
+            document.getElementById('cta-wechat-btn').classList.add('hidden');
+            document.getElementById('cta-sms-link').classList.add('hidden');
+            if (lang === 'sc') document.getElementById('cta-wechat-btn').classList.remove('hidden');
+            else if (lang === 'en') document.getElementById('cta-sms-link').classList.remove('hidden');
+            else document.getElementById('cta-wa-link').classList.remove('hidden');
 
             if (analysisState.isFinished) {
                 renderChart(analysisState.v1, analysisState.v2, analysisState.r1);
                 const isCash = analysisState.assetType === 'cash';
-                document.getElementById('ui-max-drawdown').innerText = isCash ? (currentLang === 'tc' ? "通脹侵蝕" : "通胀侵蚀") : `-${analysisState.risk}`;
+                const infText = { tc: "通脹侵蝕", sc: "通胀侵蚀", en: "Inflation" }[currentLang];
+                document.getElementById('ui-max-drawdown').innerText = isCash ? infText : `-${analysisState.risk}`;
                 document.getElementById('ui-risk-note').innerText = rates[analysisState.assetType].riskDetail[currentLang];
-
                 if (!analysisState.isAiGenerated) {
-                    const backup = isCash ? 
-                        d.backupCash(analysisState.name, analysisState.gap, analysisState.accType) :
-                        d.backupRisk(analysisState.name, analysisState.gap, analysisState.risk, analysisState.accType);
-                    document.getElementById('report-content').innerHTML = backup;
+                    document.getElementById('report-content').innerHTML = d.backupText(analysisState.name, analysisState.gapStr, analysisState.accType, analysisState.assetType, analysisState.risk);
                 }
             }
         }
@@ -322,10 +355,7 @@
 
         async function fetchAIResponse(prompt, key) {
             const trimmedKey = key.trim();
-            const attempts = [
-                { ver: "v1beta", model: "gemini-1.5-flash-8b" },
-                { ver: "v1beta", model: "gemini-1.5-flash" }
-            ];
+            const attempts = [{ ver: "v1beta", model: "gemini-1.5-flash-8b" }, { ver: "v1beta", model: "gemini-1.5-flash" }];
             for (let config of attempts) {
                 try {
                     const response = await fetch(`https://generativelanguage.googleapis.com/${config.ver}/models/${config.model}:generateContent?key=${trimmedKey}`, {
@@ -340,15 +370,13 @@
         }
 
         async function startAnalysis() {
-            const name = document.getElementById('user-name').value.trim() || (currentLang === 'tc' ? "客戶" : "客户");
+            const name = document.getElementById('user-name').value.trim() || (currentLang === 'en' ? "Client" : "客戶");
             const balanceVal = document.getElementById('balance').value;
             const balance = parseFloat(balanceVal);
-
             if(isNaN(balance)) { 
-                showMsg(currentLang === 'tc' ? "請輸入正確的額度數據。" : "请输入正确的额度数据。"); 
-                return; 
+                const err = { tc: "請輸入正確的額度數據。", sc: "请输入正确的额度数据。", en: "Please enter a valid amount." };
+                showMsg(err[currentLang]); return; 
             }
-
             document.getElementById('step-form').classList.add('hidden');
             document.getElementById('step-loading').classList.remove('hidden');
 
@@ -356,31 +384,34 @@
             const assetType = document.getElementById('asset-type').value;
             const finalCurrent = balance * Math.pow(1 + rates[assetType].yield, 17);
             const finalPro = balance * Math.pow(1 + rates.pro.yield, 17);
-            const gapStr = parseInt(finalPro - finalCurrent).toLocaleString();
+            const gapVal = parseInt(finalPro - finalCurrent);
+            const gapStr = gapVal.toLocaleString();
 
             analysisState = {
-                isFinished: true,
-                isAiGenerated: false, 
+                isFinished: true, isAiGenerated: false, 
                 v1: finalCurrent, v2: finalPro, r1: rates[assetType].yield,
-                name: name, gap: gapStr, risk: rates[assetType].risk, 
+                name: name, gapNum: gapVal, gapStr: gapStr, risk: rates[assetType].risk, 
                 assetType: assetType, accType: accType
             };
 
-            const langName = currentLang === 'tc' ? "廣東話 (繁體中文)" : "簡體中文";
-            
+            const langName = { tc: "廣東話 (繁體中文)", sc: "簡體中文", en: "Professional English" }[currentLang];
+            const smsBody = `Hi Alex, I just completed my ${accType} yield analysis. I'm interested in the pro-managed portfolio with principal protection. Let's discuss.`;
+            document.getElementById('cta-sms-link').href = `sms:+17783198129?body=${encodeURIComponent(smsBody)}`;
+            const msgBodyTC = `你好！我係 ${name}，我剛剛完成咗個人稅務帳戶收益分析 (${accType})。我對具備「具體生活價值」且有「本金保證」嘅專業管理組合好有興趣。`;
+            document.getElementById('cta-wa-link').href = `https://wa.me/17783198129?text=${encodeURIComponent(msgBodyTC)}`;
+
             const promptText = `
-                你是一位負責「個人稅務帳戶收益與風險分析」的專業顧問助手。
-                請為 ${name} 寫一份 180 字的分析報告。
-                語言要求：必須使用 ${langName}。
-                場景：客戶在 ${accType} 存入 $${balance.toLocaleString()}，目前配置是 ${assetType}。
+                You are a professional advisor's assistant for the "Personal Tax-Account Yield & Risk Analysis" system.
+                Generate a 200-word report for ${name}.
+                Language Requirement: Must be in ${langName}.
+                Scenario: $${balance.toLocaleString()} in ${accType}, currently in ${assetType}.
                 
-                對比分析要求（語氣要中肯、專業）：
-                1. 先肯定客戶目前配置的好處：若為存款，稱讚其穩健與高流動性；若為基金/股票，稱讚其具備投資意識。
-                2. 對比分析潛在挑戰：若為銀行存款，指出通脹會令實質購買力受損；若為基金/股票，指出歷史最大跌幅可能達 ${rates[assetType].risk}。
-                3. 專業配置優勢：回報差距達 $${gapStr}，且具備「合約級別的本金保證」，實現「進可攻、退可守」的優化。
-                
-                要求：語氣專業理性，用震撼比喻說明收益價值。保持專業系統的神秘感，不要提及特定產品名。
-                禁止使用『診斷』，統一用『分析』。
+                CRITICAL INSTRUCTION:
+                1. Visualize the gap of $${gapStr}. DO NOT just mention the number.
+                2. Use impact analogies: How many Tesla Model Y Performance (approx. $85k each) can this gap buy? Or equate it to a home down payment in Canada, or years of luxury global travel.
+                3. Acknowledge current stability, then expose the "Opportunity Cost" of not using pro-managed protection systems.
+                4. Tone: Insightful, balanced, but shocking regarding the loss. Keep the system mysterious, focus on "Contractual Guarantee".
+                Avoid "diagnosis", use "analysis".
             `;
 
             try {
@@ -389,11 +420,7 @@
                 analysisState.isAiGenerated = true; 
                 finish();
             } catch (e) { 
-                const d = dictionary[currentLang];
-                const backup = (assetType === 'cash') ? 
-                    d.backupCash(name, gapStr, accType) :
-                    d.backupRisk(name, gapStr, rates[assetType].risk, accType);
-                document.getElementById('report-content').innerHTML = backup;
+                document.getElementById('report-content').innerHTML = dictionary[currentLang].backupText(name, gapStr, accType, assetType, rates[assetType].risk);
                 analysisState.isAiGenerated = false; 
                 finish();
             }
@@ -406,7 +433,8 @@
                 document.getElementById('step-result').classList.remove('hidden');
                 renderChart(analysisState.v1, analysisState.v2, analysisState.r1);
                 const isCash = analysisState.assetType === 'cash';
-                document.getElementById('ui-max-drawdown').innerText = isCash ? (currentLang === 'tc' ? "通脹侵蝕" : "通胀侵蚀") : `-${analysisState.risk}`;
+                const infText = { tc: "通脹侵蝕", sc: "通胀侵蚀", en: "Inflation" }[currentLang];
+                document.getElementById('ui-max-drawdown').innerText = isCash ? infText : `-${analysisState.risk}`;
                 document.getElementById('ui-risk-note').innerText = rates[analysisState.assetType].riskDetail[currentLang];
             }, 800);
         }
@@ -414,16 +442,11 @@
         function renderChart(v1, v2, r1) {
             const ctx = document.getElementById('wealthChart').getContext('2d');
             if (wealthChart) wealthChart.destroy();
-            const labels = dictionary[currentLang].chartLabels;
             wealthChart = new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: labels,
-                    datasets: [{
-                        data: [v1.toFixed(0), v2.toFixed(0)],
-                        backgroundColor: ['#cbd5e1', '#3b82f6'],
-                        borderRadius: 15, barThickness: 50
-                    }]
+                    labels: dictionary[currentLang].chartLabels,
+                    datasets: [{ data: [v1.toFixed(0), v2.toFixed(0)], backgroundColor: ['#cbd5e1', '#3b82f6'], borderRadius: 15, barThickness: 50 }]
                 },
                 options: {
                     responsive: true, maintainAspectRatio: false,
