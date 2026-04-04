@@ -76,6 +76,9 @@
             <button onclick="startAnalysis()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-black py-4 rounded-2xl shadow-xl transition-all transform active:scale-95 flex items-center justify-center mt-6">
                 <span id="ui-btn-scan">⚡ 啟動 AI 收益與風險分析</span>
             </button>
+            <p class="text-[9px] text-slate-400 text-center mt-4 italic leading-relaxed px-4">
+                * 本分析系統僅供模擬參考用途。過往回報並不代表未來收益。
+            </p>
         </div>
 
         <!-- 第二步：載入中 -->
@@ -97,7 +100,7 @@
 
                 <!-- 收益增長圖 -->
                 <div class="bg-slate-50 p-4 rounded-3xl border border-slate-100 shadow-inner">
-                    <h4 id="ui-chart-header" class="text-[10px] font-black text-center text-slate-400 mb-4 uppercase tracking-widest italic">17年預期累積收益對比</h4>
+                    <h4 id="ui-chart-header" class="text-[10px] font-black text-center text-slate-400 mb-4 uppercase tracking-widest italic">17年模擬累積收益對比</h4>
                     <div class="chart-container"><canvas id="wealthChart"></canvas></div>
                 </div>
 
@@ -110,9 +113,9 @@
                     </div>
                     <div class="p-4 bg-green-50 rounded-2xl border border-green-100 relative overflow-hidden">
                         <div class="absolute -right-2 -top-2 opacity-10 text-green-600">🛡️</div>
-                        <p id="ui-safe-title" class="text-[10px] font-black text-green-500 uppercase mb-2">專業配置保障機制</p>
-                        <p id="ui-safe-status" class="text-xl font-black text-green-600">本金保證</p>
-                        <p id="ui-safe-note" class="text-[9px] text-green-500 mt-1 italic leading-tight">具備合約級別安全墊</p>
+                        <p id="ui-safe-title" class="text-[10px] font-black text-green-500 uppercase mb-2">配置保障機制</p>
+                        <p id="ui-safe-status" class="text-xl font-black text-green-600">合約級別保證</p>
+                        <p id="ui-safe-note" class="text-[9px] text-green-500 mt-1 italic leading-tight">受保單/合約條款約束</p>
                     </div>
                 </div>
                 
@@ -120,13 +123,13 @@
 
                 <div class="p-5 bg-blue-50 rounded-3xl border border-blue-100 mb-4">
                     <p class="text-blue-900 text-[11px] font-black flex items-center mb-1">
-                        <span class="mr-2">💡</span> <span id="ui-note-title">數據備註</span>
+                        <span class="mr-2">💡</span> <span id="ui-note-title">數據備註與披露</span>
                     </p>
-                    <p id="ui-note-desc" class="text-blue-700 text-[10px] leading-relaxed italic">目前配置數據參考加拿大市場歷史平均。專業配置採用具備「本金保證」機制的收益優化組合。</p>
+                    <p id="ui-note-desc" class="text-blue-700 text-[10px] leading-relaxed italic">模擬數據參考加拿大市場 2009-2026 歷史平均。專業配置採用具備保險合約保障機制 (Guarantee) 的優化組合，具體保證金額視到期日或死亡日期而定。</p>
                 </div>
             </div>
 
-            <div class="p-6 bg-slate-900 text-white text-center flex-shrink-0 space-y-3">
+            <div class="p-6 bg-slate-900 text-white text-center flex-shrink-0 space-y-3 border-t border-slate-800">
                 <a id="cta-wa-link" href="#" target="_blank" class="w-full bg-[#25D366] text-white font-black py-4 rounded-xl flex items-center justify-center no-underline shadow-lg active:scale-95 transition-all">
                     WhatsApp 聯繫顧問獲取分析
                 </a>
@@ -137,13 +140,13 @@
                     Text Alex (Consultation)
                 </a>
                 <button id="ui-btn-reset" onclick="resetApp()" class="w-full bg-slate-700 text-white font-bold py-3 rounded-xl active:scale-95 transition-all text-xs">
-                    ↺ 重新開始分析
+                    ↺ 重新分析其他配置
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- 微信彈窗 -->
+    <!-- WeChat Modal -->
     <div id="wechat-modal" class="fixed inset-0 bg-black/70 z-[300] hidden items-center justify-center p-6 backdrop-blur-md">
         <div class="bg-white p-8 rounded-[2.5rem] max-w-xs w-full text-center shadow-2xl modal-animate border border-slate-100">
             <div class="text-6xl mb-6">✅</div>
@@ -155,7 +158,7 @@
         </div>
     </div>
 
-    <!-- 訊息彈窗 -->
+    <!-- Info Modal -->
     <div id="msg-modal" class="fixed inset-0 bg-black/70 z-[200] hidden items-center justify-center p-6 backdrop-blur-md">
         <div class="bg-white p-8 rounded-[2.5rem] max-w-xs w-full text-center shadow-2xl modal-animate border border-slate-100">
             <div class="text-5xl mb-4">⚠️</div>
@@ -203,21 +206,21 @@
                 optCash: "銀行定期 / GIC", optFund: "互惠基金", optStock: "藍籌股票",
                 btnScan: "⚡ 啟動 AI 收益與風險分析",
                 loadingTitle: "正在模擬市場波動場景...", loadingHint: "正在對比歷史最大回撤與具體生活價值...",
-                resultLabel: "Analysis Report", chartHeader: "17年預期累積收益對比", riskTitle: "下行/購買力風險",
-                safeTitle: "專業配置保障機制", safeStatus: "本金保證", safeNote: "具備合約級別安全墊",
-                noteTitle: "數據備註",
+                resultLabel: "Analysis Report", chartHeader: "17年模擬累積收益對比", riskTitle: "下行/購買力風險",
+                safeTitle: "配置保障機制", safeStatus: "合約級別保證", safeNote: "受保單/合約條款約束",
+                noteTitle: "數據備註與披露",
                 noteDesc: "目前配置數據參考加拿大市場歷史平均。專業配置採用具備「本金保證」機制的收益優化組合。",
                 btnReset: "↺ 重新開始分析", msgTitle: "系統提示", msgBtn: "了解",
                 waBtn: "WhatsApp 聯繫顧問獲取分析",
                 wcTitle: "已成功複製微信號", wcTip: "請前往微信搜索並添加 Alex 為好友。", wcBtn: "前往微信",
-                chartLabels: ["目前策略", "專業配置系統"],
-                closing: "<br><br>如果你想妥善了解自己的財務狀況，在可控制風險的情況下最大化資產，善用稅務戶口，歡迎聯絡 Alex 簡單了解一下。憑藉 20 多年的銀行及獨立理財顧問經驗，應該可以為你提供有價值的意見。",
+                chartLabels: ["目前策略", "專業配置系統*"],
+                closing: "<br><br>如果您希望全面審視財務現狀，在風險可控的前提下追求資產回報最大化，並極大化稅務帳戶的優勢，誠邀您聯絡 Alex 進行初步諮詢。憑藉逾 20 年深耕銀行體系及獨立理財顧問的深厚經驗，Alex 將為您的財富增值提供精確且具價值的專業導航。",
                 backupText: (name, gap, acc, asset, risk) => {
                     const gapNum = parseFloat(gap.replace(/,/g,''));
                     const analogy = getSingleAnalogy(gapNum, 'tc');
-                    let base = `你好 ${name}，選擇存放 ${acc} 於銀行存款是一個非常穩健的決定。但數據顯示，17 年後的複利缺口高達 $${gap}，<b>這筆錢${analogy}。</b>透過專業配置，您可以在保持本金絕對安全的同時，追求更佳的退休生活。`;
+                    let base = `你好 ${name}，選擇存放 ${acc} 於銀行存款是一個非常穩健的決定。但數據顯示，17 年後的模擬複利缺口高達 $${gap}，<b>這筆錢${analogy}。</b>透過專業配置，您可以在保持本金合約保證安全的同時，追求更佳的退休生活。`;
                     if (asset !== 'cash') {
-                        base = `你好 ${name}，您的投資意識很好。然而，目前的配置在增長之餘卻面臨歷史高達 ${risk} 的下行風險。與「專業管理配置」相比，您正錯失約 $${gap} 的免稅增長空間，這金額<b>${analogy}。</b>專業配置系統提供「本金保證」機制，能消除此風險。`;
+                        base = `你好 ${name}，您的投資意識很好。然而，目前的配置在增長之餘卻面臨歷史高達 ${risk} 的下行風險。與「專業管理配置」相比，您正錯失約 $${gap} 的潛在收益空間，這金額<b>${analogy}。</b>專業配置系統提供「本金保證」機制（受條款約束），能消除此風險。`;
                     }
                     return base + dictionary.tc.closing;
                 }
@@ -231,21 +234,21 @@
                 optCash: "银行定期 / GIC", optFund: "互惠基金", optStock: "蓝筹股票",
                 btnScan: "⚡ 启动 AI 收益与风险分析",
                 loadingTitle: "正在模拟市场波动场景...", loadingHint: "正在对比历史最大回撤与具体生活价值...",
-                resultLabel: "Analysis Report", chartHeader: "17年预期累计收益对比", riskTitle: "下行/购买力风险",
-                safeTitle: "专业配置保障机制", safeStatus: "本金保证", safeNote: "具备合约级别安全垫",
-                noteTitle: "数据备注",
+                resultLabel: "Analysis Report", chartHeader: "17年模拟累计收益对比", riskTitle: "下行/购买力风险",
+                safeTitle: "配置保障机制", safeStatus: "合约级别保证", safeNote: "受保单/合约条款约束",
+                noteTitle: "数据备注与披露",
                 noteDesc: "目前配置数据参考加拿大市场历史平均。专业配置采用具备「本金保证」机制的收益优化组合。",
                 btnReset: "↺ 重新开始分析", msgTitle: "系统提示", msgBtn: "了解",
                 scBtn: "微信联系顾问獲取分析",
                 wcTitle: "已成功复制微信号", wcTip: "请前往微信搜索并添加 Alex 为好友。", wcBtn: "前往微信",
-                chartLabels: ["目前策略", "专业配置系统"],
-                closing: "<br><br>如果你想妥善了解自己的财务状况，在可控制风险的情况下最大化资产，善用税务户口，欢迎联络 Alex 简单了解一下。凭借 20 多年的银行及独立理财顾问经验，应该可以为你提供有价值的意见。",
+                chartLabels: ["目前策略", "专业配置系统*"],
+                closing: "<br><br>如果您希望全面审视财务现状，在风险可控的前提下追求资产回报最大化，并极大化税务账户的优势，诚邀您联络 Alex 进行初步咨询。凭借逾 20 年深耕银行体系及独立理财顾问的深厚经验，Alex 将为您的财富增值提供精确且具价值的专业导航。",
                 backupText: (name, gap, acc, asset, risk) => {
                     const gapNum = parseFloat(gap.replace(/,/g,''));
                     const analogy = getSingleAnalogy(gapNum, 'sc');
-                    let base = `你好 ${name}，选择存放 ${acc} 於银行存款是非常稳健的决定。但数据显示，17 年后的复利缺口高达 $${gap}，<b>这笔钱${analogy}。</b>通过专业配置，您可以在保持本金绝对安全的同时，追求更佳的退休生活。`;
+                    let base = `你好 ${name}，选择存放 ${acc} 於银行存款是非常稳健的决定。但数据显示，17 年后的模拟复利缺口高达 $${gap}，<b>这笔钱${analogy}。</b>通过专业配置，您可以在保持本金合约保证安全的同时，追求更佳的退休生活。`;
                     if (asset !== 'cash') {
-                        base = `你好 ${name}，您的投资意识很好。然而，目前的配置在增长之余却面临历史高达 ${risk} 的下行风险。与「专业管理配置」相比，您正错失约 $${gap} 的免税增长空间，这金额<b>${analogy}。</b>专业配置系统提供「本金保证」机制，能消除此风险。`;
+                        base = `你好 ${name}，您的投资意识很好。然而，目前的配置在增长之余却面临历史高达 ${risk} 的下行风险。与「专业管理配置」相比，您正错失约 $${gap} 的潜在收益空间，这金额<b>${analogy}。</b>专业配置系统提供「本金保证」机制（受条款约束），能消除此风险。`;
                     }
                     return base + dictionary.sc.closing;
                 }
@@ -259,21 +262,21 @@
                 optCash: "Bank Savings / GIC", optFund: "Mutual Funds", optStock: "Blue-chip Stocks",
                 btnScan: "⚡ Launch AI Yield & Risk Analysis",
                 loadingTitle: "Simulating market scenarios...", loadingHint: "Comparing drawdown risks and lifestyle impacts...",
-                resultLabel: "Analysis Report", chartHeader: "17-Year Projected Yield Comparison", riskTitle: "Downside / Inflation Risk",
-                safeTitle: "Professional Protection Mechanism", safeStatus: "Principal Guarantee", safeNote: "Contract-level safety buffer",
-                noteTitle: "Data Reference",
+                resultLabel: "Analysis Report", chartHeader: "17-Year Simulated Yield Comparison", riskTitle: "Downside / Inflation Risk",
+                safeTitle: "Protection Mechanism", safeStatus: "Contractual Guarantee", safeNote: "Subject to policy/contract terms",
+                noteTitle: "Disclosure & References",
                 noteDesc: "Current allocation data refers to Canadian market historical averages. Professional allocation uses guaranteed yield-optimized portfolios.",
                 btnReset: "↺ Start New Analysis", msgTitle: "System Notification", msgBtn: "Got it",
                 waBtn: "Text Alex for Consultation",
                 wcTitle: "WeChat ID Copied", wcTip: "Please search and add Alex on WeChat.", wcBtn: "Open WeChat",
-                chartLabels: ["Current Strategy", "Pro-Managed Portfolio"],
-                closing: "<br><br>If you would like to properly understand your financial situation, maximize your assets under controlled risk, and make the best use of tax-advantaged accounts, you are welcome to contact Alex for a brief consultation. With over 20 years of experience in banking and independent financial advisory, he can provide valuable insights for your future.",
+                chartLabels: ["Current Strategy", "Pro-Managed Portfolio*"],
+                closing: "<br><br>To gain a comprehensive understanding of your financial health, maximize your assets within your risk tolerance, and fully leverage your tax-advantaged accounts, you are invited to connect with Alex for an initial consultation. With over 20 years of distinguished experience in both the banking sector and independent financial advisory, Alex is dedicated to providing the precise insights and professional guidance necessary to navigate your path toward wealth optimization.",
                 backupText: (name, gap, acc, asset, risk) => {
                     const gapNum = parseFloat(gap.replace(/,/g,''));
                     const analogy = getSingleAnalogy(gapNum, 'en');
-                    let base = `Hello ${name}, keeping ${acc} in savings is safe. However, the $${gap} gap in 17 years is massive. <b>This sum is ${analogy}</b> Our system allows you to seek higher growth without sacrificing security.`;
+                    let base = `Hello ${name}, keeping ${acc} in savings is safe. However, the $${gap} simulated gap in 17 years is massive. <b>This sum is ${analogy}</b> Our system allows you to seek higher growth with contractual security.`;
                     if (asset !== 'cash') {
-                        base = `Hello ${name}, your current ${acc} setup captures growth but faces a ${risk} drawdown risk. Compared to a Pro-Managed portfolio, you are missing out on $${gap}, which is <b>${analogy}</b> Our system offers a Principal Guarantee to eliminate this risk.`;
+                        base = `Hello ${name}, your current ${acc} setup captures growth but faces a ${risk} drawdown risk. Compared to a Pro-Managed portfolio, you are missing out on $${gap}, which is <b>${analogy}</b> Our system offers a Principal Guarantee (subject to terms) to eliminate this risk.`;
                     }
                     return base + dictionary.en.closing;
                 }
@@ -416,9 +419,9 @@
             };
 
             const langName = { tc: "廣東話 (繁體中文)", sc: "簡體中文", en: "Professional English" }[currentLang];
-            const smsBody = `Hi Alex, I just completed my ${accType} yield analysis. I'm interested in the pro-managed portfolio with principal protection. Let's discuss.`;
+            const smsBody = `Hi Alex, I just completed my ${accType} yield analysis. I'm interested in the pro-managed portfolio with contractual protection. Let's discuss.`;
             document.getElementById('cta-sms-link').href = `sms:+17783198129?body=${encodeURIComponent(smsBody)}`;
-            const msgBodyTC = `你好！我係 ${name}，我剛剛完成咗個人稅務帳戶收益分析 (${accType})。我對具備「下行風險保障」且能「抗衡通脹」嘅專業管理組合好有興趣。`;
+            const msgBodyTC = `你好！我係 ${name}，我剛剛完成咗個人稅務帳戶收益分析 (${accType})。我對具備合約保障且能優化回報嘅專業配置組合好有興趣。`;
             document.getElementById('cta-wa-link').href = `https://wa.me/17783198129?text=${encodeURIComponent(msgBodyTC)}`;
 
             const promptText = `
@@ -428,22 +431,19 @@
                 Language Requirement: Must be in ${langName}.
                 Scenario: $${balance.toLocaleString()} in ${accType}, currently in ${assetType}.
                 
-                CRITICAL INSTRUCTION FOR ANALOGY (Choose ONLY ONE based on the gap of $${gapStr}):
-                - If gap > $1.5M: Focus on a Detached House in West Vancouver (海景獨立屋首期).
-                - If gap is $800k - $1.5M: Focus on a spacious brand new Townhouse in Richmond (全新聯排別墅).
-                - If gap is $350k - $800k: Focus on a top-tier Class A Luxury Motorhome (豪華露營車).
-                - If gap is $150k - $350k: Focus on a top-spec Premium Pick-up Truck (豪華重型皮卡).
-                - If gap is less: Focus on a brand new high-performance All-Electric SUV (高性能電動 SUV).
-                
-                MANDATORY REPORT STRUCTURE:
-                1. Acknowledge current stability first (praise the client's cautiousness/investing intent).
-                2. Expose the massive "Opportunity Cost" using the ONE chosen analogy.
-                3. Pro-Managed portfolio advantages: featuring "Contractual Principal Guarantee".
-                4. CLOSING STATEMENT (REQUIRED): 
+                STRICT REGULATORY COMPLIANCE INSTRUCTIONS:
+                1. DO NOT promise specific future returns. Use terms like "Hypothetical Simulation", "Historical Benchmark", or "Potential Gap".
+                2. Acknowledge current stability first (praise the client's cautiousness/investing intent).
+                3. Analogy (Use ONE only):
+                   - If gap > $1.5M: Detached House down payment in West Vancouver.
+                   - If gap $800k-$1.5M: New Townhouse in Richmond.
+                   - If gap $350k-$800k: Luxury Motorhome.
+                   - If gap $150k-$350k: Premium Pick-up Truck.
+                   - Otherwise: High-performance EV SUV.
+                4. Guarantee: Must state that "Principal Guarantees" are contractual and subject to terms (maturity/death).
+                5. Tone: Insightful, balanced, authoritative. Avoid "diagnosis", use "analysis".
+                6. CLOSING STATEMENT (MANDATORY): 
                    "${dictionary[currentLang].closing.replace('<br><br>', '')}"
-                
-                Tone: Insightful, balanced, authoritative. Keep the system mysterious.
-                Avoid "diagnosis", use "analysis".
             `;
 
             try {
@@ -488,10 +488,12 @@
                 plugins: [{
                     id: 'val',
                     afterDraw: (c) => {
-                        const { ctx } = c; ctx.save(); ctx.textAlign = 'center'; ctx.font = 'bold 12px sans-serif';
+                        const { ctx } = c; ctx.save(); ctx.textAlign = 'center'; ctx.font = 'bold 10px sans-serif';
                         const meta = c.getDatasetMeta(0);
-                        ctx.fillStyle = '#64748b'; ctx.fillText(`${(r1*100).toFixed(1)}% p.a.`, meta.data[0].x, meta.data[0].y - 12);
-                        ctx.fillStyle = '#3b82f6'; ctx.fillText(`11.0% p.a.`, meta.data[1].x, meta.data[1].y - 12);
+                        ctx.fillStyle = '#64748b'; ctx.fillText(`Simulated Value`, meta.data[0].x, meta.data[0].y - 25);
+                        ctx.fillText(`${(r1*100).toFixed(1)}% p.a.`, meta.data[0].x, meta.data[0].y - 12);
+                        ctx.fillStyle = '#3b82f6'; ctx.fillText(`Target Benchmark`, meta.data[1].x, meta.data[1].y - 25);
+                        ctx.fillText(`11.0% p.a.*`, meta.data[1].x, meta.data[1].y - 12);
                         ctx.restore();
                     }
                 }]
