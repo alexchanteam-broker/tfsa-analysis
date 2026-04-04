@@ -31,18 +31,17 @@
             </div>
         </div>
 
-        <!-- Header (展示 Alex 樣貌) -->
+        <!-- Header -->
         <div class="bg-slate-900 p-8 text-white">
             <div class="flex items-center space-x-4">
                 <div class="relative">
-                    <!-- 正式使用時請確保目錄下有 profile.jpg。若讀取不到，onerror 會調用備份頭像服務。 -->
                     <img id="header-avatar" src="profile.jpg" alt="Alex Chan" 
                          onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=Alex+Chan&background=3b82f6&color=fff&size=128'" 
                          class="w-16 h-16 rounded-full profile-img shadow-lg border-2 border-blue-400/50">
                     <div class="absolute bottom-0 right-0 w-4 h-4 bg-green-500 border-2 border-slate-900 rounded-full"></div>
                 </div>
                 <div class="flex-grow">
-                    <div id="ui-header-tag" class="text-blue-400 font-black tracking-widest text-[9px] uppercase italic leading-tight">Alex Chan | Broker</div>
+                    <div id="ui-header-tag" class="text-blue-400 font-black tracking-widest text-[9px] uppercase italic leading-tight">Individual Insurance Broker</div>
                     <h1 id="ui-title" class="text-xl font-black italic text-yellow-400 tracking-tight">個人稅務帳戶收益分析</h1>
                     <div id="ui-subtitle" class="text-[9px] opacity-60 italic tracking-widest">逾20年專業管理經驗導航</div>
                 </div>
@@ -52,7 +51,7 @@
         <!-- 第一步：輸入表單 -->
         <div id="step-form" class="p-8 space-y-5">
             <div class="text-center">
-                <p id="ui-quote" class="text-slate-500 text-sm italic font-bold leading-relaxed">「透過精確的數據分析，了解您的資產在市場波動中的防禦力。」</p>
+                <p id="ui-quote" class="text-slate-500 text-sm italic font-bold leading-relaxed">「透過精確的數據分析，了解您的資產在市場波動中的表現。」</p>
             </div>
             
             <div class="space-y-4">
@@ -88,7 +87,7 @@
             <button onclick="startAnalysis()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-black py-4 rounded-2xl shadow-xl transition-all transform active:scale-95 flex items-center justify-center mt-6">
                 <span id="ui-btn-scan">⚡ 啟動 AI 收益與風險分析</span>
             </button>
-            <p class="text-[9px] text-slate-400 text-center mt-4 italic leading-relaxed px-4">
+            <p id="ui-footer-note" class="text-[9px] text-slate-400 text-center mt-4 italic leading-relaxed px-4">
                 * 本分析系統僅供模擬參考用途。過往回報並不代表未來收益。
             </p>
         </div>
@@ -138,8 +137,8 @@
                          class="w-12 h-12 rounded-xl object-cover shadow-md">
                     <div>
                         <p class="text-blue-900 font-black text-sm italic">Alex Chan</p>
-                        <p class="text-[10px] text-slate-400 uppercase font-bold tracking-tighter">Individual Insurance Broker (Canada)</p>
-                        <p class="text-[9px] text-slate-400 italic">20+ Years Excellence in Wealth Management</p>
+                        <p id="sig-role" class="text-[10px] text-slate-400 uppercase font-bold tracking-tighter">Individual Insurance Broker (Canada)</p>
+                        <p id="sig-exp" class="text-[9px] text-slate-400 italic">20+ Years Excellence in Wealth Management</p>
                     </div>
                 </div>
 
@@ -218,17 +217,20 @@
 
         const dictionary = {
             tc: {
-                title: "個人稅務帳戶收益分析", headerTag: "Alex Chan | Broker",
-                quote: "「透過精確的數據分析，了解您的資產在市場波動中的防禦力。」",
+                title: "個人稅務帳戶收益分析", headerTag: "Individual Insurance Broker",
+                subtitle: "逾20年專業管理經驗導航",
+                quote: "「透過精確的數據分析，了解您的資產在市場波動中的表現。」",
                 labelName: "您的稱呼", labelAccType: "帳戶類型", labelAssetType: "目前存放方式",
                 labelBalanceTFSA: "CRA 累積供款額度 (CAD)", labelBalanceRRSP: "RRSP 扣稅額度 (CAD)",
                 optCash: "銀行定期 / GIC", optFund: "互惠基金", optStock: "藍籌股票",
-                btnScan: "⚡ 啟動 AI 收益與風險分析",
+                btnScan: "⚡ 啟動 AI 收益與風險分析", footerNote: "* 本分析系統僅供模擬參考用途過往回報並不代表未來收益。",
                 loadingTitle: "正在模擬市場波動場景...", loadingHint: "正在對比歷史最大回撤與具體生活價值...",
                 resultLabel: "Analysis Report", chartHeader: "17年模擬累積收益增長軌跡", riskTitle: "下行/購買力風險",
                 safeTitle: "配置保障機制", safeStatus: "合約級別保證", safeNote: "受保單/合約條款約束",
                 noteTitle: "數據備註與披露",
-                noteDesc: "模擬數據參考加拿大市場歷史平均。專業配置採用具備「本金保證」機制的收益優化組合。",
+                noteDesc: "目前配置數據參考加拿大市場歷史平均。專業配置採用具備「本金保證」機制的收益優化組合。",
+                sigRole: "Individual Insurance Broker (Canada)",
+                sigExp: "20+ Years Excellence in Wealth Management",
                 btnReset: "↺ 重新開始分析", msgTitle: "系統提示", msgBtn: "了解",
                 waBtn: "WhatsApp 聯繫顧問獲取分析",
                 wcTitle: "已成功複製微信號", wcTip: "請前往微信搜索並添加 Alex 為好友。", wcBtn: "前往微信",
@@ -245,17 +247,20 @@
                 }
             },
             sc: {
-                title: "个人税务账户收益分析", headerTag: "Alex Chan | Broker",
-                quote: "「通过精确的数据分析，了解您的资产在市场波动中的防御力。」",
+                title: "个人税务账户收益分析", headerTag: "Individual Insurance Broker",
+                subtitle: "逾20年专业管理经验导航",
+                quote: "「通过精确的数据分析，了解您的资产在市场波动中的表现。」",
                 labelName: "您的称呼", labelAccType: "账户类型", labelAssetType: "目前存放方式",
                 labelBalanceTFSA: "CRA 累计供款额度 (CAD)", labelBalanceRRSP: "RRSP 扣税额度 (CAD)",
                 optCash: "银行定期 / GIC", optFund: "互惠基金", optStock: "蓝筹股票",
-                btnScan: "⚡ 启动 AI 收益与风险分析",
+                btnScan: "⚡ 启动 AI 收益与风险分析", footerNote: "* 本分析系统仅供模拟参考用途。过往回报并不代表未来收益。",
                 loadingTitle: "正在模拟市场波动场景...", loadingHint: "正在对比历史最大回撤与具体生活价值...",
                 resultLabel: "Analysis Report", chartHeader: "17年模拟累计收益增长轨迹", riskTitle: "下行/购买力风险",
                 safeTitle: "配置保障机制", safeStatus: "合约级别保证", safeNote: "受保单/合约条款约束",
                 noteTitle: "数据备注与披露",
                 noteDesc: "目前配置数据参考加拿大市场历史平均。专业配置采用具备「本金保证」机制的收益优化组合。",
+                sigRole: "Individual Insurance Broker (Canada)",
+                sigExp: "20+ Years Excellence in Wealth Management",
                 btnReset: "↺ 重新开始分析", msgTitle: "系统提示", msgBtn: "了解",
                 scBtn: "微信联系顾问獲取分析",
                 wcTitle: "已成功复制微信号", wcTip: "请前往微信搜索并添加 Alex 为好友。", wcBtn: "前往微信",
@@ -272,28 +277,31 @@
                 }
             },
             en: {
-                title: "Tax-Account Analysis", headerTag: "Alex Chan | Broker",
-                quote: "「Analyze assets with precision and understand defense against market volatility.」",
+                title: "Personal Tax-Account Yield Analysis", headerTag: "Individual Insurance Broker",
+                subtitle: "Guided by 20+ Years of Professional Management",
+                quote: "「Analyze assets with precision and understand your performance against market volatility.」",
                 labelName: "Your Name", labelAccType: "Account Type", labelAssetType: "Current Method",
                 labelBalanceTFSA: "CRA Contribution Room (CAD)", labelBalanceRRSP: "RRSP Deduction Limit (CAD)",
                 optCash: "Bank Savings / GIC", optFund: "Mutual Funds", optStock: "Blue-chip Stocks",
-                btnScan: "⚡ Launch AI Yield & Risk Analysis",
-                loadingTitle: "Simulating market scenarios...", loadingHint: "Comparing drawdown risks and lifestyle impacts...",
+                btnScan: "⚡ Launch AI Yield & Risk Analysis", footerNote: "* This system is for simulation purposes only. Past performance does not guarantee future results.",
+                loadingTitle: "Simulating market scenarios...", loadingHint: "Comparing historical performance and lifestyle impacts...",
                 resultLabel: "Analysis Report", chartHeader: "17-Year Simulated Growth Trajectory", riskTitle: "Downside / Inflation Risk",
                 safeTitle: "Protection Mechanism", safeStatus: "Contractual Guarantee", safeNote: "Subject to policy terms",
                 noteTitle: "Disclosure & References",
-                noteDesc: "Current allocation data refers to historical averages. Professional allocation uses guaranteed yield-optimized portfolios.",
+                noteDesc: "Current allocation data refers to historical market averages. Professional allocation uses guaranteed yield-optimized portfolios.",
+                sigRole: "Individual Insurance Broker (Canada)",
+                sigExp: "20+ Years Excellence in Wealth Management",
                 btnReset: "↺ Start New Analysis", msgTitle: "System Notification", msgBtn: "Got it",
                 waBtn: "Text Alex for Consultation",
                 wcTitle: "WeChat ID Copied", wcTip: "Please search and add Alex on WeChat.", wcBtn: "Open WeChat",
                 chartLabels: ["Current Strategy", "Pro-Managed Portfolio*"],
-                closing: "<br><br>To gain a comprehensive understanding of your financial health, maximize your assets within risk tolerance, and leverage tax-advantaged accounts, you are invited to connect with Alex. With over 20 years of experience in banking and financial advisory, Alex provides precise insights to navigate your wealth optimization.",
+                closing: "<br><br>To gain a comprehensive understanding of your financial health, maximize your assets within risk tolerance, and fully leverage your tax-advantaged accounts, you are invited to connect with Alex for a consultation. With over 20 years of distinguished experience in banking and independent financial advisory, Alex provides precise insights to navigate your wealth optimization.",
                 backupText: (name, gap, acc, asset, risk) => {
                     const gapNum = parseFloat(gap.replace(/,/g,''));
                     const analogy = getSingleAnalogy(gapNum, 'en');
                     let base = `Hello ${name}, keeping ${acc} in savings is safe. However, the $${gap} simulated gap in 17 years is massive. <b>This sum is ${analogy}</b>`;
                     if (asset !== 'cash') {
-                        base = `Hello ${name}, your current setup captures growth but faces a ${risk} drawdown risk. Compared to a Pro-Managed portfolio, you are missing out on $${gap}, which is <b>${analogy}</b>`;
+                        base = `Hello ${name}, your current setup captures growth but faces a ${risk} performance drawdown risk. Compared to a Pro-Managed portfolio, you are missing out on $${gap}, which is <b>${analogy}</b>`;
                     }
                     return base + dictionary.en.closing;
                 }
@@ -312,6 +320,7 @@
             const d = dictionary[lang];
             document.getElementById('ui-title').innerText = d.title;
             document.getElementById('ui-header-tag').innerText = d.headerTag;
+            document.getElementById('ui-subtitle').innerText = d.subtitle;
             document.getElementById('ui-quote').innerText = d.quote;
             document.getElementById('label-name').innerText = d.labelName;
             document.getElementById('label-acc-type').innerText = d.labelAccType;
@@ -320,6 +329,7 @@
             document.getElementById('opt-fund').innerText = d.optFund;
             document.getElementById('opt-stock').innerText = d.optStock;
             document.getElementById('ui-btn-scan').innerText = d.btnScan;
+            document.getElementById('ui-footer-note').innerText = d.footerNote;
             document.getElementById('ui-loading-title').innerText = d.loadingTitle;
             document.getElementById('loading-hint').innerText = d.loadingHint;
             document.getElementById('ui-result-label').innerText = d.resultLabel;
@@ -330,9 +340,14 @@
             document.getElementById('ui-safe-note').innerText = d.safeNote;
             document.getElementById('ui-note-title').innerText = d.noteTitle;
             document.getElementById('ui-note-desc').innerText = d.noteDesc;
+            document.getElementById('sig-role').innerText = d.sigRole;
+            document.getElementById('sig-exp').innerText = d.sigExp;
             document.getElementById('ui-btn-reset').innerText = d.btnReset;
             document.getElementById('msg-modal-title').innerText = d.msgTitle;
             document.getElementById('msg-modal-btn').innerText = d.msgBtn;
+            document.getElementById('wechat-modal-title').innerText = d.wcTitle;
+            document.getElementById('wechat-modal-tip').innerText = d.wcTip;
+            document.getElementById('wechat-modal-btn').innerText = d.wcBtn;
             updateLabelByAccount();
             document.getElementById('btn-tc').classList.toggle('lang-btn-active', lang === 'tc');
             document.getElementById('btn-sc').classList.toggle('lang-btn-active', lang === 'sc');
