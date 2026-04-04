@@ -12,7 +12,7 @@
         .glass { background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(12px); }
         .loading-bar { width: 0%; height: 4px; background: #3b82f6; transition: width 0.4s ease-out; }
         .lang-btn-active { background-color: #3b82f6 !important; color: white !important; }
-        .chart-container { position: relative; height: 350px; width: 100%; }
+        .chart-container { position: relative; height: 400px; width: 100%; }
         @keyframes fadeInScale { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
         .modal-animate { animation: fadeInScale 0.3s ease-out forwards; }
         .profile-img { object-fit: cover; }
@@ -41,7 +41,7 @@
                     <div class="absolute bottom-0 right-0 w-4 h-4 bg-green-500 border-2 border-slate-900 rounded-full"></div>
                 </div>
                 <div class="flex-grow">
-                    <div id="ui-header-tag" class="text-blue-400 font-black tracking-widest text-[9px] uppercase italic leading-tight">Alex Chan | Individual Insurance Broker</div>
+                    <div class="text-blue-400 font-black tracking-widest text-[9px] uppercase italic leading-tight">Alex Chan | Individual Insurance Broker</div>
                     <h1 id="ui-title" class="text-xl font-black italic text-yellow-400 tracking-tight">個人稅務帳戶收益分析</h1>
                     <div id="ui-subtitle" class="text-[9px] opacity-60 italic tracking-widest">逾20年專業管理經驗導航</div>
                 </div>
@@ -84,7 +84,7 @@
                 </div>
             </div>
 
-            <button id="btn-submit-main" onclick="startAnalysis()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-black py-4 rounded-2xl shadow-xl transition-all transform active:scale-95 flex items-center justify-center mt-6">
+            <button id="btn-submit" onclick="startAnalysis()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-black py-4 rounded-2xl shadow-xl transition-all transform active:scale-95 flex items-center justify-center mt-6">
                 <span id="ui-btn-scan">⚡ 啟動 AI 收益與風險分析</span>
             </button>
             <p id="ui-footer-note" class="text-[9px] text-slate-400 text-center mt-4 italic leading-relaxed px-4">
@@ -146,7 +146,7 @@
                     <p class="text-blue-900 text-[11px] font-black flex items-center mb-1">
                         <span class="mr-2">💡</span> <span id="ui-note-title">數據備註與披露</span>
                     </p>
-                    <p id="ui-note-desc" class="text-blue-700 text-[10px] leading-relaxed italic">模擬數據參考加拿大市場歷史平均。專業配置採用具備保險合約保障機制 (Guarantee) 的優化組合，具體保證金額視合約條款而定。</p>
+                    <p id="ui-note-desc" class="text-blue-700 text-[10px] leading-relaxed italic">模擬數據參考加拿大市場歷史平均。專業配置採用具備「本金保證」機制的收益優化組合，具體保證金額視合約條款而定。</p>
                 </div>
             </div>
 
@@ -167,7 +167,7 @@
         </div>
     </div>
 
-    <!-- 微信彈窗 -->
+    <!-- WeChat Modal -->
     <div id="wechat-modal" class="fixed inset-0 bg-black/70 z-[300] hidden items-center justify-center p-6 backdrop-blur-md">
         <div class="bg-white p-8 rounded-[2.5rem] max-w-xs w-full text-center shadow-2xl modal-animate border border-slate-100">
             <div class="text-6xl mb-6">✅</div>
@@ -179,7 +179,7 @@
         </div>
     </div>
 
-    <!-- 提示彈窗 -->
+    <!-- Error/Info Modal -->
     <div id="msg-modal" class="fixed inset-0 bg-black/70 z-[200] hidden items-center justify-center p-6 backdrop-blur-md">
         <div class="bg-white p-8 rounded-[2.5rem] max-w-xs w-full text-center shadow-2xl modal-animate border border-slate-100">
             <div class="text-5xl mb-4">⚠️</div>
@@ -190,7 +190,7 @@
     </div>
 
     <script>
-        const apiKey = "AIzaSyCx5OJu8NnZhNSsh1e0-6iKkW-mpUUAG0o"; 
+        const apiKey = "AIzaSyCx5OJu8NnZhNSsh1e0-6iKkW-mpUUAG0o"; // 環境自動注入
 
         let currentLang = 'tc';
         let wealthChart = null;
@@ -215,7 +215,8 @@
                 btnReset: "↺ 重新開始分析", msgTitle: "系統提示", msgBtn: "了解", waBtn: "WhatsApp 聯繫顧問獲取分析",
                 wcTitle: "已成功複製微信號", wcTip: "WeChat ID: catholicalex<br>請前往微信搜索並添加 Alex 為好友。", wcBtn: "前往微信",
                 chartLabelTarget: "專業管理的投資組合*", chartLabelCurrent: "目前策略模擬表現",
-                closing: "<br><br>如果您希望全面審視財務現狀，在風險可控的前提下追求資產回報最大化，並極大化稅務帳戶的優勢，誠邀您聯絡 Alex 進行初步諮詢。憑藉逾 20 年深耕銀行體系及獨立理財顧問的深厚經驗，Alex 將為您的財富增值提供精確且具價值的專業導航。"
+                closing: "<br><br>如果您希望全面審視財務現狀，在風險可控的前提下追求資產回報最大化，並極大化稅務帳戶的優勢，誠邀您聯絡 Alex 進行初步諮詢。憑藉逾 20 年深耕銀行體系及獨立理財顧問的深厚經驗，Alex 將為您的財富增值提供精確且具價值的專業導航。",
+                backupText: (name, gap, acc, asset, risk) => `你好 ${name}，選擇存放 ${acc} 於銀行存款是一個非常穩健的決定。但數據顯示，17 年後的模擬複利缺口高達 $${gap}。如果您目前配置面臨歷史高達 ${risk} 的下行風險，專業管理配置能有效消除此風險。`
             },
             sc: {
                 title: "个人税务账户收益分析", subtitle: "逾20年专业管理经验导航", quote: "「通过精确的数据分析，了解您的资产在市场波动中的表现。」",
@@ -228,4 +229,236 @@
                 btnReset: "↺ 重新開始分析", msgTitle: "系统提示", msgBtn: "了解", scBtn: "微信联系顾问獲取分析",
                 wcTitle: "已成功复制微信号", wcTip: "WeChat ID: catholicalex<br>请前往微信搜索并添加 Alex 为好友。", wcBtn: "前往微信",
                 chartLabelTarget: "专业管理的投资组合*", chartLabelCurrent: "目前策略模拟表现",
-                closing: "<br><br>如果您希望全面审视财务现状，在风险可控的前提下
+                closing: "<br><br>如果您希望全面审视财务现状，在风险可控的前提下追求资产回报最大化，并极大化税务账户的优势，诚邀您联络 Alex 进行初步咨询。凭借逾 20 年深耕银行体系及獨立理財顧問的深厚經驗，Alex 將為您提供精確且具價值的專業導航。",
+                backupText: (name, gap, acc, asset, risk) => `你好 ${name}，选择存放 ${acc} 於银行存款是非常稳健的决定。但数据显示，17 年後的模拟复利缺口高达 $${gap}。如果您目前配置面临历史高达 ${risk} 的下行风险，專業管理配置能有效消除此風險。`
+            },
+            en: {
+                title: "Personal Tax-Account Analysis", subtitle: "Guided by 20+ Years of Professional Management", quote: "「Analyze assets with precision and understand your performance against market volatility.」",
+                labelName: "Your Name", labelAccType: "Account Type", labelAssetType: "Current Method", labelBalanceTFSA: "CRA Room (CAD)", labelBalanceRRSP: "RRSP Limit (CAD)",
+                optCash: "Bank Savings / GIC", optFund: "Mutual Funds", optStock: "Blue-chip Stocks", btnScan: "⚡ Launch AI Yield & Risk Analysis", footerNote: "* Simulation purposes only. Past performance does not guarantee future results.",
+                loadingTitle: "Simulating market scenarios...", loadingHint: "Comparing performance and lifestyle impacts...",
+                resultLabel: "Analysis Report", chartHeader: "17-Year Simulated Growth Trajectory", riskTitle: "Downside Risk", safeTitle: "Protection Mechanism", safeStatus: "Contractual Guarantee", safeNote: "Subject to policy terms",
+                noteTitle: "Disclosure & References", noteDesc: "Data refers to historical market averages. Professional allocation uses guaranteed portfolios.",
+                sigRole: "Individual Insurance Broker (Canada)", sigExp: "20+ Years Excellence in Wealth Management",
+                btnReset: "↺ Start New Analysis", msgTitle: "System Notification", msgBtn: "Got it", waBtn: "Text Alex for Consultation",
+                wcTitle: "WeChat ID Copied", wcTip: "WeChat ID: catholicalex<br>Please search and add Alex on WeChat.", wcBtn: "Open WeChat",
+                chartLabelTarget: "Pro-Managed Portfolio*", chartLabelCurrent: "Current Strategy Simulation",
+                closing: "<br><br>To gain a comprehensive understanding of your financial health, maximize your assets within risk tolerance, and fully leverage your tax-advantaged accounts, you are invited to connect with Alex for a consultation. With over 20 years of distinguished experience in banking and independent financial advisory, Alex provides precise insights to navigate your wealth optimization."
+            }
+        };
+
+        function setLanguage(lang) {
+            currentLang = lang;
+            const d = dictionary[lang];
+            
+            // 介面文字精確更新 (排除之前導致 Bug 的 ID)
+            document.getElementById('ui-title').innerText = d.title;
+            document.getElementById('ui-subtitle').innerText = d.subtitle;
+            document.getElementById('ui-quote').innerText = d.quote;
+            document.getElementById('label-name').innerText = d.labelName;
+            document.getElementById('label-acc-type').innerText = d.labelAccType;
+            document.getElementById('label-asset-type').innerText = d.labelAssetType;
+            document.getElementById('opt-cash').innerText = d.optCash;
+            document.getElementById('opt-fund').innerText = d.optFund;
+            document.getElementById('opt-stock').innerText = d.optStock;
+            document.getElementById('ui-btn-scan').innerText = d.btnScan;
+            document.getElementById('ui-footer-note').innerText = d.footerNote;
+            document.getElementById('ui-loading-title').innerText = d.loadingTitle;
+            document.getElementById('loading-hint').innerText = d.loadingHint;
+            document.getElementById('ui-result-label').innerText = d.resultLabel;
+            document.getElementById('ui-chart-header').innerText = d.chartHeader;
+            document.getElementById('ui-risk-title').innerText = d.riskTitle;
+            document.getElementById('ui-safe-title').innerText = d.safeTitle;
+            document.getElementById('ui-safe-status').innerText = d.safeStatus;
+            document.getElementById('ui-safe-note').innerText = d.safeNote;
+            document.getElementById('ui-note-title').innerText = d.noteTitle;
+            document.getElementById('ui-note-desc').innerText = d.noteDesc;
+            document.getElementById('sig-role').innerText = d.sigRole;
+            document.getElementById('sig-exp').innerText = d.sigExp;
+            document.getElementById('ui-btn-reset').innerText = d.btnReset;
+            document.getElementById('msg-modal-title').innerText = d.msgTitle;
+            document.getElementById('msg-modal-btn').innerText = d.msgBtn;
+            document.getElementById('wechat-modal-title').innerText = d.wcTitle;
+            document.getElementById('wechat-modal-tip').innerHTML = d.wcTip;
+            document.getElementById('wechat-modal-btn').innerText = d.wcBtn;
+
+            updateLabelByAccount();
+
+            // 按鈕樣式更新
+            document.getElementById('btn-tc').classList.toggle('lang-btn-active', lang === 'tc');
+            document.getElementById('btn-sc').classList.toggle('lang-btn-active', lang === 'sc');
+            document.getElementById('btn-en').classList.toggle('lang-btn-active', lang === 'en');
+
+            // 聯絡按鈕動態切換
+            document.getElementById('cta-wa-link').classList.add('hidden');
+            document.getElementById('cta-wechat-btn').classList.add('hidden');
+            document.getElementById('cta-sms-link').classList.add('hidden');
+            if (lang === 'sc') document.getElementById('cta-wechat-btn').classList.remove('hidden');
+            else if (lang === 'en') document.getElementById('cta-sms-link').classList.remove('hidden');
+            else document.getElementById('cta-wa-link').classList.remove('hidden');
+
+            if (analysisState.isFinished) {
+                renderChart(analysisState.v1, analysisState.v2, analysisState.r1);
+                const isCash = analysisState.asset === 'cash';
+                const infText = { tc: "通脹侵蝕", sc: "通胀侵蚀", en: "Inflation" }[currentLang];
+                document.getElementById('ui-max-drawdown').innerText = isCash ? infText : `-${analysisState.risk}`;
+                document.getElementById('ui-risk-note').innerText = rates[analysisState.asset].riskDetail[currentLang];
+            }
+        }
+
+        function updateLabelByAccount() {
+            const accType = document.getElementById('account-type').value;
+            const label = document.getElementById('ui-label-balance');
+            label.innerText = accType === 'TFSA' ? dictionary[currentLang].labelBalanceTFSA : dictionary[currentLang].labelBalanceRRSP;
+        }
+
+        function showMsg(text) { 
+            document.getElementById('msg-text').innerText = text; 
+            document.getElementById('msg-modal').classList.remove('hidden'); 
+            document.getElementById('msg-modal').classList.add('flex'); 
+        }
+
+        function closeMsg() { 
+            document.getElementById('msg-modal').classList.add('hidden'); 
+            document.getElementById('msg-modal').classList.remove('flex'); 
+        }
+
+        async function startAnalysis() {
+            const balanceVal = document.getElementById('balance').value;
+            const balance = parseFloat(balanceVal);
+            if(isNaN(balance) || balance <= 0) { 
+                showMsg(currentLang === 'en' ? "Please enter a valid amount." : "請輸入有效的金額。"); 
+                return; 
+            }
+            
+            const nameInput = document.getElementById('user-name').value.trim();
+            const name = nameInput || (currentLang === 'en' ? "Client" : "客戶");
+            const accType = document.getElementById('account-type').value;
+            const assetType = document.getElementById('asset-type').value;
+
+            document.getElementById('step-form').classList.add('hidden');
+            document.getElementById('step-loading').classList.remove('hidden');
+
+            const finalCurrent = balance * Math.pow(1 + rates[assetType].yield, 17);
+            const finalPro = balance * Math.pow(1 + rates.pro.yield, 17);
+            const gapStr = parseInt(finalPro - finalCurrent).toLocaleString();
+
+            analysisState = { isFinished: true, v1: finalCurrent, v2: finalPro, r1: rates[assetType].yield, balance, name, asset: assetType, acc: accType, gap: gapStr, risk: rates[assetType].risk };
+
+            const smsBody = `Hi Alex, I finished my ${accType} analysis. I'm interested in the pro-managed portfolio.`;
+            document.getElementById('cta-sms-link').href = `sms:+17783198129?body=${encodeURIComponent(smsBody)}`;
+            const msgBodyTC = `你好！我係 ${name}，我剛剛完成咗個人稅務帳戶收益分析 (${accType})。我對具備合約保障嘅專業配置組合好有興趣。`;
+            document.getElementById('cta-wa-link').href = `https://wa.me/17783198129?text=${encodeURIComponent(msgBodyTC)}`;
+
+            const langPrompt = { tc: "廣東話繁體中文", sc: "簡體中文", en: "Professional English" }[currentLang];
+            const prompt = `Assistant for Alex Chan (20+ years experience). Report for ${name} regarding $${balance.toLocaleString()} in ${accType}. Language: ${langPrompt}. ANALOGY: If gap > $1.5M: Detached House in West Vancouver. Gap $800k-$1.5M: New Townhouse in Richmond. Gap $350k-$800k: Luxury Motorhome. Gap $150k-$350k: Premium Pick-up Truck. Else: High-performance EV SUV. STRICTLY write in ${langPrompt} only. No mix of languages. No English labels like "Analysis Report" in the text content. CLOSING: "${dictionary[currentLang].closing.replace('<br><br>', '')}"`;
+
+            try {
+                // 使用最新的 Gemini 2.5 Flash 模型
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+                });
+                const data = await response.json();
+                const aiText = data.candidates?.[0]?.content?.parts?.[0]?.text || dictionary[currentLang].backupText(name, gapStr, accType, assetType, rates[assetType].risk);
+                document.getElementById('report-content').innerHTML = aiText.replace(/\n/g, '<br>');
+                finish();
+            } catch (e) { 
+                document.getElementById('report-content').innerHTML = dictionary[currentLang].backupText(name, gapStr, accType, assetType, rates[assetType].risk) + dictionary[currentLang].closing;
+                finish();
+            }
+        }
+
+        function finish() {
+            document.getElementById('progress-bar').style.width = "100%";
+            setTimeout(() => {
+                document.getElementById('step-loading').classList.add('hidden');
+                document.getElementById('step-result').classList.remove('hidden');
+                renderChart(analysisState.v1, analysisState.v2, analysisState.r1);
+                const isCash = analysisState.asset === 'cash';
+                const infText = { tc: "通脹侵蝕", sc: "通胀侵蚀", en: "Inflation" }[currentLang];
+                document.getElementById('ui-max-drawdown').innerText = isCash ? infText : `-${analysisState.risk}`;
+                document.getElementById('ui-risk-note').innerText = rates[analysisState.asset].riskDetail[currentLang];
+            }, 500);
+        }
+
+        function renderChart(v1, v2, r1) {
+            const ctx = document.getElementById('wealthChart').getContext('2d');
+            if (wealthChart) wealthChart.destroy();
+            const labels = Array.from({length: 18}, (_, i) => i === 0 ? "0" : `Y${i}`);
+            const dataCurrent = []; const dataPro = []; const p = analysisState.balance;
+            for (let t = 0; t <= 17; t++) {
+                dataCurrent.push((p * Math.pow(1 + r1, t)).toFixed(0));
+                dataPro.push((p * Math.pow(1 + 0.11, t)).toFixed(0));
+            }
+            wealthChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        { label: dictionary[currentLang].chartLabelTarget, data: dataPro, borderColor: '#3b82f6', backgroundColor: 'rgba(59, 130, 246, 0.1)', fill: true, tension: 0.4, borderWidth: 3, pointRadius: (c) => c.dataIndex === 17 ? 6 : 0, pointBackgroundColor: '#3b82f6' },
+                        { label: dictionary[currentLang].chartLabelCurrent, data: dataCurrent, borderColor: '#94a3b8', backgroundColor: 'transparent', fill: false, tension: 0.4, borderWidth: 2, borderDash: [5, 5], pointRadius: (c) => c.dataIndex === 17 ? 4 : 0, pointBackgroundColor: '#94a3b8' }
+                    ]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } },
+                    layout: { padding: { top: 110, right: 20 } },
+                    scales: {
+                        y: { 
+                            display: true, position: 'right', grid: { color: 'rgba(0,0,0,0.05)' }, 
+                            ticks: { font: { size: 9 }, callback: (val) => '$' + (val/1000) + 'k' },
+                            suggestedMax: Math.max(...dataPro) * 1.5 // 留出 50% 頂部空間給文字
+                        },
+                        x: { display: true, grid: { display: false }, ticks: { font: { size: 9 }, autoSkip: true, maxTicksLimit: 6 } }
+                    }
+                },
+                plugins: [{
+                    id: 'customLabels',
+                    afterDraw: (chart) => {
+                        const { ctx } = chart; ctx.save();
+                        const metaPro = chart.getDatasetMeta(0); const lastPPro = metaPro.data[17];
+                        const metaCurr = chart.getDatasetMeta(1); const lastPCurr = metaCurr.data[17];
+                        ctx.font = 'bold 11px Inter, "Noto Sans TC"'; ctx.textAlign = 'right'; ctx.textBaseline = 'bottom';
+                        
+                        // 藍色標籤
+                        ctx.fillStyle = '#1d4ed8'; 
+                        ctx.fillText(dictionary[currentLang].chartLabelTarget.replace('*',''), lastPPro.x - 10, lastPPro.y - 25); 
+                        
+                        // 灰色標籤
+                        ctx.fillStyle = '#64748b'; 
+                        ctx.textBaseline = 'top'; 
+                        ctx.fillText(dictionary[currentLang].chartLabelCurrent, lastPCurr.x - 10, lastPCurr.y + 12);
+                        ctx.restore();
+                    }
+                }]
+            });
+        }
+
+        function copyWeChat() { 
+            const el = document.createElement('textarea'); 
+            el.value = 'catholicalex'; 
+            document.body.appendChild(el); 
+            el.select(); 
+            document.execCommand('copy'); 
+            document.body.removeChild(el); 
+            document.getElementById('wechat-modal').classList.remove('hidden'); 
+            document.getElementById('wechat-modal').classList.add('flex'); 
+        }
+
+        function closeWechatModal() { 
+            document.getElementById('wechat-modal').classList.add('hidden'); 
+            document.getElementById('wechat-modal').classList.remove('flex'); 
+            window.location.href = "weixin://"; 
+        }
+
+        function resetApp() { 
+            analysisState.isFinished = false; 
+            document.getElementById('step-result').classList.add('hidden'); 
+            document.getElementById('step-form').classList.remove('hidden'); 
+            window.scrollTo({ top: 0, behavior: 'smooth' }); 
+        }
+
+        window.onload = () => setLanguage('tc');
+    </script>
+</body>
+</html>
