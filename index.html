@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Alex Chan | TFSA & RRSP 智慧分析</title>
+    <title>Alex Chan | TFSA & RRSP 個人稅務帳戶收益分析</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&family=Noto+Sans+SC:wght@400;700;900&display=swap" rel="stylesheet">
@@ -32,20 +32,20 @@
         <!-- Header -->
         <div class="bg-slate-900 p-8 text-center text-white">
             <div id="ui-header-tag" class="text-blue-400 font-black tracking-widest text-[10px] mb-2 uppercase italic leading-tight">Alex Chan | Individual Insurance Broker</div>
-            <h1 id="ui-title" class="text-2xl font-black italic text-yellow-400 tracking-tight">TFSA/RRSP 財富增長分析</h1>
-            <div id="ui-subtitle" class="text-[10px] opacity-60 mt-2 italic tracking-widest">專業註冊帳戶增長分析系統</div>
+            <h1 id="ui-title" class="text-2xl font-black italic text-yellow-400 tracking-tight">個人稅務帳戶收益分析</h1>
+            <div id="ui-subtitle" class="text-[10px] opacity-60 mt-2 italic tracking-widest">個人稅務帳戶收益分析系統</div>
         </div>
 
         <!-- 第一步：輸入表單 -->
         <div id="step-form" class="p-8 space-y-5">
             <div class="text-center">
-                <p id="ui-quote" class="text-slate-500 text-sm italic font-bold leading-relaxed">「助您優化註冊帳戶資產配置，釋放財富潛力。」</p>
+                <p id="ui-quote" class="text-slate-500 text-sm italic font-bold leading-relaxed">「透過精確的稅務帳戶分析，優化您的個人資產收益空間。」</p>
             </div>
             
             <div class="space-y-4">
                 <div>
                     <label id="ui-label-name" class="block text-[10px] font-bold text-slate-400 uppercase mb-1 ml-1 tracking-widest">您的稱呼</label>
-                    <input id="user-name" type="text" placeholder="例如：Chris" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-sm">
+                    <input id="user-name" type="text" placeholder="例如：Chris" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-sm transition-all">
                 </div>
                 
                 <div class="grid grid-cols-2 gap-3">
@@ -68,44 +68,47 @@
 
                 <div>
                     <label id="ui-label-balance" class="block text-[10px] font-bold text-slate-400 uppercase mb-1 ml-1 tracking-widest">累積供款額度 (CAD)</label>
-                    <input id="balance" type="number" placeholder="例如: 109000" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-sm">
+                    <input id="balance" type="number" placeholder="例如: 109000" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-sm transition-all">
                 </div>
             </div>
 
             <button onclick="startAnalysis()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-black py-4 rounded-2xl shadow-xl transition-all transform active:scale-95 flex items-center justify-center mt-6">
-                <span id="ui-btn-scan">⚡ 啟動 AI 深度分析</span>
+                <span id="ui-btn-scan">⚡ 啟動 AI 收益深度分析</span>
             </button>
         </div>
 
         <!-- 第二步：載入中 -->
         <div id="step-loading" class="hidden p-16 text-center space-y-8">
             <div class="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
-            <h3 id="ui-loading-title" class="text-xl font-black text-slate-800">AI 正在進行財富分析...</h3>
+            <h3 id="ui-loading-title" class="text-xl font-black text-slate-800">AI 正在分析帳戶收益...</h3>
             <div class="w-full bg-gray-100 rounded-full h-1.5 overflow-hidden">
                 <div id="progress-bar" class="loading-bar"></div>
             </div>
-            <p id="loading-hint" class="text-[10px] text-slate-400 italic">正在優化 AI 智慧分析路徑...</p>
+            <p id="loading-hint" class="text-[10px] text-slate-400 italic">正在優化個人稅務收益路徑...</p>
         </div>
 
         <!-- 第三步：分析結果 -->
         <div id="step-result" class="hidden flex flex-col h-[650px] bg-white">
             <div class="p-6 space-y-6 flex-grow overflow-y-auto">
                 <div class="flex items-center justify-between text-blue-600 border-b border-blue-50 pb-3">
-                    <span id="ui-result-header" class="font-black text-sm italic tracking-widest">Alex Chan AI 智慧分析結果</span>
+                    <span id="ui-result-header" class="font-black text-sm italic tracking-widest">稅務帳戶收益分析結果</span>
                 </div>
                 <div class="bg-slate-50 p-4 rounded-3xl border border-slate-100 shadow-inner text-center">
-                    <h4 class="text-[10px] font-black text-slate-400 mb-4 uppercase tracking-widest italic">17年財富累積對比預測</h4>
+                    <h4 class="text-[10px] font-black text-slate-400 mb-4 uppercase tracking-widest italic text-center">17年預期累積收益對比</h4>
                     <div class="chart-container"><canvas id="wealthChart"></canvas></div>
                 </div>
                 <div id="report-content" class="text-slate-700 leading-relaxed text-[15px] space-y-4 px-2 italic"></div>
                 <div class="p-5 bg-blue-50 rounded-3xl border border-blue-100 mb-4">
-                    <p class="text-blue-700 text-[11px] leading-relaxed italic font-medium">Alex 建議您考慮配置具備「保證機制」的組合，在免稅/延稅空間內實現長線投資最大化。</p>
+                    <p class="text-blue-700 text-[11px] leading-relaxed italic font-medium">建議考慮配置具備「專業管理」與「保證機制」的收益組合，在免稅空間內實現個人長期收益最大化。</p>
                 </div>
             </div>
-            <div class="p-6 bg-slate-900 text-white text-center flex-shrink-0">
-                <a id="cta-wa-link" href="#" target="_blank" class="w-full bg-[#25D366] text-white font-black py-4 rounded-xl flex items-center justify-center no-underline shadow-lg">
-                    WhatsApp 聯繫 Alex
+            <div class="p-6 bg-slate-900 text-white text-center flex-shrink-0 space-y-3">
+                <a id="cta-wa-link" href="#" target="_blank" class="w-full bg-[#25D366] text-white font-black py-4 rounded-xl flex items-center justify-center no-underline shadow-lg active:scale-95 transition-all">
+                    WhatsApp 聯繫顧問詳談
                 </a>
+                <button onclick="resetApp()" class="w-full bg-slate-700 text-white font-bold py-3 rounded-xl flex items-center justify-center active:scale-95 transition-all text-sm">
+                    ↺ 重新開始分析
+                </button>
             </div>
         </div>
     </div>
@@ -121,7 +124,6 @@
     </div>
 
     <script>
-        // 您的 API Key (已確認結尾為 AG0o)
         const apiKey = "AIzaSyCx5OJu8NnZhNSsh1e0-6iKkW-mpUUAG0o"; 
 
         let currentLang = 'tc';
@@ -152,10 +154,14 @@
             label.innerText = accType === 'TFSA' ? (currentLang === 'tc' ? "CRA 累積供款額度 (CAD)" : "CRA 累计供款额度 (CAD)") : (currentLang === 'tc' ? "RRSP 扣稅額度 (CAD)" : "RRSP 扣税额度 (CAD)");
         }
 
-        // --- 最終極致穩定的 API 呼叫：多路徑備選方案 ---
+        function resetApp() {
+            document.getElementById('step-result').classList.add('hidden');
+            document.getElementById('step-form').classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
         async function fetchAIResponse(prompt, key) {
             const trimmedKey = key.trim();
-            // 嘗試路徑清單：優先嘗試最輕量的 1.5-flash-8b
             const attempts = [
                 { ver: "v1beta", model: "gemini-1.5-flash-8b" },
                 { ver: "v1beta", model: "gemini-1.5-flash" },
@@ -166,7 +172,7 @@
             for (let i = 0; i < attempts.length; i++) {
                 const config = attempts[i];
                 try {
-                    document.getElementById('loading-hint').innerText = `正在連接 AI 智慧分析路徑 (Step ${i+1})...`;
+                    document.getElementById('loading-hint').innerText = `正在連接 AI 分析路徑 (Step ${i+1})...`;
                     const url = `https://generativelanguage.googleapis.com/${config.ver}/models/${config.model}:generateContent?key=${trimmedKey}`;
                     
                     const response = await fetch(url, {
@@ -183,7 +189,7 @@
                 } catch (e) {
                     lastErr = e.message;
                 }
-                await new Promise(r => setTimeout(r, 500)); // 增加間隔，避免請求過快
+                await new Promise(r => setTimeout(r, 500));
             }
             throw new Error(lastErr || "API 無回應");
         }
@@ -209,19 +215,19 @@
             const finalAlex = balance * Math.pow(1 + rates.alex, 17);
             const gap = finalAlex - finalCurrent;
 
-            const msg = `你好 Alex！我係 ${name}，我剛剛完成了您的 AI 財富分析 (${accType})，想諮詢您的專業配置建議。`;
+            const msg = `你好！我係 ${name}，我剛剛完成了個人稅務帳戶收益分析 (${accType})，想諮詢關於專業配置的細節建議。`;
             document.getElementById('cta-wa-link').href = `https://wa.me/17783198129?text=${encodeURIComponent(msg)}`;
 
             const promptText = `
-                你是理財顧問 Alex Chan 的助理。Alex 有 18 年經驗。
+                你是一位專業理財顧問的助手，負責「個人稅務帳戶收益分析系統」。
                 請為 ${name} 寫一份 180 字廣東話分析。
-                他在 ${accType} 有 $${balance.toLocaleString()}，目前回報 ${(rates[assetType]*100).toFixed(1)}%。
-                計算顯示 17 年後的差距高達 $${parseInt(gap).toLocaleString()}。
+                背景：他在 ${accType} 有 $${balance.toLocaleString()}，目前配置是 ${assetType}。
+                關鍵：若轉向「專業管理投資組合」，17 年後的預期收益差距高達 $${parseInt(gap).toLocaleString()}。
                 要求：
-                1. 用震撼的比喻（如買一輛超跑）說明這筆錢的價值。
-                2. 指出留在銀行是浪費免稅增長空間。
-                3. 強調 Alex 的『增長與保證』策略。
-                禁止使用『診斷』，統一用『分析』。
+                1. 用震撼的比喻（如買一輛超跑或置業首期）說明這筆免稅收益的價值。
+                2. 指出留在傳統銀行低息戶口是嚴重浪費個人稅務帳戶的免稅增長空間。
+                3. 強調「專業管理組合」與「增長保證」在個人財務規劃中的優勢。
+                禁止使用『診斷』，統一用『分析』。不要過度提及個人姓名，重點放在「專業管理配置系統」。
             `;
 
             try {
@@ -237,8 +243,7 @@
 
             } catch (e) { 
                 console.error("AI Error:", e);
-                // 自動轉為「智能精算簡報」模式，確保數據震撼力
-                const backupReport = `你好 ${name}，這是您的自動精算簡報：<br><br>根據 17 年複利模擬，您的 ${accType} 帳戶目前正處於「增長受限」狀態。預計與 Alex 建議的專業配置相比，您將面臨高達 <b>$${parseInt(gap).toLocaleString()}</b> 的財富缺口。這筆差額足以大幅提升您的退休生活品質。請立即點擊下方按鈕聯繫 Alex 獲取完整分析。`;
+                const backupReport = `你好 ${name}，這是您的個人稅務帳戶收益精算簡報：<br><br>根據 17 年複利模擬，您的 ${accType} 帳戶目前正處於「收益受限」狀態。預計與「專業管理投資組合」的配置相比，您將面臨高達 <b>$${parseInt(gap).toLocaleString()}</b> 的收益缺口。這筆差額足夠讓您的退休生活品質產生質的飛躍。請立即點擊下方按鈕聯繫顧問獲取完整專業分析。`;
                 document.getElementById('report-content').innerHTML = backupReport;
                 
                 setTimeout(() => {
@@ -255,7 +260,7 @@
             wealthChart = new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: ["目前策略", "Alex 建議"],
+                    labels: ["目前策略", "專業管理配置"],
                     datasets: [{
                         data: [v1.toFixed(0), v2.toFixed(0)],
                         backgroundColor: ['#cbd5e1', '#3b82f6'],
