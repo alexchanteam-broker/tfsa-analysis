@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alex Chan | 專屬品牌 QR Code 生成器</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 使用 QRCode.js 基礎庫 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Noto Sans TC', sans-serif; background-color: #f1f5f9; }
+        .poster-canvas {
+            width: 350px;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            border-radius: 2.5rem;
+            padding: 2.5rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            position: relative;
+        }
+        #qr-wrapper {
+            background: white;
+            padding: 12px;
+            border-radius: 1.5rem;
+            display: inline-block;
+            position: relative;
+        }
+        #qrcode-canvas {
+            display: none; /* 隱藏原始生成，改用畫布合併 */
+        }
+        #final-qr-image {
+            width: 200px;
+            height: 200px;
+            border-radius: 1rem;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center p-6 space-y-10">
+
+    <!-- 工具控制區 -->
+    <div class="max-w-md w-full bg-white p-8 rounded-[2rem] shadow-xl border border-gray-100">
+        <h2 class="text-2xl font-black text-slate-800 mb-6 flex items-center">
+            <span class="mr-2">🎨</span> 品牌化 QR Code 工具
+        </h2>
+        
+        <div class="space-y-5">
+            <div>
+                <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 ml-1">第一步：輸入 App 網址</label>
+                <input id="app-url" type="text" placeholder="https://alexchanteam-broker.github.io/tfsa-analysis/" 
+                       class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none transition-all text-sm">
+            </div>
+
+            <div>
+                <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 ml-1">第二步：上傳個人頭像</label>
+                <input id="photo-input" type="file" accept="image/*" 
+                       class="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer">
+            </div>
+
+            <button onclick="processQRCode()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-black py-4 rounded-2xl shadow-lg transition-all active:scale-95">
+                生成專屬防偽 QR Code
+            </button>
+        </div>
+    </div>
+
+    <!-- 預覽海報區 -->
+    <div id="poster" class="poster-canvas text-center text-white relative overflow-hidden">
+        <!-- 裝飾背景 -->
+        <div class="absolute -top-10 -right-10 w-32 h-32 bg-blue-500/10 rounded-full blur-3xl"></div>
+        <div class="absolute -bottom-10 -left-10 w-32 h-32 bg-yellow-500/10 rounded-full blur-3xl"></div>
+
+        <div class="mb-6">
+            <div class="text-blue-400 font-black tracking-widest text-[10px] mb-1 uppercase italic">Wealth Management</div>
+            <h3 class="text-2xl font-black italic text-yellow-400 tracking-tight">Alex Chan</h3>
+            <p class="text-[9px] opacity-60 uppercase tracking-tighter">Individual Insurance Broker</p>
+        </div>
+
+        <div class="bg-white/5 p-6 rounded-[2rem] border border-white/10 backdrop-blur-sm mb-6">
+            <h4 class="text-lg font-black mb-5 leading-tight">
+                即刻掃描分析<br>您的 <span class="text-yellow-400 underline decoration-yellow-400">TFSA/RRSP</span><br>財富增長潛力
+            </h4>
+            
+            <div id="qr-wrapper">
+                <!-- 這裡會顯示最終合併了頭像的 QR Code -->
+                <canvas id="main-canvas" width="400" height="400" style="display:none;"></canvas>
+                <img id="final-qr-image" src="" alt="QR Code">
+            </div>
+            
+            <p class="text-[10px] font-bold text-blue-300 italic mt-4">⚡ AI 智慧收益分析系統</p>
+        </div>
+
+        <div class="space-y-1">
+            <p class="text-[8px] opacity-40 italic font-medium uppercase tracking-widest leading-relaxed">
+                Unique Identity Protected Analysis.<br>Exclusively managed by Alex Chan.
+            </p>
+        </div>
+    </div>
+
+    <!-- 用於生成 QR 的隱藏節點 -->
+    <div id="qrcode-raw" style="display:none;"></div>
+
+    <div class="text-slate-400 text-xs italic text-center max-w-xs">
+        * 操作指引：上傳照片後點擊生成。完成後請對下方海報進行截圖，用於 IG 或微信推廣。
+    </div>
+
+    <script>
+        function processQRCode() {
+            const url = document.getElementById('app-url').value;
+            const photoInput = document.getElementById('photo-input');
+            
+            if (!url) {
+                alert("請先輸入您的網址");
+                return;
+            }
+
+            // 1. 生成基礎 QR Code (高容錯率 H 以支持中央圖標)
+            const qrContainer = document.getElementById('qrcode-raw');
+            qrContainer.innerHTML = "";
+            const qrcode = new QRCode(qrContainer, {
+                text: url,
+                width: 400,
+                height: 400,
+                colorDark: "#0f172a",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H
+            });
+
+            // 等待 QR 生成
+            setTimeout(() => {
+                const qrCanvas = qrContainer.querySelector('canvas');
+                if (!qrCanvas) return;
+
+                const canvas = document.getElementById('main-canvas');
+                const ctx = canvas.getContext('2d');
+                
+                // 2. 將 QR 畫到主畫布上
+                ctx.drawImage(qrCanvas, 0, 0);
+
+                // 3. 如果有上傳照片，處理照片
+                if (photoInput.files && photoInput.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const img = new Image();
+                        img.onload = function() {
+                            const size = 100; // 頭像大小
+                            const x = (canvas.width - size) / 2;
+                            const y = (canvas.height - size) / 2;
+
+                            // 繪製圓形裁切區域
+                            ctx.save();
+                            
+                            // 先畫一個白色底圓（邊框）
+                            ctx.beginPath();
+                            ctx.arc(canvas.width/2, canvas.height/2, (size/2) + 8, 0, Math.PI * 2);
+                            ctx.fillStyle = "white";
+                            ctx.fill();
+
+                            // 裁切圓形頭像
+                            ctx.beginPath();
+                            ctx.arc(canvas.width/2, canvas.height/2, size/2, 0, Math.PI * 2);
+                            ctx.clip();
+                            
+                            // 繪製頭像 (維持比例)
+                            const aspect = img.width / img.height;
+                            let drawW, drawH;
+                            if (aspect > 1) {
+                                drawH = size;
+                                drawW = size * aspect;
+                            } else {
+                                drawW = size;
+                                drawH = size / aspect;
+                            }
+                            ctx.drawImage(img, x - (drawW-size)/2, y - (drawH-size)/2, drawW, drawH);
+                            
+                            ctx.restore();
+
+                            // 4. 輸出最終圖片
+                            document.getElementById('final-qr-image').src = canvas.toDataURL("image/png");
+                        };
+                        img.src = e.target.result;
+                    };
+                    reader.readAsDataURL(photoInput.files[0]);
+                } else {
+                    // 如果沒上傳照片，直接顯示 QR
+                    document.getElementById('final-qr-image').src = qrCanvas.toDataURL("image/png");
+                }
+            }, 100);
+        }
+
+        // 初始化
+        window.onload = () => {
+            document.getElementById('app-url').value = "https://alexchanteam-broker.github.io/tfsa-analysis/";
+            processQRCode();
+        };
+    </script>
+</body>
+</html>
