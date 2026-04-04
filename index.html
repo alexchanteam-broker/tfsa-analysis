@@ -15,7 +15,6 @@
         .chart-container { position: relative; height: 260px; width: 100%; }
         @keyframes fadeInScale { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
         .modal-animate { animation: fadeInScale 0.3s ease-out forwards; }
-        .risk-pill { padding: 2px 10px; border-radius: 99px; font-size: 10px; font-weight: 800; }
     </style>
 </head>
 <body class="min-h-screen flex items-center justify-center p-4">
@@ -45,31 +44,31 @@
             
             <div class="space-y-4">
                 <div>
-                    <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1 ml-1 tracking-widest">您的稱呼</label>
-                    <input id="user-name" type="text" placeholder="例如：Chris" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-sm transition-all">
+                    <label id="label-name" class="block text-[10px] font-bold text-slate-400 uppercase mb-1 ml-1 tracking-widest">您的稱呼</label>
+                    <input id="user-name" type="text" placeholder="Chris" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-sm transition-all">
                 </div>
                 
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1 ml-1 tracking-widest">帳戶類型</label>
+                        <label id="label-acc-type" class="block text-[10px] font-bold text-slate-400 uppercase mb-1 ml-1 tracking-widest">帳戶類型</label>
                         <select id="account-type" onchange="updateLabelByAccount()" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none text-sm cursor-pointer">
                             <option value="TFSA">TFSA</option>
                             <option value="RRSP">RRSP</option>
                         </select>
                     </div>
                     <div>
-                        <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1 ml-1 tracking-widest">目前存放方式</label>
+                        <label id="label-asset-type" class="block text-[10px] font-bold text-slate-400 uppercase mb-1 ml-1 tracking-widest">目前存放方式</label>
                         <select id="asset-type" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none text-sm cursor-pointer">
-                            <option value="cash">銀行定期 / GIC</option>
-                            <option value="fund">互惠基金</option>
-                            <option value="stock">藍籌股票</option>
+                            <option value="cash" id="opt-cash">銀行定期 / GIC</option>
+                            <option value="fund" id="opt-fund">互惠基金</option>
+                            <option value="stock" id="opt-stock">藍籌股票</option>
                         </select>
                     </div>
                 </div>
 
                 <div>
                     <label id="ui-label-balance" class="block text-[10px] font-bold text-slate-400 uppercase mb-1 ml-1 tracking-widest">累積供款額度 (CAD)</label>
-                    <input id="balance" type="number" placeholder="例如: 109000" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-sm transition-all">
+                    <input id="balance" type="number" placeholder="109000" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-sm transition-all">
                 </div>
             </div>
 
@@ -97,22 +96,22 @@
 
                 <!-- 收益增長圖 -->
                 <div class="bg-slate-50 p-4 rounded-3xl border border-slate-100 shadow-inner">
-                    <h4 class="text-[10px] font-black text-center text-slate-400 mb-4 uppercase tracking-widest italic">17年預期累積收益對比</h4>
+                    <h4 id="ui-chart-header" class="text-[10px] font-black text-center text-slate-400 mb-4 uppercase tracking-widest italic">17年預期累積收益對比</h4>
                     <div class="chart-container"><canvas id="wealthChart"></canvas></div>
                 </div>
 
                 <!-- 風險對比區塊 -->
                 <div class="grid grid-cols-2 gap-3">
                     <div class="p-4 bg-red-50 rounded-2xl border border-red-100">
-                        <p class="text-[10px] font-black text-red-400 uppercase mb-2">下行/購買力風險</p>
+                        <p id="ui-risk-title" class="text-[10px] font-black text-red-400 uppercase mb-2">下行/購買力風險</p>
                         <p id="ui-max-drawdown" class="text-xl font-black text-red-600">- --%</p>
                         <p id="ui-risk-note" class="text-[9px] text-red-400 mt-1 italic text-wrap leading-tight">若遇市場波動或通脹，資產將受損</p>
                     </div>
                     <div class="p-4 bg-green-50 rounded-2xl border border-green-100 relative overflow-hidden">
                         <div class="absolute -right-2 -top-2 opacity-10 text-green-600">🛡️</div>
-                        <p class="text-[10px] font-black text-green-500 uppercase mb-2">專業配置保障機制</p>
-                        <p class="text-xl font-black text-green-600">本金保證</p>
-                        <p class="text-[9px] text-green-500 mt-1 italic leading-tight">具備合約級別安全墊</p>
+                        <p id="ui-safe-title" class="text-[10px] font-black text-green-500 uppercase mb-2">專業配置保障機制</p>
+                        <p id="ui-safe-status" class="text-xl font-black text-green-600">本金保證</p>
+                        <p id="ui-safe-note" class="text-[9px] text-green-500 mt-1 italic leading-tight">具備合約級別安全墊</p>
                     </div>
                 </div>
                 
@@ -120,9 +119,9 @@
 
                 <div class="p-5 bg-blue-50 rounded-3xl border border-blue-100 mb-4">
                     <p class="text-blue-900 text-[11px] font-black flex items-center mb-1">
-                        <span class="mr-2">💡</span> 數據備註
+                        <span class="mr-2">💡</span> <span id="ui-note-title">數據備註</span>
                     </p>
-                    <p class="text-blue-700 text-[10px] leading-relaxed italic">目前配置數據參考加拿大市場歷史平均。專業配置採用具備「本金保證」機制的收益優化組合。</p>
+                    <p id="ui-note-desc" class="text-blue-700 text-[10px] leading-relaxed italic">目前配置數據參考加拿大市場歷史平均。專業配置採用具備「本金保證」機制的收益優化組合。</p>
                 </div>
             </div>
 
@@ -130,10 +129,25 @@
                 <a id="cta-wa-link" href="#" target="_blank" class="w-full bg-[#25D366] text-white font-black py-4 rounded-xl flex items-center justify-center no-underline shadow-lg active:scale-95 transition-all">
                     WhatsApp 聯繫顧問獲取分析
                 </a>
-                <button onclick="resetApp()" class="w-full bg-slate-700 text-white font-bold py-3 rounded-xl active:scale-95 transition-all text-xs">
+                <button id="cta-wechat-btn" onclick="copyWeChat()" class="hidden w-full bg-[#07C160] text-white font-black py-4 rounded-xl flex items-center justify-center shadow-lg active:scale-95 transition-all">
+                    微信聯系顧問 (catholicalex)
+                </button>
+                <button id="ui-btn-reset" onclick="resetApp()" class="w-full bg-slate-700 text-white font-bold py-3 rounded-xl active:scale-95 transition-all text-xs">
                     ↺ 重新分析其他配置
                 </button>
             </div>
+        </div>
+    </div>
+
+    <!-- 微信彈窗 -->
+    <div id="wechat-modal" class="fixed inset-0 bg-black/70 z-[300] hidden items-center justify-center p-6 backdrop-blur-md">
+        <div class="bg-white p-8 rounded-[2.5rem] max-w-xs w-full text-center shadow-2xl modal-animate border border-slate-100">
+            <div class="text-6xl mb-6">✅</div>
+            <h3 class="text-xl font-black text-slate-900 mb-2">已成功複製微信號</h3>
+            <p class="text-slate-500 text-[13px] mb-8 leading-relaxed italic">
+                WeChat ID: <span class="font-bold text-blue-600">catholicalex</span><br>請前往微信搜索並添加 Alex 為好友。
+            </p>
+            <button onclick="closeWechatModal()" class="w-full bg-slate-900 text-white py-4 rounded-2xl font-black">前往微信</button>
         </div>
     </div>
 
@@ -141,7 +155,7 @@
     <div id="msg-modal" class="fixed inset-0 bg-black/70 z-[200] hidden items-center justify-center p-6 backdrop-blur-md">
         <div class="bg-white p-8 rounded-[2.5rem] max-w-xs w-full text-center shadow-2xl modal-animate border border-slate-100">
             <div class="text-5xl mb-4">⚠️</div>
-            <h3 class="text-lg font-black text-slate-900 mb-2">系統提示</h3>
+            <h3 id="msg-modal-title" class="text-lg font-black text-slate-900 mb-2">系統提示</h3>
             <p id="msg-text" class="text-slate-500 text-sm mb-6 leading-relaxed italic text-left"></p>
             <button onclick="closeMsg()" class="w-full bg-slate-900 text-white py-3 rounded-xl font-bold active:scale-95 transition-transform">了解</button>
         </div>
@@ -152,12 +166,119 @@
 
         let currentLang = 'tc';
         let wealthChart = null;
-        const rates = { 
-            cash: { yield: 0.020, risk: "通脹侵蝕", riskDetail: "雖然無下行風險，但購買力會因通脹令增長歸零" }, 
-            fund: { yield: 0.045, risk: "25.4%", riskDetail: "若遇市場崩盤，本金將面臨顯著損失" }, 
-            stock: { yield: 0.060, risk: "38.2%", riskDetail: "高度市場波動，無任何保本保障" }, 
-            pro: { yield: 0.110, risk: "保證" } 
+
+        const dictionary = {
+            tc: {
+                title: "個人稅務帳戶收益分析",
+                subtitle: "收益增長與風險保障深度系統",
+                quote: "「透過精確的數據分析，了解您的資產在市場波動中的防禦力。」",
+                labelName: "您的稱呼",
+                labelAccType: "帳戶類型",
+                labelAssetType: "目前存放方式",
+                labelBalanceTFSA: "CRA 累積供款額度 (CAD)",
+                labelBalanceRRSP: "RRSP 扣稅額度 (CAD)",
+                optCash: "銀行定期 / GIC",
+                optFund: "互惠基金",
+                optStock: "藍籌股票",
+                btnScan: "⚡ 啟動 AI 收益與風險分析",
+                loadingTitle: "正在模擬市場波動場景...",
+                loadingHint: "正在對比歷史最大回撤與購買力數據...",
+                chartHeader: "17年預期累積收益對比",
+                riskTitle: "下行/購買力風險",
+                safeTitle: "專業配置保障機制",
+                safeStatus: "本金保證",
+                safeNote: "具備合約級別安全墊",
+                noteTitle: "數據備註",
+                noteDesc: "目前配置數據參考加拿大市場歷史平均。專業配置採用具備「本金保證」機制的收益優化組合。",
+                btnReset: "↺ 重新分析其他配置",
+                msgTitle: "系統提示",
+                waBtn: "WhatsApp 聯繫顧問獲取分析",
+                backupCash: (name, gap) => `你好 ${name}，根據 17 年模擬，您的帳戶雖然穩定，但預計收益缺口仍高達 $${gap}。請注意，銀行存款在通脹環境下，實質購買力的增長幾乎停滯。專業配置系統不僅提供更高增長，更具備「本金保證」合約。`,
+                backupRisk: (name, gap, risk) => `你好 ${name}，您的潛在收益缺口高達 $${gap}，且目前配置面臨高達 ${risk} 的回撤風險。專業配置系統提供「本金保證」機制，確保您的財富不被市場波動或通脹蠶食。`
+            },
+            sc: {
+                title: "个人税务账户收益分析",
+                subtitle: "收益增长与风险保障深度系统",
+                quote: "「通过精确的数据分析，了解您的资产在市场波动中的防御力。」",
+                labelName: "您的称呼",
+                labelAccType: "账户类型",
+                labelAssetType: "目前存放方式",
+                labelBalanceTFSA: "CRA 累计供款额度 (CAD)",
+                labelBalanceRRSP: "RRSP 扣税额度 (CAD)",
+                optCash: "银行定期 / GIC",
+                optFund: "互惠基金",
+                optStock: "蓝筹股票",
+                btnScan: "⚡ 启动 AI 收益与风险分析",
+                loadingTitle: "正在模拟市场波动场景...",
+                loadingHint: "正在对比历史最大回撤与购买力数据...",
+                chartHeader: "17年预期累计收益对比",
+                riskTitle: "下行/购买力风险",
+                safeTitle: "专业配置保障机制",
+                safeStatus: "本金保证",
+                safeNote: "具备合约级别安全垫",
+                noteTitle: "数据备注",
+                noteDesc: "目前配置数据参考加拿大市场历史平均。专业配置采用具备「本金保证」机制的收益优化组合。",
+                btnReset: "↺ 重新分析其他配置",
+                msgTitle: "系统提示",
+                scBtn: "微信联系顾问獲取分析",
+                backupCash: (name, gap) => `你好 ${name}，根据 17 年模拟，您的账户虽然稳定，但预计收益缺口仍高达 $${gap}。请注意，银行存款在通胀环境下，实质购买力的增长几乎停滞。专业配置系统不仅提供更高增长，更具备「本金保证」合约。`,
+                backupRisk: (name, gap, risk) => `你好 ${name}，您的潜在收益缺口高达 $${gap}，且目前配置面临高达 ${risk} 的回撤风险。专业配置系统提供「本金保证」机制，确保您的财富不被市场波动或通胀蚕食。`
+            }
         };
+
+        const rates = { 
+            cash: { yield: 0.020, risk: "通脹侵蝕", riskDetail: { tc: "雖然無下行風險，但購買力會因通脹令增長歸零", sc: "虽然无下行风险，但购买力会因通胀令增长归零" } }, 
+            fund: { yield: 0.045, risk: "25.4%", riskDetail: { tc: "若遇市場崩盤，本金將面臨顯著損失", sc: "若遇市场崩盘，本金将面临显著损失" } }, 
+            stock: { yield: 0.060, risk: "38.2%", riskDetail: { tc: "高度市場波動，無任何保本保障", sc: "高度市场波动，无任何保本保障" } }, 
+            pro: { yield: 0.110 } 
+        };
+
+        function setLanguage(lang) {
+            currentLang = lang;
+            const d = dictionary[lang];
+            
+            document.getElementById('ui-title').innerText = d.title;
+            document.getElementById('ui-subtitle').innerText = d.subtitle;
+            document.getElementById('ui-quote').innerText = d.quote;
+            document.getElementById('label-name').innerText = d.labelName;
+            document.getElementById('label-acc-type').innerText = d.labelAccType;
+            document.getElementById('label-asset-type').innerText = d.labelAssetType;
+            document.getElementById('opt-cash').innerText = d.optCash;
+            document.getElementById('opt-fund').innerText = d.optFund;
+            document.getElementById('opt-stock').innerText = d.optStock;
+            document.getElementById('ui-btn-scan').innerText = d.btnScan;
+            document.getElementById('ui-loading-title').innerText = d.loadingTitle;
+            document.getElementById('loading-hint').innerText = d.loadingHint;
+            document.getElementById('ui-chart-header').innerText = d.chartHeader;
+            document.getElementById('ui-risk-title').innerText = d.riskTitle;
+            document.getElementById('ui-safe-title').innerText = d.safeTitle;
+            document.getElementById('ui-safe-status').innerText = d.safeStatus;
+            document.getElementById('ui-safe-note').innerText = d.safeNote;
+            document.getElementById('ui-note-title').innerText = d.noteTitle;
+            document.getElementById('ui-note-desc').innerText = d.noteDesc;
+            document.getElementById('ui-btn-reset').innerText = d.btnReset;
+            document.getElementById('msg-modal-title').innerText = d.msgTitle;
+
+            updateLabelByAccount();
+
+            document.getElementById('btn-tc').classList.toggle('lang-btn-active', lang === 'tc');
+            document.getElementById('btn-sc').classList.toggle('lang-btn-active', lang === 'sc');
+
+            // 聯絡方式切換
+            if (lang === 'sc') {
+                document.getElementById('cta-wa-link').classList.add('hidden');
+                document.getElementById('cta-wechat-btn').classList.remove('hidden');
+            } else {
+                document.getElementById('cta-wa-link').classList.remove('hidden');
+                document.getElementById('cta-wechat-btn').classList.add('hidden');
+            }
+        }
+
+        function updateLabelByAccount() {
+            const accType = document.getElementById('account-type').value;
+            const label = document.getElementById('ui-label-balance');
+            label.innerText = accType === 'TFSA' ? dictionary[currentLang].labelBalanceTFSA : dictionary[currentLang].labelBalanceRRSP;
+        }
 
         function showMsg(text) {
             document.getElementById('msg-text').innerHTML = text;
@@ -170,17 +291,18 @@
             document.getElementById('msg-modal').classList.remove('flex');
         }
 
-        function setLanguage(lang) {
-            currentLang = lang;
-            updateLabelByAccount();
-            document.getElementById('btn-tc').classList.toggle('lang-btn-active', lang === 'tc');
-            document.getElementById('btn-sc').classList.toggle('lang-btn-active', lang === 'sc');
+        function copyWeChat() {
+            const el = document.createElement('textarea'); el.value = 'catholicalex';
+            document.body.appendChild(el); el.select();
+            document.execCommand('copy'); document.body.removeChild(el);
+            document.getElementById('wechat-modal').classList.remove('hidden');
+            document.getElementById('wechat-modal').classList.add('flex');
         }
 
-        function updateLabelByAccount() {
-            const accType = document.getElementById('account-type').value;
-            const label = document.getElementById('ui-label-balance');
-            label.innerText = accType === 'TFSA' ? (currentLang === 'tc' ? "CRA 累積供款額度 (CAD)" : "CRA 累计供款额度 (CAD)") : (currentLang === 'tc' ? "RRSP 扣稅額度 (CAD)" : "RRSP 扣税额度 (CAD)");
+        function closeWechatModal() {
+            document.getElementById('wechat-modal').classList.add('hidden');
+            document.getElementById('wechat-modal').classList.remove('flex');
+            window.location.href = "weixin://";
         }
 
         function resetApp() {
@@ -209,11 +331,14 @@
         }
 
         async function startAnalysis() {
-            const name = document.getElementById('user-name').value.trim() || "客戶";
+            const name = document.getElementById('user-name').value.trim() || (currentLang === 'tc' ? "客戶" : "客户");
             const balanceVal = document.getElementById('balance').value;
             const balance = parseFloat(balanceVal);
 
-            if(isNaN(balance)) { showMsg("請輸入正確的額度數據。"); return; }
+            if(isNaN(balance)) { 
+                showMsg(currentLang === 'tc' ? "請輸入正確的額度數據。" : "请输入正确的额度数据。"); 
+                return; 
+            }
 
             document.getElementById('step-form').classList.add('hidden');
             document.getElementById('step-loading').classList.remove('hidden');
@@ -222,25 +347,31 @@
             const assetType = document.getElementById('asset-type').value;
             const finalCurrent = balance * Math.pow(1 + rates[assetType].yield, 17);
             const finalPro = balance * Math.pow(1 + rates.pro.yield, 17);
-            const gap = finalPro - finalCurrent;
+            const gap = parseInt(finalPro - finalCurrent).toLocaleString();
 
             // 更新 UI 上的風險提示
             const isCash = assetType === 'cash';
-            document.getElementById('ui-max-drawdown').innerText = isCash ? rates[assetType].risk : `-${rates[assetType].risk}`;
-            document.getElementById('ui-risk-note').innerText = rates[assetType].riskDetail;
+            document.getElementById('ui-max-drawdown').innerText = isCash ? (currentLang === 'tc' ? "通脹侵蝕" : "通胀侵蚀") : `-${rates[assetType].risk}`;
+            document.getElementById('ui-risk-note').innerText = rates[assetType].riskDetail[currentLang];
 
-            const msg = `你好！我係 ${name}，我剛剛完成咗個人稅務帳戶收益分析 (${accType})。我對具備「下行風險保障」且能「抗衡通脹」嘅專業管理組合好有興趣。`;
+            const langName = currentLang === 'tc' ? "廣東話 (繁體中文)" : "簡體中文";
+            const msg = currentLang === 'tc' ? 
+                `你好！我係 ${name}，我剛剛完成咗個人稅務帳戶收益分析 (${accType})。我對具備「下行風險保障」且能「抗衡通脹」嘅專業管理組合好有興趣。` :
+                `你好！我是 ${name}，我刚刚完成了个人税务账户收益分析 (${accType})。我對具备「下行风险保障」且能「抗衡通胀」的专业管理组合很有兴趣。`;
+            
             document.getElementById('cta-wa-link').href = `https://wa.me/17783198129?text=${encodeURIComponent(msg)}`;
 
             const promptText = `
                 你是一位負責「個人稅務帳戶收益與風險分析」的專業顧問助手。
-                請為 ${name} 寫一份 180 字廣東話分析。
+                請為 ${name} 寫一份 180 字的分析報告。
+                語言要求：必須使用 ${langName}。
                 場景：客戶在 ${accType} 存入 $${balance.toLocaleString()}，目前配置是 ${assetType}。
                 對比分析：
                 1. 若目前是銀行存款/GIC：雖然看似無風險，但請指出通脹（約 3%）會令實質購買力不增反減，組合形同虛設。
                 2. 若目前是基金/股票：指出歷史最大跌幅可能達 ${rates[assetType].risk}。
-                3. 專業配置優勢：回報差距達 $${parseInt(gap).toLocaleString()}，且具備「合約級別的本金保證」，實現真正的「進可攻、退可守」。
-                要求：語氣專業理性，用震撼比喻（如置業首期）說明收益價值。不要提及特定產品名稱（如 Seg Fund），保持專業系統的神秘感與權威感。
+                3. 專業配置優勢：回報差距達 $${gap}，且具備「合約級別的本金保證」，實現真正的「進可攻、退可守」。
+                要求：語氣專業理性，用震撼比喻（如置業首期）說明收益價值。保持專業系統的神秘感與權威感。
+                禁止使用『診斷』，統一用『分析』。
             `;
 
             try {
@@ -249,8 +380,8 @@
                 finish(finalCurrent, finalPro, rates[assetType].yield);
             } catch (e) { 
                 const backupReport = isCash ? 
-                    `你好 ${name}，根據 17 年模擬，您的 ${accType} 雖然穩定，但預計收益缺口仍高達 <b>$${parseInt(gap).toLocaleString()}</b>。請注意，銀行存款在通脹環境下，實質購買力的增長幾乎停滯。專業配置系統不僅提供更高增長，更具備「本金保證」合約，確保您的退休儲蓄在抗通脹的同時絕對安全。` :
-                    `你好 ${name}，您的 ${accType} 潛在收益缺口高達 <b>$${parseInt(gap).toLocaleString()}</b>，且目前配置面臨高達 ${rates[assetType].risk} 的回撤風險。專業配置系統提供「本金保證」機制，確保您的財富不被市場波動或通脹蠶食。`;
+                    dictionary[currentLang].backupCash(name, gap) :
+                    dictionary[currentLang].backupRisk(name, gap, rates[assetType].risk);
                 document.getElementById('report-content').innerHTML = backupReport;
                 finish(finalCurrent, finalPro, rates[assetType].yield);
             }
@@ -271,7 +402,7 @@
             wealthChart = new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: ["目前策略", "專業配置系統"],
+                    labels: currentLang === 'tc' ? ["目前策略", "專業配置系統"] : ["目前策略", "专业配置系统"],
                     datasets: [{
                         data: [v1.toFixed(0), v2.toFixed(0)],
                         backgroundColor: ['#cbd5e1', '#3b82f6'],
