@@ -211,6 +211,7 @@
                 waBtn: "WhatsApp 聯繫顧問獲取分析",
                 wcTitle: "已成功複製微信號", wcTip: "請前往微信搜索並添加 Alex 為好友。", wcBtn: "前往微信",
                 chartLabels: ["目前策略", "專業配置系統"],
+                closing: "<br><br>如果你想妥善了解自己的財務狀況，在可控制風險的情況下最大化資產，善用稅務戶口，歡迎聯絡 Alex 簡單了解一下。憑藉 20 多年的銀行及獨立理財顧問經驗，應該可以為你提供有價值的意見。",
                 backupText: (name, gap, acc, asset, risk) => {
                     const gapNum = parseFloat(gap.replace(/,/g,''));
                     const analogy = getSingleAnalogy(gapNum, 'tc');
@@ -218,7 +219,7 @@
                     if (asset !== 'cash') {
                         base = `你好 ${name}，您的投資意識很好。然而，目前的配置在增長之餘卻面臨歷史高達 ${risk} 的下行風險。與「專業管理配置」相比，您正錯失約 $${gap} 的免稅增長空間，這金額<b>${analogy}。</b>專業配置系統提供「本金保證」機制，能消除此風險。`;
                     }
-                    return base;
+                    return base + dictionary.tc.closing;
                 }
             },
             sc: {
@@ -238,6 +239,7 @@
                 scBtn: "微信联系顾问獲取分析",
                 wcTitle: "已成功复制微信号", wcTip: "请前往微信搜索并添加 Alex 为好友。", wcBtn: "前往微信",
                 chartLabels: ["目前策略", "专业配置系统"],
+                closing: "<br><br>如果你想妥善了解自己的财务状况，在可控制风险的情况下最大化资产，善用税务户口，欢迎联络 Alex 简单了解一下。凭借 20 多年的银行及独立理财顾问经验，应该可以为你提供有价值的意见。",
                 backupText: (name, gap, acc, asset, risk) => {
                     const gapNum = parseFloat(gap.replace(/,/g,''));
                     const analogy = getSingleAnalogy(gapNum, 'sc');
@@ -245,7 +247,7 @@
                     if (asset !== 'cash') {
                         base = `你好 ${name}，您的投资意识很好。然而，目前的配置在增长之余却面临历史高达 ${risk} 的下行风险。与「专业管理配置」相比，您正错失约 $${gap} 的免税增长空间，这金额<b>${analogy}。</b>专业配置系统提供「本金保证」机制，能消除此风险。`;
                     }
-                    return base;
+                    return base + dictionary.sc.closing;
                 }
             },
             en: {
@@ -265,6 +267,7 @@
                 waBtn: "Text Alex for Consultation",
                 wcTitle: "WeChat ID Copied", wcTip: "Please search and add Alex on WeChat.", wcBtn: "Open WeChat",
                 chartLabels: ["Current Strategy", "Pro-Managed Portfolio"],
+                closing: "<br><br>If you would like to properly understand your financial situation, maximize your assets under controlled risk, and make the best use of tax-advantaged accounts, you are welcome to contact Alex for a brief consultation. With over 20 years of experience in banking and independent financial advisory, he can provide valuable insights for your future.",
                 backupText: (name, gap, acc, asset, risk) => {
                     const gapNum = parseFloat(gap.replace(/,/g,''));
                     const analogy = getSingleAnalogy(gapNum, 'en');
@@ -272,7 +275,7 @@
                     if (asset !== 'cash') {
                         base = `Hello ${name}, your current ${acc} setup captures growth but faces a ${risk} drawdown risk. Compared to a Pro-Managed portfolio, you are missing out on $${gap}, which is <b>${analogy}</b> Our system offers a Principal Guarantee to eliminate this risk.`;
                     }
-                    return base;
+                    return base + dictionary.en.closing;
                 }
             }
         };
@@ -419,8 +422,9 @@
             document.getElementById('cta-wa-link').href = `https://wa.me/17783198129?text=${encodeURIComponent(msgBodyTC)}`;
 
             const promptText = `
-                You are a professional advisor's assistant for the "Personal Tax-Account Yield & Risk Analysis" system.
-                Generate a 200-word report for ${name}.
+                You are a professional advisor's assistant for the "Personal Tax-Account Yield & Risk Analysis" system. 
+                Advisor Background: Alex Chan, with over 20 years of banking and independent financial advisory experience.
+                Generate a 220-word report for ${name}.
                 Language Requirement: Must be in ${langName}.
                 Scenario: $${balance.toLocaleString()} in ${accType}, currently in ${assetType}.
                 
@@ -431,12 +435,15 @@
                 - If gap is $150k - $350k: Focus on a top-spec Premium Pick-up Truck (豪華重型皮卡).
                 - If gap is less: Focus on a brand new high-performance All-Electric SUV (高性能電動 SUV).
                 
-                MANDATORY: 
-                - DO NOT use specific brand names (No Tesla, Ferrari, etc.). Use generic high-value descriptions.
-                - Choose ONLY ONE analogy. DO NOT mix them.
-                - Acknowledge current stability first (praise the client's cautiousness/investing intent), then expose the massive "Opportunity Cost".
-                - Tone: Insightful, balanced, but shocking regarding the loss. Keep the system mysterious.
-                - Avoid "diagnosis", use "analysis".
+                MANDATORY REPORT STRUCTURE:
+                1. Acknowledge current stability first (praise the client's cautiousness/investing intent).
+                2. Expose the massive "Opportunity Cost" using the ONE chosen analogy.
+                3. Pro-Managed portfolio advantages: featuring "Contractual Principal Guarantee".
+                4. CLOSING STATEMENT (REQUIRED): 
+                   "${dictionary[currentLang].closing.replace('<br><br>', '')}"
+                
+                Tone: Insightful, balanced, authoritative. Keep the system mysterious.
+                Avoid "diagnosis", use "analysis".
             `;
 
             try {
