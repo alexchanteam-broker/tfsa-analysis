@@ -84,7 +84,7 @@
             <div class="w-full bg-gray-100 rounded-full h-1.5 overflow-hidden">
                 <div id="progress-bar" class="loading-bar"></div>
             </div>
-            <p id="loading-hint" class="text-[10px] text-slate-400 italic">正在連接 AI 智慧分析路徑...</p>
+            <p id="loading-hint" class="text-[10px] text-slate-400 italic">正在優化 AI 智慧分析路徑...</p>
         </div>
 
         <!-- 第三步：分析結果 -->
@@ -152,21 +152,24 @@
             label.innerText = accType === 'TFSA' ? (currentLang === 'tc' ? "CRA 累積供款額度 (CAD)" : "CRA 累计供款额度 (CAD)") : (currentLang === 'tc' ? "RRSP 扣稅額度 (CAD)" : "RRSP 扣税额度 (CAD)");
         }
 
-        // --- 超級穩定的 API 調用函數：多路徑備選方案 ---
+        // --- 最終極致穩定的 API 呼叫：多路徑備選方案 ---
         async function fetchAIResponse(prompt, key) {
             const trimmedKey = key.trim();
-            // 嘗試路徑清單：按照成功率排列
-            const endpoints = [
-                `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${trimmedKey}`,
-                `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${trimmedKey}`,
-                `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${trimmedKey}`
+            // 嘗試路徑清單：優先嘗試最輕量的 1.5-flash-8b
+            const attempts = [
+                { ver: "v1beta", model: "gemini-1.5-flash-8b" },
+                { ver: "v1beta", model: "gemini-1.5-flash" },
+                { ver: "v1", model: "gemini-1.5-flash" }
             ];
 
             let lastErr = "";
-            for (let i = 0; i < endpoints.length; i++) {
+            for (let i = 0; i < attempts.length; i++) {
+                const config = attempts[i];
                 try {
-                    document.getElementById('loading-hint').innerText = `正在優化連線路徑 (${i+1}/${endpoints.length})...`;
-                    const response = await fetch(endpoints[i], {
+                    document.getElementById('loading-hint').innerText = `正在連接 AI 智慧分析路徑 (Step ${i+1})...`;
+                    const url = `https://generativelanguage.googleapis.com/${config.ver}/models/${config.model}:generateContent?key=${trimmedKey}`;
+                    
+                    const response = await fetch(url, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
@@ -180,8 +183,7 @@
                 } catch (e) {
                     lastErr = e.message;
                 }
-                // 等待短暫時間再試下一個路徑
-                await new Promise(r => setTimeout(r, 400));
+                await new Promise(r => setTimeout(r, 500)); // 增加間隔，避免請求過快
             }
             throw new Error(lastErr || "API 無回應");
         }
@@ -211,11 +213,14 @@
             document.getElementById('cta-wa-link').href = `https://wa.me/17783198129?text=${encodeURIComponent(msg)}`;
 
             const promptText = `
-                你是專業理財顧問 Alex Chan 的助手。Alex 有 18 年管理經驗。
-                請為客戶 ${name} 寫一份 180 字廣東話分析。
-                背景：他在 ${accType} 有 $${balance.toLocaleString()}，目前配置是 ${assetType}。
-                重點：計算出的 17 年財富差距是 $${parseInt(gap).toLocaleString()}。
-                要求：用震撼的比喻說明這筆錢的價值。強調 Alex 的『增長與保證』策略，說明留在銀行是浪費珍貴的免稅空間。
+                你是理財顧問 Alex Chan 的助理。Alex 有 18 年經驗。
+                請為 ${name} 寫一份 180 字廣東話分析。
+                他在 ${accType} 有 $${balance.toLocaleString()}，目前回報 ${(rates[assetType]*100).toFixed(1)}%。
+                計算顯示 17 年後的差距高達 $${parseInt(gap).toLocaleString()}。
+                要求：
+                1. 用震撼的比喻（如買一輛超跑）說明這筆錢的價值。
+                2. 指出留在銀行是浪費免稅增長空間。
+                3. 強調 Alex 的『增長與保證』策略。
                 禁止使用『診斷』，統一用『分析』。
             `;
 
@@ -231,9 +236,9 @@
                 }, 800);
 
             } catch (e) { 
-                console.error("AI Generation Error:", e);
-                // 核心數據備援顯示
-                const backupReport = `抱歉 ${name}，AI 引擎正在同步雲端權限（預計需時 2-3 分鐘），目前為您顯示核心精算數據：<br><br>根據 17 年複利模擬，您的 ${accType} 潛在財富缺口高達 <b>$${parseInt(gap).toLocaleString()}</b>。這筆差額足以大幅改變您的退休生活品質。請點擊下方按鈕聯繫 Alex 獲取完整手動分析報告。`;
+                console.error("AI Error:", e);
+                // 自動轉為「智能精算簡報」模式，確保數據震撼力
+                const backupReport = `你好 ${name}，這是您的自動精算簡報：<br><br>根據 17 年複利模擬，您的 ${accType} 帳戶目前正處於「增長受限」狀態。預計與 Alex 建議的專業配置相比，您將面臨高達 <b>$${parseInt(gap).toLocaleString()}</b> 的財富缺口。這筆差額足以大幅提升您的退休生活品質。請立即點擊下方按鈕聯繫 Alex 獲取完整分析。`;
                 document.getElementById('report-content').innerHTML = backupReport;
                 
                 setTimeout(() => {
@@ -261,7 +266,7 @@
                 options: {
                     responsive: true, maintainAspectRatio: false,
                     plugins: { legend: { display: false } },
-                    scales: { y: { display: false }, x: { grid: { display: false }, ticks: { font: { weight: 'bold' } } } }
+                    scales: { y: { display: false }, x: { grid: { display: false } } }
                 },
                 plugins: [{
                     id: 'valueLabel',
