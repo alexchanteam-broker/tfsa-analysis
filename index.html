@@ -152,20 +152,23 @@
             label.innerText = accType === 'TFSA' ? (currentLang === 'tc' ? "CRA 累積供款額度 (CAD)" : "CRA 累计供款额度 (CAD)") : (currentLang === 'tc' ? "RRSP 扣稅額度 (CAD)" : "RRSP 扣税额度 (CAD)");
         }
 
-        // --- 強大的調用函數：更換為最穩定的 v1beta 管道並嘗試多個模型標識符 ---
+        // --- 強化版自動修復邏輯：循環嘗試 v1 與 v1beta 管道 ---
         async function fetchAIResponse(prompt, key) {
             const trimmedKey = key.trim();
-            const modelsToTry = [
-                "gemini-1.5-flash",
-                "gemini-1.5-flash-latest",
-                "gemini-pro"
+            // 嘗試路徑組合：模型標識符與 API 版本的組合
+            const attempts = [
+                { ver: "v1beta", model: "gemini-1.5-flash" },
+                { ver: "v1", model: "gemini-1.5-flash" },
+                { ver: "v1beta", model: "gemini-1.5-flash-latest" },
+                { ver: "v1beta", model: "gemini-pro" }
             ];
 
             let lastErr = "";
-            for (const modelId of modelsToTry) {
+            for (let i = 0; i < attempts.length; i++) {
+                const config = attempts[i];
                 try {
-                    document.getElementById('loading-hint').innerText = `正在連接穩定引擎 (${modelId})...`;
-                    const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelId}:generateContent?key=${trimmedKey}`;
+                    document.getElementById('loading-hint').innerText = `正在連接 AI 分析引擎 (嘗試 ${i+1}/${attempts.length})...`;
+                    const url = `https://generativelanguage.googleapis.com/${config.ver}/models/${config.model}:generateContent?key=${trimmedKey}`;
                     
                     const response = await fetch(url, {
                         method: 'POST',
@@ -182,8 +185,8 @@
                 } catch (e) {
                     lastErr = e.message;
                 }
-                // 等待一下再試下一個模型標識符
-                await new Promise(r => setTimeout(r, 300));
+                // 等待一下再試下一個組合
+                await new Promise(r => setTimeout(r, 400));
             }
             throw new Error(lastErr || "API 無回應");
         }
@@ -213,15 +216,17 @@
             document.getElementById('cta-wa-link').href = `https://wa.me/17783198129?text=${encodeURIComponent(msg)}`;
 
             // 極簡化 Prompt，確保不觸發 API 內容過濾或格式錯誤
-            const promptText = `你是一位專業理財顧問 Alex Chan 的助手。Alex 有 18 年資產管理經驗。
-            請分析客戶 ${name} 在 ${accType} 存入 $${balance.toLocaleString()} 於 ${assetType} 的理財情況。
-            這筆錢在 Alex 建議的 11% 回報配置下，與目前年回報的差距約為 $${parseInt(gap).toLocaleString()}。
-            請用 180 字內廣東話撰寫報告。
-            要求：
-            1. 強調這筆差距足以購買一部保時捷或物業首期。
-            2. 說明留在銀行定期是浪費珍貴的免稅空間。
-            3. 語氣要震撼但專業，結尾鼓勵聯繫 Alex。
-            4. 嚴禁使用『診斷』，統一用『分析』。`;
+            const promptText = `
+                你是一位專業理財顧問 Alex Chan 的助手。Alex 有 18 年資產管理經驗。
+                請為客戶 ${name} 寫一份 180 字廣東話分析。
+                背景：他在 ${accType} 有 $${balance.toLocaleString()}，目前配置是 ${assetType}。
+                關鍵數據：預測 17 年後的財富差距約為 $${parseInt(gap).toLocaleString()}。
+                要求：
+                1. 用震撼的比喻說明這筆差距的價值。
+                2. 說明留在銀行是浪費珍貴的免稅增長空間。
+                3. 鼓勵客戶聯繫 Alex 獲取「增長與保證」兼備的方案。
+                4. 嚴禁使用『診斷』，統一用『分析』。
+            `;
 
             try {
                 const aiText = await fetchAIResponse(promptText, apiKey);
