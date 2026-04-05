@@ -115,7 +115,7 @@
                     <div class="chart-container"><canvas id="wealthChart"></canvas></div>
                 </div>
 
-                <!-- 方案對比卡片 (色彩同步區) -->
+                <!-- 方案對比卡片 -->
                 <div class="grid grid-cols-2 gap-3">
                     <!-- 客戶現狀 (紅色) -->
                     <div class="p-4 bg-red-50 rounded-2xl border border-red-200 relative overflow-hidden">
@@ -152,7 +152,7 @@
                     微信聯繫顧問
                 </button>
                 <a id="cta-sms-link" href="sms:+17783198129" class="hidden w-full bg-blue-500 text-white font-black py-4 rounded-xl flex items-center justify-center no-underline shadow-lg active:scale-95 transition-all">
-                    Text Alex (Consultation)
+                    Text for Consultation
                 </a>
                 <button id="ui-btn-reset" onclick="resetApp()" class="w-full bg-slate-700 text-white font-bold py-3 rounded-xl active:scale-95 transition-all text-xs">
                     ↺ 重新開始分析
@@ -264,7 +264,7 @@
                 resultLabel: "Analysis Report", tagCurrent: "Current Strategy", tagPro: "Professional Edge", chartHeader: "17-Year Simulated Growth Trajectory", riskTitle: "Downside Risk", safeTitle: "Protection Mechanism", safeStatus: "Contractual Guarantee", safeNote: "Subject to policy terms",
                 noteTitle: "Disclosure & References", noteDesc: "Data refers to historical averages. Professional allocation uses guaranteed yield-optimized portfolios.",
                 sigRole: "Individual Insurance Broker (Canada)", sigExp: "20+ Years Excellence in Wealth Management",
-                btnReset: "↺ Start New Analysis", msgTitle: "Notification", msgBtn: "Got it", waBtn: "Text Alex for Consultation",
+                btnReset: "↺ Start New Analysis", msgTitle: "Notification", msgBtn: "Got it", waBtn: "Text for Consultation",
                 wcTitle: "WeChat ID Copied", wcBtn: "Open WeChat", wcBtnLabel: "Contact via WeChat",
                 chartLabelTarget: "Pro-Managed Portfolio*", chartLabelCurrent: "Current Strategy Simulation",
                 closing: "<br><br>To gain a comprehensive understanding of your financial health, maximize your assets within risk tolerance, and fully leverage your tax-advantaged accounts, you are invited to connect with Alex for a consultation. With over 20 years of distinguished experience in banking and independent financial advisory, Alex provides precise insights to navigate your wealth optimization.",
@@ -288,6 +288,8 @@
             safeSet('msg-modal-btn', d.msgBtn); safeSet('wechat-modal-title', d.wcTitle);
             safeSet('ui-tag-current', d.tagCurrent); safeSet('ui-tag-pro', d.tagPro);
             safeSet('cta-wechat-btn', d.wcBtnLabel);
+            safeSet('cta-wa-link', d.waBtn);
+            safeSet('cta-sms-link', d.waBtn);
 
             updateLabelByAccount();
 
