@@ -149,7 +149,7 @@
                     WhatsApp 聯繫顧問獲取分析
                 </a>
                 <button id="cta-wechat-btn" onclick="copyWeChat()" class="hidden w-full bg-[#07C160] text-white font-black py-4 rounded-xl flex items-center justify-center shadow-lg active:scale-95 transition-all">
-                    微信聯系顧問 (catholicalex)
+                    微信聯繫顧問
                 </button>
                 <a id="cta-sms-link" href="sms:+17783198129" class="hidden w-full bg-blue-500 text-white font-black py-4 rounded-xl flex items-center justify-center no-underline shadow-lg active:scale-95 transition-all">
                     Text Alex (Consultation)
@@ -185,7 +185,7 @@
 
         let currentLang = 'tc';
         let wealthChart = null;
-        let analysisState = { isFinished: false, v1: 0, v2: 0, r1: 0, balance: 0, name: '', asset: '', acc: '', gap: '', riskKey: '' };
+        let analysisState = { isFinished: false, v1: 0, v2: 0, r1: 0, balance: 0, name: '', asset: '', acc: '', gap: '', riskText: '' };
 
         const assetRisks = {
             cash: { tc: "通脹侵蝕", sc: "通胀侵蚀", en: "Inflation" },
@@ -237,7 +237,7 @@
                 noteTitle: "數據備註與披露", noteDesc: "模擬數據參考加拿大市場歷史平均。專業配置採用具備「合約級別保證」機制的收益優化組合。",
                 sigRole: "Individual Insurance Broker (Canada)", sigExp: "20+ Years Excellence in Wealth Management",
                 btnReset: "↺ 重新開始分析", msgTitle: "系統提示", msgBtn: "了解", waBtn: "WhatsApp 聯繫顧問獲取分析",
-                wcTitle: "已成功複製微信號", wcBtn: "前往微信",
+                wcTitle: "已成功複製微信號", wcBtn: "前往微信", wcBtnLabel: "微信聯繫顧問",
                 chartLabelTarget: "專業管理的投資組合*", chartLabelCurrent: "目前策略模擬表現",
                 closing: "<br><br>如果您希望全面審視財務現狀，在風險可控的前提下追求資產回報最大化，並極大化稅務帳戶的優勢，誠邀您聯絡 Alex 進行初步諮詢。憑藉逾 20 年深耕銀行體系及獨立理財顧問的深厚經驗，Alex 將為您的財富增值提供精確且具價值的專業導航。",
                 backup: (name, gap, acc, asset, riskText, analogy) => `你好 ${name}，選擇存放 ${acc} 於目前配置是一個非常穩健的決定。但數據顯示，17 年後的模擬複利缺口高達 $${gap}，這筆錢<b>${analogy}</b>。如果您目前配置面臨歷史高達 ${riskText} 的下行風險，專業配置系統能提供合約保證機制以消除此風險。`
@@ -251,7 +251,7 @@
                 noteTitle: "数据备注与披露", noteDesc: "目前配置数据参考加拿大市场历史平均. 专业配置采用具备「合约级别保证」机制的收益优化组合。",
                 sigRole: "Individual Insurance Broker (Canada)", sigExp: "20+ Years Excellence in Wealth Management",
                 btnReset: "↺ 重新開始分析", msgTitle: "系统提示", msgBtn: "了解", scBtn: "微信联系顾问獲取分析",
-                wcTitle: "已成功复制微信号", wcBtn: "前往微信",
+                wcTitle: "已成功复制微信号", wcBtn: "前往微信", wcBtnLabel: "微信聯繫顧問",
                 chartLabelTarget: "专业管理的投资组合*", chartLabelCurrent: "目前策略模拟表现",
                 closing: "<br><br>如果您希望全面审视财务现状，在风险可控的前提下追求资产回报最大化，并极大化税务账户的优势，诚邀您联络 Alex 进行初步咨询。凭借逾 20 年深耕銀行體系及獨立理財顧問的深厚經驗，Alex 將為您提供精確且具價值的專業導航。",
                 backup: (name, gap, acc, asset, riskText, analogy) => `你好 ${name}，选择存放 ${acc} 於目前配置是非常稳健的决定。但数据显示，17 年後的模拟复利缺口高达 $${gap}，这笔钱<b>${analogy}</b>。如果您目前配置面临历史高达 ${riskText} 的下行风险，专业配置系统能提供合约保证机制以消除此风险。`
@@ -265,7 +265,7 @@
                 noteTitle: "Disclosure & References", noteDesc: "Data refers to historical averages. Professional allocation uses guaranteed yield-optimized portfolios.",
                 sigRole: "Individual Insurance Broker (Canada)", sigExp: "20+ Years Excellence in Wealth Management",
                 btnReset: "↺ Start New Analysis", msgTitle: "Notification", msgBtn: "Got it", waBtn: "Text Alex for Consultation",
-                wcTitle: "WeChat ID Copied", wcBtn: "Open WeChat",
+                wcTitle: "WeChat ID Copied", wcBtn: "Open WeChat", wcBtnLabel: "Contact via WeChat",
                 chartLabelTarget: "Pro-Managed Portfolio*", chartLabelCurrent: "Current Strategy Simulation",
                 closing: "<br><br>To gain a comprehensive understanding of your financial health, maximize your assets within risk tolerance, and fully leverage your tax-advantaged accounts, you are invited to connect with Alex for a consultation. With over 20 years of distinguished experience in banking and independent financial advisory, Alex provides precise insights to navigate your wealth optimization.",
                 backup: (name, gap, acc, asset, riskText, analogy) => `Hello ${name}, choosing ${acc} in savings is safe. However, the $${gap} simulated gap in 17 years is massive, <b>${analogy}</b>. If your current setup faces a ${riskText} drawdown risk, our pro-managed portfolio offers a contractual guarantee to eliminate this risk.`
@@ -287,6 +287,7 @@
             safeSet('ui-note-desc', d.noteDesc); safeSet('ui-btn-reset', d.btnReset); safeSet('msg-modal-title', d.msgTitle);
             safeSet('msg-modal-btn', d.msgBtn); safeSet('wechat-modal-title', d.wcTitle);
             safeSet('ui-tag-current', d.tagCurrent); safeSet('ui-tag-pro', d.tagPro);
+            safeSet('cta-wechat-btn', d.wcBtnLabel);
 
             updateLabelByAccount();
 
