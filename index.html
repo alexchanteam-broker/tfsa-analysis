@@ -8,117 +8,126 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&family=Noto+Sans+SC:wght@400;700;900&family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', 'Noto Sans TC', 'Noto Sans SC', sans-serif; background-color: #f1f5f9; -webkit-tap-highlight-color: transparent; }
+        /* 鎖定 body 滾動，改由內部容器控制 */
+        body { 
+            font-family: 'Inter', 'Noto Sans TC', 'Noto Sans SC', sans-serif; 
+            background-color: #f1f5f9; 
+            -webkit-tap-highlight-color: transparent;
+            overflow: hidden; 
+            height: 100dvh;
+        }
+        .app-container {
+            height: 100dvh;
+            display: flex;
+            flex-direction: column;
+        }
         .glass { background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(12px); }
         .loading-bar { width: 0%; height: 4px; background: #3b82f6; transition: width 0.4s ease-out; }
         .lang-btn-active { background-color: #3b82f6 !important; color: white !important; }
-        .chart-container { position: relative; height: 280px; width: 100%; margin-top: -5px; }
+        .chart-container { position: relative; height: 260px; width: 100%; margin-top: -5px; }
         @keyframes fadeInScale { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
         .modal-animate { animation: fadeInScale 0.3s ease-out forwards; }
         .profile-img { object-fit: cover; }
-        /* 優化滾動體驗 */
-        .no-scrollbar::-webkit-scrollbar { display: none; }
+        /* 隱藏捲動條但保留功能 */
+        .custom-scroll::-webkit-scrollbar { width: 0px; background: transparent; }
         .custom-scroll { scrollbar-width: none; -ms-overflow-style: none; }
     </style>
 </head>
-<body class="min-h-screen flex items-center justify-center p-2 sm:p-4">
+<body class="bg-slate-100 flex items-center justify-center sm:p-4">
 
-    <div class="max-w-md w-full glass rounded-[2rem] sm:rounded-[2.5rem] shadow-2xl overflow-hidden border border-gray-200 relative flex flex-col">
+    <div class="app-container max-w-md w-full bg-white shadow-2xl relative sm:rounded-[2.5rem] overflow-hidden border-x border-gray-200">
         
-        <!-- 語言切換 (緊湊型) -->
-        <div class="bg-gray-50 border-b border-gray-100 px-4 py-2 flex justify-end items-center">
-            <div class="flex bg-gray-200 p-1 rounded-full text-[10px] font-bold shadow-sm space-x-1">
-                <button id="btn-tc" onclick="setLanguage('tc')" class="px-3 py-1 rounded-full transition-all lang-btn-active">繁</button>
-                <button id="btn-sc" onclick="setLanguage('sc')" class="px-3 py-1 rounded-full transition-all">简</button>
-                <button id="btn-en" onclick="setLanguage('en')" class="px-3 py-1 rounded-full transition-all">EN</button>
-            </div>
-        </div>
-
-        <!-- Header (壓縮高度) -->
-        <div class="bg-slate-900 p-5 sm:p-8 text-white">
-            <div class="flex items-center space-x-3 sm:space-x-4">
-                <div class="relative flex-shrink-0">
-                    <img id="header-avatar" src="profile.jpg" alt="Alex Chan" 
-                         onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=Alex+Chan&background=3b82f6&color=fff&size=128'" 
-                         class="w-12 h-12 sm:w-16 sm:h-16 rounded-full profile-img shadow-lg border-2 border-blue-400/50">
-                    <div class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-slate-900 rounded-full"></div>
-                </div>
-                <div class="flex-grow">
-                    <div id="ui-header-tag" class="text-blue-400 font-black tracking-widest text-[8px] sm:text-[9px] uppercase italic leading-tight">Alex Chan | Individual Insurance Broker</div>
-                    <h1 id="ui-title" class="text-lg sm:text-xl font-black italic text-yellow-400 tracking-tight">個人稅務帳戶收益分析</h1>
-                    <div id="ui-subtitle" class="text-[8px] sm:text-[9px] opacity-60 italic tracking-widest">逾20年財富管理經驗導航</div>
+        <!-- 固定頂部 (Fixed Top) -->
+        <header class="flex-shrink-0 z-20 shadow-sm">
+            <!-- 語言切換 -->
+            <div class="bg-gray-50 border-b border-gray-100 px-4 py-2 flex justify-end items-center">
+                <div class="flex bg-gray-200 p-1 rounded-full text-[10px] font-bold shadow-sm space-x-1">
+                    <button id="btn-tc" onclick="setLanguage('tc')" class="px-3 py-1 rounded-full transition-all lang-btn-active">繁</button>
+                    <button id="btn-sc" onclick="setLanguage('sc')" class="px-3 py-1 rounded-full transition-all">简</button>
+                    <button id="btn-en" onclick="setLanguage('en')" class="px-3 py-1 rounded-full transition-all">EN</button>
                 </div>
             </div>
-        </div>
-
-        <!-- 第一步：輸入表單 (壓縮間距) -->
-        <div id="step-form" class="p-5 sm:p-8 space-y-4">
-            <div class="text-center">
-                <p id="ui-quote" class="text-slate-500 text-[13px] italic font-bold leading-relaxed">「透過精確的數據分析，了解您的資產在市場波動中的表現。」</p>
+            <!-- Header 資訊 -->
+            <div class="bg-slate-900 p-5 text-white">
+                <div class="flex items-center space-x-3">
+                    <div class="relative flex-shrink-0">
+                        <img id="header-avatar" src="profile.jpg" alt="Alex Chan" 
+                             onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=Alex+Chan&background=3b82f6&color=fff&size=128'" 
+                             class="w-12 h-12 rounded-full profile-img shadow-lg border-2 border-blue-400/50">
+                        <div class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-slate-900 rounded-full"></div>
+                    </div>
+                    <div class="flex-grow">
+                        <div id="ui-header-tag" class="text-blue-400 font-black tracking-widest text-[8px] uppercase italic leading-tight">Alex Chan | Individual Insurance Broker</div>
+                        <h1 id="ui-title" class="text-lg font-black italic text-yellow-400 tracking-tight">個人稅務帳戶收益分析</h1>
+                        <div id="ui-subtitle" class="text-[8px] opacity-60 italic tracking-widest">逾20年財富管理經驗導航</div>
+                    </div>
+                </div>
             </div>
+        </header>
+
+        <!-- 中間可捲動區 (Scrollable Middle) -->
+        <main class="flex-grow overflow-y-auto custom-scroll bg-white">
             
-            <div class="space-y-3">
-                <div>
-                    <label id="label-name" class="block text-[9px] font-bold text-slate-400 uppercase mb-1 ml-1 tracking-widest">您的稱呼</label>
-                    <input id="user-name" type="text" placeholder="Chris" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-sm transition-all text-slate-800">
+            <!-- 第一步：輸入表單 -->
+            <div id="step-form" class="p-6 space-y-5">
+                <div class="text-center pt-2">
+                    <p id="ui-quote" class="text-slate-500 text-[13px] italic font-bold leading-relaxed">「透過精確的數據分析，了解您的資產在市場波動中的表現。」</p>
                 </div>
                 
-                <div class="grid grid-cols-2 gap-3">
+                <div class="space-y-4">
                     <div>
-                        <label id="label-acc-type" class="block text-[9px] font-bold text-slate-400 uppercase mb-1 ml-1 tracking-widest">帳戶類型</label>
-                        <select id="account-type" onchange="updateLabelByAccount()" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none text-sm cursor-pointer">
-                            <option value="TFSA">TFSA</option>
-                            <option value="RRSP">RRSP</option>
-                        </select>
+                        <label id="label-name" class="block text-[9px] font-bold text-slate-400 uppercase mb-1 ml-1 tracking-widest">您的稱呼</label>
+                        <input id="user-name" type="text" placeholder="Chris" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-sm text-slate-800">
                     </div>
+                    
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label id="label-acc-type" class="block text-[9px] font-bold text-slate-400 uppercase mb-1 ml-1 tracking-widest">帳戶類型</label>
+                            <select id="account-type" onchange="updateLabelByAccount()" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none text-sm cursor-pointer">
+                                <option value="TFSA">TFSA</option>
+                                <option value="RRSP">RRSP</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label id="label-asset-type" class="block text-[9px] font-bold text-slate-400 uppercase mb-1 ml-1 tracking-widest">目前存放方式</label>
+                            <select id="asset-type" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none text-sm cursor-pointer">
+                                <option id="opt-cash" value="cash">銀行定期 / GIC</option>
+                                <option id="opt-fund" value="fund">互惠基金</option>
+                                <option id="opt-stock" value="stock">藍籌股/ETF</option>
+                            </select>
+                        </div>
+                    </div>
+
                     <div>
-                        <label id="label-asset-type" class="block text-[9px] font-bold text-slate-400 uppercase mb-1 ml-1 tracking-widest">目前存放方式</label>
-                        <select id="asset-type" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none text-sm cursor-pointer">
-                            <option id="opt-cash" value="cash">銀行定期 / GIC</option>
-                            <option id="opt-fund" value="fund">互惠基金</option>
-                            <option id="opt-stock" value="stock">藍籌股/ETF</option>
-                        </select>
+                        <label id="ui-label-balance" class="block text-[9px] font-bold text-slate-400 uppercase mb-1 ml-1 tracking-widest">累積供款額度 (CAD)</label>
+                        <input id="balance" type="number" placeholder="109000" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-sm text-slate-800 font-bold">
                     </div>
                 </div>
+                <div class="h-10"></div> <!-- 墊底空間防止被按鈕遮擋 -->
+            </div>
 
-                <div>
-                    <label id="ui-label-balance" class="block text-[9px] font-bold text-slate-400 uppercase mb-1 ml-1 tracking-widest">累積供款額度 (CAD)</label>
-                    <input id="balance" type="number" placeholder="109000" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-sm transition-all text-slate-800 font-bold">
+            <!-- 第二步：載入中 -->
+            <div id="step-loading" class="hidden p-16 text-center space-y-8">
+                <div class="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
+                <h3 id="ui-loading-title" class="text-lg font-black text-slate-800">正在模擬市場波動場景...</h3>
+                <div class="w-full bg-gray-100 rounded-full h-1.5 overflow-hidden">
+                    <div id="progress-bar" class="loading-bar"></div>
                 </div>
+                <p id="loading-hint" class="text-[10px] text-slate-400 italic">正在對比歷史數據與生活價值空間...</p>
             </div>
 
-            <button id="btn-submit" onclick="startAnalysis()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-black py-4 rounded-2xl shadow-xl transition-all transform active:scale-95 flex items-center justify-center mt-4">
-                <span id="ui-btn-scan">⚡ 啟動 AI 收益與風險分析</span>
-            </button>
-            <p id="ui-footer-note" class="text-[8px] text-slate-400 text-center mt-2 italic leading-relaxed px-4 opacity-80">
-                * 本分析系統僅供模擬參考用途。
-            </p>
-        </div>
-
-        <!-- 第二步：載入中 -->
-        <div id="step-loading" class="hidden p-12 text-center space-y-6">
-            <div class="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
-            <h3 id="ui-loading-title" class="text-lg font-black text-slate-800">正在模擬市場波動場景...</h3>
-            <div class="w-full bg-gray-100 rounded-full h-1 overflow-hidden">
-                <div id="progress-bar" class="loading-bar"></div>
-            </div>
-            <p id="loading-hint" class="text-[10px] text-slate-400 italic">正在對比歷史數據與生活價值空間...</p>
-        </div>
-
-        <!-- 第三步：分析結果 (移除固定高度) -->
-        <div id="step-result" class="hidden flex flex-col bg-white">
-            <div class="p-5 sm:p-6 space-y-4 overflow-y-auto max-h-[70vh] custom-scroll">
+            <!-- 第三步：分析結果內容 -->
+            <div id="step-result" class="hidden p-5 space-y-6 pb-20">
                 <div class="flex items-center justify-between text-blue-600 border-b border-blue-50 pb-2">
                     <span id="ui-result-label" class="font-black text-xs italic tracking-widest uppercase">分析報告</span>
                 </div>
 
-                <!-- 圖表區 (高度優化) -->
-                <div class="bg-slate-50 p-3 sm:p-4 rounded-3xl border border-slate-100 shadow-inner">
+                <div class="bg-slate-50 p-4 rounded-3xl border border-slate-100 shadow-inner">
                     <h4 id="ui-chart-header" class="text-[10px] font-black text-center text-slate-900 mb-2 uppercase tracking-tight italic">17年模擬累積收益增長軌跡</h4>
                     <div class="chart-container"><canvas id="wealthChart"></canvas></div>
                 </div>
 
-                <!-- 方案對比卡片 (緊湊型) -->
+                <!-- 方案對比卡片 -->
                 <div class="grid grid-cols-2 gap-2">
                     <div class="p-3 bg-red-50 rounded-2xl border border-red-200 relative overflow-hidden">
                         <div class="text-[7px] font-black text-red-400 mb-1 uppercase tracking-widest" id="ui-tag-current">目前策略表現</div>
@@ -137,49 +146,57 @@
                 
                 <div id="report-content" class="text-slate-700 leading-relaxed text-[14px] space-y-3 px-1 italic"></div>
 
-                <div class="p-4 bg-blue-50 rounded-3xl border border-blue-100 mb-2 mt-4">
+                <div class="p-4 bg-blue-50 rounded-3xl border border-blue-100 mt-4">
                     <p class="text-blue-900 text-[10px] font-black flex items-center mb-1">
                         <span class="mr-1">💡</span> <span id="ui-note-title">數據備註與披露</span>
                     </p>
                     <p id="ui-note-desc" class="text-blue-700 text-[9px] leading-relaxed italic">模擬數據參考加拿大市場歷史平均。專業配置採用具備「合約級別保證」機制的收益優化組合。</p>
                 </div>
             </div>
+        </main>
 
-            <!-- 固定在底部的操作區 -->
-            <div class="p-4 sm:p-6 bg-slate-900 text-white text-center flex-shrink-0 space-y-2 border-t border-slate-800">
-                <a id="cta-wa-link" href="#" target="_blank" class="w-full bg-[#25D366] text-white font-black py-3 sm:py-4 rounded-xl flex items-center justify-center no-underline shadow-lg active:scale-95 transition-all text-sm sm:text-base">
+        <!-- 固定底部 (Fixed Bottom Buttons) -->
+        <footer class="flex-shrink-0 bg-slate-900 p-4 sm:p-6 space-y-2 z-20 border-t border-slate-800">
+            <!-- 第一步按鈕 -->
+            <button id="btn-submit-action" onclick="startAnalysis()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-black py-4 rounded-xl shadow-xl transition-all transform active:scale-95 flex items-center justify-center text-sm">
+                <span id="ui-btn-scan">⚡ 啟動 AI 收益與風險分析</span>
+            </button>
+
+            <!-- 第三步按鈕 (預設隱藏) -->
+            <div id="result-footer-actions" class="hidden space-y-2">
+                <a id="cta-wa-link" href="#" target="_blank" class="w-full bg-[#25D366] text-white font-black py-3 rounded-xl flex items-center justify-center no-underline shadow-lg active:scale-95 transition-all text-sm">
                     WhatsApp 聯繫顧問獲取分析
                 </a>
-                <button id="cta-wechat-btn" onclick="copyWeChat()" class="hidden w-full bg-[#07C160] text-white font-black py-3 sm:py-4 rounded-xl flex items-center justify-center shadow-lg active:scale-95 transition-all text-sm sm:text-base">
+                <button id="cta-wechat-btn" onclick="copyWeChat()" class="hidden w-full bg-[#07C160] text-white font-black py-3 rounded-xl flex items-center justify-center shadow-lg active:scale-95 transition-all text-sm">
                     微信聯繫顧問
                 </button>
-                <a id="cta-sms-link" href="sms:+17783198129" class="hidden w-full bg-blue-500 text-white font-black py-3 sm:py-4 rounded-xl flex items-center justify-center no-underline shadow-lg active:scale-95 transition-all text-sm sm:text-base">
+                <a id="cta-sms-link" href="sms:+17783198129" class="hidden w-full bg-blue-500 text-white font-black py-3 rounded-xl flex items-center justify-center no-underline shadow-lg active:scale-95 transition-all text-sm">
                     Text for Consultation
                 </a>
                 <button id="ui-btn-reset" onclick="resetApp()" class="w-full bg-slate-700 text-white font-bold py-2 rounded-xl active:scale-95 transition-all text-[10px]">
                     ↺ 重新開始分析
                 </button>
             </div>
-        </div>
+        </footer>
     </div>
 
-    <!-- 微信彈窗 -->
-    <div id="wechat-modal" class="fixed inset-0 bg-black/70 z-[300] hidden items-center justify-center p-6 backdrop-blur-md">
-        <div class="bg-white p-8 rounded-[2rem] max-w-xs w-full text-center shadow-2xl modal-animate border border-slate-100">
+    <!-- WeChat Modal -->
+    <div id="wechat-modal" class="fixed inset-0 bg-black/70 z-[100] hidden items-center justify-center p-6 backdrop-blur-md">
+        <div class="bg-white p-8 rounded-[2rem] max-w-xs w-full text-center shadow-2xl modal-animate">
             <div class="text-5xl mb-4">✅</div>
             <h3 id="wechat-modal-title" class="text-lg font-black text-slate-900 mb-2">已成功複製微信號</h3>
-            <p id="wechat-modal-tip" class="text-slate-500 text-[12px] mb-6 leading-relaxed italic">WeChat ID: <span class="font-bold text-blue-600">catholicalex</span><br>請前往微信搜索並添加 Alex 為好友。</p>
-            <button onclick="closeWechatModal()" class="w-full bg-slate-900 text-white py-3 rounded-2xl font-black shadow-lg active:scale-95">前往微信</button>
+            <p class="text-slate-500 text-[12px] mb-6 leading-relaxed italic">WeChat ID: <span class="font-bold text-blue-600">catholicalex</span><br>請前往微信搜索並添加 Alex 為好友。</p>
+            <button onclick="closeWechatModal()" class="w-full bg-slate-900 text-white py-3 rounded-2xl font-black shadow-lg">前往微信</button>
         </div>
     </div>
 
-    <!-- 提示彈窗 -->
-    <div id="msg-modal" class="fixed inset-0 bg-black/70 z-[200] hidden items-center justify-center p-6 backdrop-blur-md">
-        <div class="bg-white p-8 rounded-[2rem] max-w-xs w-full text-center shadow-2xl modal-animate border border-slate-100">
+    <!-- Message Modal -->
+    <div id="msg-modal" class="fixed inset-0 bg-black/70 z-[100] hidden items-center justify-center p-6 backdrop-blur-md">
+        <div class="bg-white p-8 rounded-[2rem] max-w-xs w-full text-center shadow-2xl modal-animate">
             <div class="text-4xl mb-4">⚠️</div>
             <h3 id="msg-modal-title" class="text-lg font-black text-slate-900 mb-2">系統提示</h3>
-            <p id="msg-text" class="text-slate-500 text-[13px] mb-6 leading-relaxed italic text-left"></p>
-            <button onclick="closeMsg()" class="w-full bg-slate-900 text-white py-3 rounded-xl font-bold active:scale-95">了解</button>
+            <p id="msg-text" class="text-slate-500 text-[13px] mb-6 leading-relaxed text-left"></p>
+            <button onclick="closeMsg()" class="w-full bg-slate-900 text-white py-3 rounded-xl font-bold">了解</button>
         </div>
     </div>
 
@@ -188,7 +205,7 @@
 
         let currentLang = 'tc';
         let wealthChart = null;
-        let analysisState = { isFinished: false, v1: 0, v2: 0, r1: 0, balance: 0, name: '', asset: '', acc: '', gap: '', riskText: '' };
+        let analysisState = { isFinished: false, v1: 0, v2: 0, r1: 0, balance: 0, name: '', asset: '', acc: '', gap: '' };
 
         const assetRisks = {
             cash: { tc: "通脹侵蝕", sc: "通胀侵蚀", en: "Inflation" },
@@ -203,72 +220,27 @@
             pro: { yield: 0.110 } 
         };
 
-        const getAnalogy = (gapNum, lang) => {
-            const analogies = {
-                tc: {
-                    house: "足以支付溫哥華高尚住宅區獨立屋的優厚首期", townhouse: "足以全款購置一間寬敞的全新聯排別墅 (Townhouse)",
-                    rv: "足以購買一部頂級豪華的 Class A 大型露營車", car: "足以全款買入一部頂配版豪華跑車或重型越野皮卡",
-                    suv: "足以添置一部全新款式的高性能全電動 SUV"
-                },
-                sc: {
-                    house: "足以支付温哥华高尚住宅区独立屋的优厚首期", townhouse: "足以全款购置一间宽敞的全新联排别墅 (Townhouse)",
-                    rv: "足以购买一部顶级豪华的 Class A 大型露营车", car: "足以全款买入一部顶配版豪华跑车或重型越野皮卡",
-                    suv: "足以添置一部全新款式的高性能全电动 SUV"
-                },
-                en: {
-                    house: "equivalent to a substantial down payment for a detached house in a prime neighborhood",
-                    townhouse: "enough to purchase a spacious brand-new Townhouse in full cash",
-                    rv: "enough to purchase a top-tier Luxury Motorhome",
-                    car: "equivalent to the full price of a top-spec luxury sports car or heavy-duty pickup",
-                    suv: "enough to purchase a brand-new high-performance all-electric SUV"
-                }
-            };
-            if (gapNum > 1500000) return analogies[lang].house;
-            if (gapNum > 800000) return analogies[lang].townhouse;
-            if (gapNum > 350000) return analogies[lang].rv;
-            if (gapNum > 150000) return analogies[lang].car;
-            return analogies[lang].suv;
-        };
-
         const dictionary = {
             tc: {
                 title: "個人稅務帳戶收益分析", headerTag: "Alex Chan | Individual Insurance Broker", subtitle: "逾20年財富管理經驗導航", quote: "「透過精確的數據分析，了解您的資產在市場波動中的表現。」",
                 labelName: "您的稱呼", labelAccType: "帳戶類型", labelAssetType: "目前存放方式", labelBalanceTFSA: "CRA 累積供款額度 (CAD)", labelBalanceRRSP: "RRSP 扣稅額度 (CAD)",
-                optCash: "銀行定期 / GIC", optFund: "互惠基金", optStock: "藍籌股/ETF", btnScan: "⚡ 啟動 AI 收益與風險分析", footerNote: "* 本分析系統僅供模擬參考用途。",
-                loadingTitle: "正在模擬市場波動場景...", loadingHint: "正在對比歷史數據與生活價值空間...",
-                resultLabel: "分析報告", tagCurrent: "目前策略表現", tagPro: "專業配置優勢", chartHeader: "17年模擬累積收益增長軌跡", riskTitle: "下行/購買力風險", safeTitle: "配置保障機制", safeStatus: "合約級別保證", safeNote: "受保單條款約束",
+                optCash: "銀行定期 / GIC", optFund: "互惠基金", optStock: "藍籌股/ETF", btnScan: "⚡ 啟動 AI 收益與風險分析", resultLabel: "分析報告", tagCurrent: "目前策略表現", tagPro: "專業配置優勢", chartHeader: "17年模擬累積收益增長軌跡", riskTitle: "下行/購買力風險", safeTitle: "配置保障機制", safeStatus: "合約級別保證", safeNote: "受保單條款約束",
                 noteTitle: "數據備註與披露", noteDesc: "模擬數據參考加拿大市場歷史平均。專業配置採用具備「合約級別保證」機制的收益優化組合。",
-                btnReset: "↺ 重新開始分析", msgTitle: "系統提示", msgBtn: "了解", waBtn: "WhatsApp 聯繫顧問獲取分析",
-                wcTitle: "已成功複製微信號", wcBtnLabel: "微信聯繫顧問",
-                chartLabelTarget: "專業管理的投資組合*", chartLabelCurrent: "目前策略模擬表現",
-                closing: "<br><br>如果您希望全面審視財務現狀，在風險可控的前提下追求資產回報最大化，並極大化稅務帳戶的優勢，誠邀您聯絡 Alex 進行初步諮詢。憑藉逾 20 年深耕銀行體系及獨立理財顧問的深厚經驗，Alex 將為您的財富增值提供精確且具價值的專業導航。",
-                backup: (name, gap, acc, asset, riskText, analogy) => `你好 ${name}，選擇存放 ${acc} 於目前配置是一個非常穩健的決定。但數據顯示，17 年後的模擬複利缺口高達 $${gap}，這筆錢<b>${analogy}</b>。如果您目前配置面臨歷史高達 ${riskText} 的下行風險，專業配置系統能提供合約保證機制以消除此風險。`
+                wcTitle: "已成功複製微信號", wcBtnLabel: "微信聯繫顧問", waBtn: "WhatsApp 聯繫顧問獲取分析", chartLabelTarget: "專業管理的投資組合*", chartLabelCurrent: "目前策略模擬表現", closing: "<br><br>如果您希望全面審視財務現狀，在風險可控的前提下追求資產回報最大化，並極大化稅務帳戶的優勢，誠邀您聯絡 Alex 進行初步諮詢。"
             },
             sc: {
                 title: "个人税务账户收益分析", headerTag: "Alex Chan | Individual Insurance Broker", subtitle: "逾20年财富管理经验导航", quote: "「通过精确的数据分析，了解您的资产在市场波动中的表现。」",
                 labelName: "您的称呼", labelAccType: "账户类型", labelAssetType: "目前存放方式", labelBalanceTFSA: "CRA 累计供款额度 (CAD)", labelBalanceRRSP: "RRSP 扣税额度 (CAD)",
-                optCash: "银行定期 / GIC", optFund: "互惠基金", optStock: "蓝筹股/ETF", btnScan: "⚡ 启动 AI 收益与风险分析", footerNote: "* 本分析系统仅供模拟参考用途。",
-                loadingTitle: "正在模拟市场波动场景...", loadingHint: "正在对比历史数据与资产表现空间...",
-                resultLabel: "分析报告", tagCurrent: "目前策略表现", tagPro: "专业配置优势", chartHeader: "17年模拟累计收益增长轨迹", riskTitle: "下行/购买力风险", safeTitle: "配置保障機制", safeStatus: "合约级别保证", safeNote: "受保单条款约束",
+                optCash: "银行定期 / GIC", optFund: "互惠基金", optStock: "蓝筹股/ETF", btnScan: "⚡ 启动 AI 收益与风险分析", resultLabel: "分析报告", tagCurrent: "目前策略表现", tagPro: "专业配置优势", chartHeader: "17年模拟累计收益增长轨迹", riskTitle: "下行/购买力风险", safeTitle: "配置保障機制", safeStatus: "合约级别保证", safeNote: "受保单条款约束",
                 noteTitle: "数据备注与披露", noteDesc: "目前配置数据参考加拿大市场历史平均。專業配置採用具備「合約級別保證」機制的收益優化組合。",
-                btnReset: "↺ 重新開始分析", msgTitle: "系统提示", msgBtn: "了解", scBtn: "微信联系顾问獲取分析",
-                wcTitle: "已成功复制微信号", wcBtnLabel: "微信聯繫顧問",
-                chartLabelTarget: "专业管理的投资组合*", chartLabelCurrent: "目前策略模拟表现",
-                closing: "<br><br>如果您希望全面审视财务现状，在风险可控的前提下追求资产回报最大化，并极大化税务账户的优势，诚邀您联络 Alex 进行初步咨询。凭借逾 20 年深耕銀行體系及獨立理財顧問的深厚經驗，Alex 將為您提供精確且具價值的專業導航。",
-                backup: (name, gap, acc, asset, riskText, analogy) => `你好 ${name}，选择存放 ${acc} 於目前配置是非常稳健的决定。但数据显示，17 年後的模拟复利缺口高达 $${gap}，这笔钱<b>${analogy}</b>。如果您目前配置面临历史高达 ${riskText} 的下行风险，专业配置系统能提供合约保证机制以消除此风险。`
+                wcTitle: "已成功复制微信号", wcBtnLabel: "微信聯繫顧問", waBtn: "微信联系顾问獲取分析", chartLabelTarget: "专业管理的投资组合*", chartLabelCurrent: "目前策略模拟表现", closing: "<br><br>如果您希望全面审视财务现状，在风险可控的前提下追求资产回报最大化，并极大化税务账户的优势，诚邀您联络 Alex 进行初步咨询。"
             },
             en: {
                 title: "Tax-Account Yield Analysis", headerTag: "Alex Chan | Individual Insurance Broker", subtitle: "Guided by 20+ Years of Wealth Management", quote: "「Analyze assets with precision and understand your performance against market volatility.」",
                 labelName: "Your Name", labelAccType: "Account Type", labelAssetType: "Current Method", labelBalanceTFSA: "CRA Room (CAD)", labelBalanceRRSP: "RRSP Limit (CAD)",
-                optCash: "Bank Savings / GIC", optFund: "Mutual Funds", optStock: "Stocks/ETFs", btnScan: "⚡ Launch AI Yield & Risk Analysis", footerNote: "* Simulation purposes only.",
-                loadingTitle: "Simulating market scenarios...", loadingHint: "Comparing performance and lifestyle impacts...",
-                resultLabel: "Analysis Report", tagCurrent: "Current Strategy", tagPro: "Professional Edge", chartHeader: "17-Year Simulated Growth Trajectory", riskTitle: "Downside Risk", safeTitle: "Protection Mechanism", safeStatus: "Contractual Guarantee", safeNote: "Subject to policy terms",
+                optCash: "Bank Savings / GIC", optFund: "Mutual Funds", optStock: "Stocks/ETFs", btnScan: "⚡ Launch AI Yield & Risk Analysis", resultLabel: "Analysis Report", tagCurrent: "Current Strategy", tagPro: "Professional Edge", chartHeader: "17-Year Simulated Growth Trajectory", riskTitle: "Downside Risk", safeTitle: "Protection Mechanism", safeStatus: "Contractual Guarantee", safeNote: "Subject to policy terms",
                 noteTitle: "Disclosure & References", noteDesc: "Data refers to historical averages. Professional allocation uses guaranteed portfolios.",
-                btnReset: "↺ Start New Analysis", msgTitle: "Notification", msgBtn: "Got it", waBtn: "Text for Consultation",
-                wcTitle: "WeChat ID Copied", wcBtnLabel: "Contact via WeChat",
-                chartLabelTarget: "Pro-Managed Portfolio*", chartLabelCurrent: "Current Strategy Simulation",
-                closing: "<br><br>To gain a comprehensive understanding of your financial health, maximize your assets within risk tolerance, and fully leverage your tax-advantaged accounts, you are invited to connect with Alex for a consultation. With over 20 years of distinguished experience in banking and independent financial advisory, Alex provides precise insights to navigate your wealth optimization.",
-                backup: (name, gap, acc, asset, riskText, analogy) => `Hello ${name}, choosing ${acc} in savings is safe. However, the $${gap} simulated gap in 17 years is massive, <b>${analogy}</b>. If your current setup faces a ${riskText} drawdown risk, our pro-managed portfolio offers a contractual guarantee to eliminate this risk.`
+                wcTitle: "WeChat ID Copied", wcBtnLabel: "Contact via WeChat", waBtn: "Text for Consultation", chartLabelTarget: "Pro-Managed Portfolio*", chartLabelCurrent: "Current Strategy Simulation", closing: "<br><br>To gain a comprehensive understanding of your financial health, maximize your assets within risk tolerance, and fully leverage your tax-advantaged accounts, you are invited to connect with Alex for a consultation."
             }
         };
 
@@ -280,12 +252,10 @@
             safeSet('ui-title', d.title); safeSet('ui-header-tag', d.headerTag); safeSet('ui-subtitle', d.subtitle);
             safeSet('ui-quote', d.quote); safeSet('label-name', d.labelName); safeSet('label-acc-type', d.labelAccType);
             safeSet('label-asset-type', d.labelAssetType); safeSet('opt-cash', d.optCash); safeSet('opt-fund', d.optFund);
-            safeSet('opt-stock', d.optStock); safeSet('ui-btn-scan', d.btnScan); safeSet('ui-footer-note', d.footerNote);
-            safeSet('ui-loading-title', d.loadingTitle); safeSet('loading-hint', d.loadingHint); safeSet('ui-result-label', d.resultLabel);
+            safeSet('opt-stock', d.optStock); safeSet('ui-btn-scan', d.btnScan); safeSet('ui-result-label', d.resultLabel);
             safeSet('ui-chart-header', d.chartHeader); safeSet('ui-risk-title', d.riskTitle); safeSet('ui-safe-title', d.safeTitle);
             safeSet('ui-safe-status', d.safeStatus); safeSet('ui-safe-note', d.safeNote); safeSet('ui-note-title', d.noteTitle);
-            safeSet('ui-note-desc', d.noteDesc); safeSet('ui-btn-reset', d.btnReset); safeSet('msg-modal-title', d.msgTitle);
-            safeSet('wechat-modal-title', d.wcTitle);
+            safeSet('ui-note-desc', d.noteDesc); safeSet('wechat-modal-title', d.wcTitle);
             safeSet('ui-tag-current', d.tagCurrent); safeSet('ui-tag-pro', d.tagPro);
             safeSet('cta-wechat-btn', d.wcBtnLabel);
             safeSet('cta-wa-link', d.waBtn);
@@ -306,10 +276,7 @@
             if (analysisState.isFinished) {
                 renderChart(analysisState.v1, analysisState.v2, analysisState.r1);
                 const riskValText = assetRisks[analysisState.asset][currentLang];
-                const drawdown = document.getElementById('ui-max-drawdown');
-                if(drawdown) drawdown.innerText = analysisState.asset === 'cash' ? riskValText : `-${riskValText}`;
-                const analogyStr = getAnalogy(parseInt(analysisState.gap.replace(/,/g,'')), currentLang);
-                document.getElementById('report-content').innerHTML = d.backup(analysisState.name, analysisState.gap, analysisState.acc, analysisState.asset, riskValText, analogyStr) + d.closing;
+                document.getElementById('ui-max-drawdown').innerText = analysisState.asset === 'cash' ? riskValText : `-${riskValText}`;
             }
         }
 
@@ -335,103 +302,14 @@
             const assetType = document.getElementById('asset-type').value;
 
             document.getElementById('step-form').classList.add('hidden');
+            document.getElementById('btn-submit-action').classList.add('hidden');
             document.getElementById('step-loading').classList.remove('hidden');
 
             const finalCurrent = balance * Math.pow(1 + rates[assetType].yield, 17);
             const finalPro = balance * Math.pow(1 + rates.pro.yield, 17);
-            const gapInt = parseInt(finalPro - finalCurrent);
-            const gapStr = gapInt.toLocaleString();
+            const gapStr = parseInt(finalPro - finalCurrent).toLocaleString();
 
             analysisState = { isFinished: true, v1: finalCurrent, v2: finalPro, r1: rates[assetType].yield, balance, name, asset: assetType, acc: accType, gap: gapStr };
 
             const msgBodyTC = `你好 Alex！我係 ${name}，我剛剛完成咗分析報告 (${accType})，想請教專業配置建議。`;
-            const waLink = document.getElementById('cta-wa-link');
-            if(waLink) waLink.href = `https://wa.me/17783198129?text=${encodeURIComponent(msgBodyTC)}`;
-
-            const langPrompt = { tc: "廣東話繁體中文", sc: "簡體中文", en: "Professional English" }[currentLang];
-            const analogyStr = getAnalogy(gapInt, currentLang);
-            const riskText = assetRisks[assetType][currentLang];
-
-            const prompt = `You are an AI assistant for Alex Chan. Generate a 220-word report for ${name}. Context: $${balance.toLocaleString()} in ${accType}, currently in ${assetType}. Language: ${langPrompt}. IF ENGLISH, NO CHINESE CHARACTERS.
-                CRITICAL:
-                1. Gap: $${gapStr}.
-                2. Use analogy: "${analogyStr}".
-                3. Mention "${riskText}" risk.
-                4. CLOSING: "${dictionary[currentLang].closing.replace('<br><br>', '')}"`;
-
-            try {
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
-                    method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
-                });
-                const data = await response.json();
-                const aiText = data.candidates?.[0]?.content?.parts?.[0]?.text;
-                document.getElementById('report-content').innerHTML = aiText ? aiText.replace(/\n/g, '<br>') : dictionary[currentLang].backup(name, gapStr, accType, assetType, riskText, analogyStr) + dictionary[currentLang].closing;
-                finish();
-            } catch (e) { 
-                document.getElementById('report-content').innerHTML = dictionary[currentLang].backup(name, gapStr, accType, assetType, riskText, analogyStr) + dictionary[currentLang].closing;
-                finish();
-            }
-        }
-
-        function finish() {
-            document.getElementById('progress-bar').style.width = "100%";
-            setTimeout(() => {
-                document.getElementById('step-loading').classList.add('hidden');
-                document.getElementById('step-result').classList.remove('hidden');
-                renderChart(analysisState.v1, analysisState.v2, analysisState.r1);
-                const riskValText = assetRisks[analysisState.asset][currentLang];
-                document.getElementById('ui-max-drawdown').innerText = analysisState.asset === 'cash' ? riskValText : `-${riskValText}`;
-                document.getElementById('ui-risk-note').innerText = rates[analysisState.asset].riskDetail[currentLang];
-            }, 500);
-        }
-
-        function renderChart(v1, v2, r1) {
-            const ctx = document.getElementById('wealthChart').getContext('2d');
-            if (wealthChart) wealthChart.destroy();
-            const labels = Array.from({length: 18}, (_, i) => i === 0 ? "0" : `Y${i}`);
-            const dataCurrent = []; const dataPro = []; const p = analysisState.balance;
-            for (let t = 0; t <= 17; t++) {
-                dataCurrent.push((p * Math.pow(1 + r1, t)).toFixed(0));
-                dataPro.push((p * Math.pow(1 + 0.11, t)).toFixed(0));
-            }
-            wealthChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: labels,
-                    datasets: [
-                        { label: dictionary[currentLang].chartLabelTarget, data: dataPro, borderColor: '#16a34a', backgroundColor: 'rgba(22, 163, 74, 0.1)', fill: true, tension: 0.4, borderWidth: 3, pointRadius: (c) => c.dataIndex === 17 ? 6 : 0, pointBackgroundColor: '#16a34a' },
-                        { label: dictionary[currentLang].chartLabelCurrent, data: dataCurrent, borderColor: '#dc2626', backgroundColor: 'transparent', fill: false, tension: 0.4, borderWidth: 2, borderDash: [5, 5], pointRadius: (c) => c.dataIndex === 17 ? 4 : 0, pointBackgroundColor: '#dc2626' }
-                    ]
-                },
-                options: {
-                    responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } },
-                    layout: { padding: { top: 25, right: 15, bottom: 5 } },
-                    scales: {
-                        y: { display: true, position: 'right', grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { font: { size: 9 }, callback: (val) => '$' + (val/1000) + 'k' }, suggestedMax: Math.max(...dataPro) * 1.15 },
-                        x: { display: true, grid: { display: false }, ticks: { font: { size: 9 }, autoSkip: true, maxTicksLimit: 6 } }
-                    }
-                },
-                plugins: [{
-                    id: 'customLabels',
-                    afterDraw: (chart) => {
-                        const { ctx } = chart; ctx.save();
-                        const metaPro = chart.getDatasetMeta(0); const lastPPro = metaPro.data[17];
-                        const metaCurr = chart.getDatasetMeta(1); const lastPCurr = metaCurr.data[17];
-                        ctx.font = 'bold 11px Inter, "Noto Sans TC"'; ctx.textAlign = 'right'; ctx.textBaseline = 'bottom';
-                        ctx.fillStyle = '#15803d'; ctx.fillText(dictionary[currentLang].chartLabelTarget.replace('*',''), lastPPro.x - 10, lastPPro.y - 5); 
-                        ctx.fillStyle = '#b91c1c'; ctx.textBaseline = 'top'; ctx.fillText(dictionary[currentLang].chartLabelCurrent, lastPCurr.x - 10, lastPCurr.y + 12);
-                        ctx.restore();
-                    }
-                }]
-            });
-        }
-
-        function copyWeChat() { const el = document.createElement('textarea'); el.value = 'catholicalex'; document.body.appendChild(el); el.select(); document.execCommand('copy'); document.body.removeChild(el); document.getElementById('wechat-modal').classList.remove('hidden'); document.getElementById('wechat-modal').classList.add('flex'); }
-        function closeWechatModal() { document.getElementById('wechat-modal').classList.add('hidden'); document.getElementById('wechat-modal').classList.remove('flex'); window.location.href = "weixin://"; }
-        function resetApp() { analysisState.isFinished = false; document.getElementById('step-result').classList.add('hidden'); document.getElementById('step-form').classList.remove('hidden'); window.scrollTo({ top: 0, behavior: 'smooth' }); }
-
-        window.onload = () => setLanguage('tc');
-    </script>
-</body>
-</html>
+            document.getElementById('cta-wa-link').href = `
