@@ -57,7 +57,7 @@
             <div class="space-y-4">
                 <div>
                     <label id="label-name" class="block text-[10px] font-bold text-slate-400 uppercase mb-1 ml-1 tracking-widest">您的稱呼</label>
-                    <input id="user-name" type="text" placeholder="Chris" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-sm transition-all">
+                    <input id="user-name" type="text" placeholder="Chris" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-sm transition-all text-slate-800">
                 </div>
                 
                 <div class="grid grid-cols-2 gap-3">
@@ -80,7 +80,7 @@
 
                 <div>
                     <label id="ui-label-balance" class="block text-[10px] font-bold text-slate-400 uppercase mb-1 ml-1 tracking-widest">累積供款額度 (CAD)</label>
-                    <input id="balance" type="number" placeholder="109000" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-sm transition-all text-slate-800">
+                    <input id="balance" type="number" placeholder="109000" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-sm transition-all text-slate-800 font-bold">
                 </div>
             </div>
 
@@ -167,16 +167,19 @@
         </div>
     </div>
 
-    <!-- 彈窗 -->
+    <!-- WeChat Modal -->
     <div id="wechat-modal" class="fixed inset-0 bg-black/70 z-[300] hidden items-center justify-center p-6 backdrop-blur-md">
         <div class="bg-white p-8 rounded-[2.5rem] max-w-xs w-full text-center shadow-2xl modal-animate border border-slate-100">
             <div class="text-6xl mb-6">✅</div>
             <h3 id="wechat-modal-title" class="text-xl font-black text-slate-900 mb-2 tracking-tight">已成功複製微信號</h3>
-            <p id="wechat-modal-tip" class="text-slate-500 text-[13px] mb-8 leading-relaxed italic">WeChat ID: <span class="font-bold text-blue-600">catholicalex</span><br>請前往微信搜索並添加 Alex 為好友。</p>
+            <p id="wechat-modal-tip" class="text-slate-500 text-[13px] mb-8 leading-relaxed italic">
+                WeChat ID: <span class="font-bold text-blue-600">catholicalex</span><br>請前往微信搜索並添加 Alex 為好友。
+            </p>
             <button id="wechat-modal-btn" onclick="closeWechatModal()" class="w-full bg-slate-900 text-white py-4 rounded-2xl font-black shadow-lg active:scale-95 transition-transform">前往微信</button>
         </div>
     </div>
 
+    <!-- Message Modal -->
     <div id="msg-modal" class="fixed inset-0 bg-black/70 z-[200] hidden items-center justify-center p-6 backdrop-blur-md">
         <div class="bg-white p-8 rounded-[2.5rem] max-w-xs w-full text-center shadow-2xl modal-animate border border-slate-100">
             <div class="text-5xl mb-4">⚠️</div>
@@ -191,12 +194,18 @@
 
         let currentLang = 'tc';
         let wealthChart = null;
-        let analysisState = { isFinished: false, v1: 0, v2: 0, r1: 0, balance: 0, name: '', asset: '', acc: '', gap: '', risk: '' };
+        let analysisState = { isFinished: false, v1: 0, v2: 0, r1: 0, balance: 0, name: '', asset: '', acc: '', gap: '', riskKey: '' };
+
+        const assetRisks = {
+            cash: { tc: "通脹侵蝕", sc: "通胀侵蚀", en: "Inflation erosion" },
+            fund: { tc: "25.4%", sc: "25.4%", en: "25.4%" },
+            stock: { tc: "38.2%", sc: "38.2%", en: "38.2%" }
+        };
 
         const rates = { 
-            cash: { yield: 0.020, risk: "通脹侵蝕", riskDetail: { tc: "雖然無下行風險，但購買力會因通脹令增長歸零", sc: "虽然无下行风险，但购买力会因通胀令增长归零", en: "Inflation will erode purchasing power." } }, 
-            fund: { yield: 0.045, risk: "25.4%", riskDetail: { tc: "若遇市場崩盤，本金將面臨顯著損失", sc: "若遇市场崩盘，本金将面临显著损失", en: "Significant potential loss in a market crash." } }, 
-            stock: { yield: 0.060, risk: "38.2%", riskDetail: { tc: "高度市場波動，無任何保本保障", sc: "高度市场波动，无任何保本保障", en: "High volatility with no principal protection." } }, 
+            cash: { yield: 0.020, riskDetail: { tc: "雖然無下行風險，但購買力會因通脹令增長歸零", sc: "虽然无下行风险，但购买力会因通胀令增长归零", en: "Inflation will erode purchasing power over time." } }, 
+            fund: { yield: 0.045, riskDetail: { tc: "若遇市場崩盤，本金將面臨顯著損失", sc: "若遇市场崩盘，本金将面临显著损失", en: "Significant potential loss during market crashes." } }, 
+            stock: { yield: 0.060, riskDetail: { tc: "高度市場波動，無任何保本保障", sc: "高度市场波动，无任何保本保障", en: "High volatility with no principal protection." } }, 
             pro: { yield: 0.110 } 
         };
 
@@ -205,21 +214,21 @@
                 tc: {
                     house: "足以支付溫哥華高尚住宅區獨立屋的優厚首期",
                     townhouse: "足以全款購置一間寬敞的全新聯排別墅 (Townhouse)",
-                    rv: "足以購買一部頂級豪華的 Class A 大型露營車",
+                    rv: "足以購買一部頂級豪華的大型露營車",
                     car: "足以全款買入一部頂配版豪華跑車或重型越野皮卡",
                     suv: "足以添置一部全新款式的高性能全電動 SUV"
                 },
                 sc: {
                     house: "足以支付温哥华高尚住宅区独立屋的优厚首期",
                     townhouse: "足以全款购置一间宽敞的全新联排别墅 (Townhouse)",
-                    rv: "足以购买一部顶级豪华的 Class A 大型露营车",
+                    rv: "足以购买一部顶级豪华的大型露营车",
                     car: "足以全款买入一部顶配版豪华跑车或重型越野皮卡",
                     suv: "足以添置一部全新款式的高性能全电动 SUV"
                 },
                 en: {
                     house: "equivalent to a substantial down payment for a detached house in a prime neighborhood",
                     townhouse: "enough to purchase a spacious brand-new Townhouse in full cash",
-                    rv: "enough to purchase a top-tier Class A Luxury Motorhome",
+                    rv: "enough to purchase a top-tier Luxury Motorhome",
                     car: "equivalent to the full price of a top-spec luxury sports car or heavy-duty pickup",
                     suv: "enough to purchase a brand-new high-performance all-electric SUV"
                 }
@@ -244,7 +253,7 @@
                 wcTitle: "已成功複製微信號", wcTip: "WeChat ID: catholicalex<br>請前往微信搜索並添加 Alex 為好友。", wcBtn: "前往微信",
                 chartLabelTarget: "專業管理的投資組合*", chartLabelCurrent: "目前策略模擬表現",
                 closing: "<br><br>如果您希望全面審視財務現狀，在風險可控的前提下追求資產回報最大化，並極大化稅務帳戶的優勢，誠邀您聯絡 Alex 進行初步諮詢。憑藉逾 20 年深耕銀行體系及獨立理財顧問的深厚經驗，Alex 將為您的財富增值提供精確且具價值的專業導航。",
-                backup: (name, gap, acc, asset, risk, analogy) => `你好 ${name}，選擇存放 ${acc} 於銀行定期是一個非常穩健的決定。但數據顯示，17 年後的模擬複利缺口高達 $${gap}，這筆錢<b>${analogy}</b>。如果您目前配置面臨歷史高達 ${risk} 的下行風險，專業配置系統能提供合約保證機制以消除此風險。`
+                backup: (name, gap, acc, asset, riskText, analogy) => `你好 ${name}，選擇存放 ${acc} 於目前配置是一個非常穩健的決定。但數據顯示，17 年後的模擬複利缺口高達 $${gap}，這筆錢<b>${analogy}</b>。如果您目前配置面臨歷史高達 ${riskText} 的下行風險，專業配置系統能提供合約保證機制以消除此風險。`
             },
             sc: {
                 title: "个人税务账户收益分析", headerTag: "Alex Chan | Individual Insurance Broker", subtitle: "逾20年专业管理经验导航", quote: "「通过精确的数据分析，了解您的资产在市场波动中的表现。」",
@@ -257,8 +266,8 @@
                 btnReset: "↺ 重新開始分析", msgTitle: "系统提示", msgBtn: "了解", scBtn: "微信联系顾问獲取分析",
                 wcTitle: "已成功复制微信号", wcTip: "WeChat ID: catholicalex<br>请前往微信搜索并添加 Alex 为好友。", wcBtn: "前往微信",
                 chartLabelTarget: "专业管理的投资组合*", chartLabelCurrent: "目前策略模拟表现",
-                closing: "<br><br>如果您希望全面审视财务现状，在风险可控的前提下追求资产回报最大化，并极大化税务账户的优势，诚邀您联络 Alex 进行初步咨询。凭借逾 20 年深耕银行体系及獨立理財顧問的深厚經驗，Alex 將為您提供精確且具價值的專業導航。",
-                backup: (name, gap, acc, asset, risk, analogy) => `你好 ${name}，选择存放 ${acc} 於银行定期是非常稳健的决定。但数据显示，17 年後的模拟复利缺口高达 $${gap}，这笔钱<b>${analogy}</b>。如果您目前配置面临历史高达 ${risk} 的下行风险，专业配置系统能提供合约保证机制以消除此风险。`
+                closing: "<br><br>如果您希望全面审视财务现状，在风险可控的前提下追求资产回报最大化，并极大化税务账户的优势，诚邀您联络 Alex 进行初步咨询。凭借逾 20 年深耕銀行體系及獨立理財顧問的深厚經驗，Alex 將為您提供精確且具價值的專業導航。",
+                backup: (name, gap, acc, asset, riskText, analogy) => `你好 ${name}，选择存放 ${acc} 於目前配置是非常稳健的决定。但数据显示，17 年後的模拟复利缺口高达 $${gap}，这笔钱<b>${analogy}</b>。如果您目前配置面临历史高达 ${riskText} 的下行风险，专业配置系统能提供合约保证机制以消除此风险。`
             },
             en: {
                 title: "Tax-Account Yield Analysis", headerTag: "Alex Chan | Individual Insurance Broker", subtitle: "Guided by 20+ Years of Professional Management", quote: "「Analyze assets with precision and understand your performance against market volatility.」",
@@ -266,13 +275,13 @@
                 optCash: "Bank Savings / GIC", optFund: "Mutual Funds", optStock: "Blue-chip Stocks", btnScan: "⚡ Launch AI Yield & Risk Analysis", footerNote: "* Simulation purposes only. Past performance does not guarantee future results.",
                 loadingTitle: "Simulating market scenarios...", loadingHint: "Comparing performance and lifestyle impacts...",
                 resultLabel: "Analysis Report", chartHeader: "17-Year Simulated Growth Trajectory", riskTitle: "Downside Risk", safeTitle: "Protection Mechanism", safeStatus: "Contractual Guarantee", safeNote: "Subject to policy terms",
-                noteTitle: "Disclosure & References", noteDesc: "Data refers to historical market averages. Professional allocation uses guaranteed yield-optimized portfolios.",
+                noteTitle: "Disclosure & References", noteDesc: "Data refers to historical averages. Professional allocation uses guaranteed yield-optimized portfolios.",
                 sigRole: "Individual Insurance Broker (Canada)", sigExp: "20+ Years Excellence in Wealth Management",
                 btnReset: "↺ Start New Analysis", msgTitle: "Notification", msgBtn: "Got it", waBtn: "Text Alex for Consultation",
                 wcTitle: "WeChat ID Copied", wcTip: "WeChat ID: catholicalex<br>Please search and add Alex on WeChat.", wcBtn: "Open WeChat",
                 chartLabelTarget: "Pro-Managed Portfolio*", chartLabelCurrent: "Current Strategy Simulation",
                 closing: "<br><br>To gain a comprehensive understanding of your financial health, maximize your assets within risk tolerance, and fully leverage your tax-advantaged accounts, you are invited to connect with Alex for a consultation. With over 20 years of distinguished experience in banking and independent financial advisory, Alex provides precise insights to navigate your wealth optimization.",
-                backup: (name, gap, acc, asset, risk, analogy) => `Hello ${name}, choosing ${acc} in savings is safe. However, the $${gap} simulated gap in 17 years is massive, <b>${analogy}</b>. If your current setup faces a ${risk} drawdown risk, our pro-managed portfolio offers a contractual guarantee to eliminate this risk.`
+                backup: (name, gap, acc, asset, riskText, analogy) => `Hello ${name}, choosing ${acc} in savings is safe. However, the $${gap} simulated gap in 17 years is massive, <b>${analogy}</b>. If your current setup faces a ${riskText} drawdown risk, our pro-managed portfolio offers a contractual guarantee to eliminate this risk.`
             }
         };
 
@@ -327,13 +336,13 @@
             if (analysisState.isFinished) {
                 renderChart(analysisState.v1, analysisState.v2, analysisState.r1);
                 const isCash = analysisState.asset === 'cash';
-                const infText = { tc: "通脹侵蝕", sc: "通胀侵蚀", en: "Inflation" }[currentLang];
+                const riskValText = assetRisks[analysisState.asset][currentLang];
                 const drawdown = document.getElementById('ui-max-drawdown');
-                if(drawdown) drawdown.innerText = isCash ? infText : `-${analysisState.risk}`;
+                if(drawdown) drawdown.innerText = isCash ? riskValText : `-${riskValText}`;
                 
-                // 強制更新分析文字語言
+                // 強制更新報告正文語言
                 const analogyStr = getAnalogy(parseInt(analysisState.gap.replace(/,/g,'')), currentLang);
-                document.getElementById('report-content').innerHTML = d.backup(analysisState.name, analysisState.gap, analysisState.acc, analysisState.asset, analysisState.risk, analogyStr) + d.closing;
+                document.getElementById('report-content').innerHTML = d.backup(analysisState.name, analysisState.gap, analysisState.acc, analysisState.asset, riskValText, analogyStr) + d.closing;
             }
         }
 
@@ -372,20 +381,25 @@
             const gapInt = parseInt(finalPro - finalCurrent);
             const gapStr = gapInt.toLocaleString();
 
-            analysisState = { isFinished: true, v1: finalCurrent, v2: finalPro, r1: rates[assetType].yield, balance, name, asset: assetType, acc: accType, gap: gapStr, risk: rates[assetType].risk };
+            analysisState = { isFinished: true, v1: finalCurrent, v2: finalPro, r1: rates[assetType].yield, balance, name, asset: assetType, acc: accType, gap: gapStr, riskKey: assetType };
+
+            const msgBodyTC = `你好 Alex！我係 ${name}，我剛剛完成咗個人稅務帳戶收益分析 (${accType})。我對具備合約保障嘅專業配置組合好有興趣。`;
+            const waLink = document.getElementById('cta-wa-link');
+            if(waLink) waLink.href = `https://wa.me/17783198129?text=${encodeURIComponent(msgBodyTC)}`;
 
             const langPrompt = { tc: "廣東話繁體中文", sc: "簡體中文", en: "Professional English" }[currentLang];
             const analogyStr = getAnalogy(gapInt, currentLang);
+            const riskText = assetRisks[assetType][currentLang];
 
             const prompt = `You are an AI assistant for Alex Chan (Senior Advisor). Generate a 220-word report for ${name}.
                 Context: $${balance.toLocaleString()} in ${accType}, currently in ${assetType}.
-                Language Requirement: MUST generate ONLY in ${langPrompt}. IF THE LANGUAGE IS ENGLISH, NO CHINESE CHARACTERS ALLOWED.
+                Language Requirement: MUST generate ONLY in ${langPrompt}. IF THE LANGUAGE IS ENGLISH, ABSOLUTELY NO CHINESE CHARACTERS ALLOWED IN THE TEXT.
                 
-                CRITICAL TASK:
+                CRITICAL INSTRUCTIONS:
                 1. Calculate Gap: $${gapStr}.
-                2. MUST use this specific analogy: "${analogyStr}".
-                3. Regulatory: Mention "Contractual Guarantees" are subject to terms.
-                4. Tone: Mentorship, professional, insightful.
+                2. MUST include this specific analogy: "${analogyStr}".
+                3. Risk Factor: Mention the "${riskText}" risk associated with current ${assetType} setup.
+                4. Regulatory: Mention "Contractual Guarantees" are subject to terms.
                 5. MANDATORY CLOSING: "${dictionary[currentLang].closing.replace('<br><br>', '')}"`;
 
             try {
@@ -395,10 +409,10 @@
                 });
                 const data = await response.json();
                 const aiText = data.candidates?.[0]?.content?.parts?.[0]?.text;
-                document.getElementById('report-content').innerHTML = aiText ? aiText.replace(/\n/g, '<br>') : dictionary[currentLang].backup(name, gapStr, accType, assetType, rates[assetType].risk, analogyStr) + dictionary[currentLang].closing;
+                document.getElementById('report-content').innerHTML = aiText ? aiText.replace(/\n/g, '<br>') : dictionary[currentLang].backup(name, gapStr, accType, assetType, riskText, analogyStr) + dictionary[currentLang].closing;
                 finish();
             } catch (e) { 
-                document.getElementById('report-content').innerHTML = dictionary[currentLang].backup(name, gapStr, accType, assetType, rates[assetType].risk, analogyStr) + dictionary[currentLang].closing;
+                document.getElementById('report-content').innerHTML = dictionary[currentLang].backup(name, gapStr, accType, assetType, riskText, analogyStr) + dictionary[currentLang].closing;
                 finish();
             }
         }
@@ -410,9 +424,10 @@
                 document.getElementById('step-result').classList.remove('hidden');
                 renderChart(analysisState.v1, analysisState.v2, analysisState.r1);
                 const isCash = analysisState.asset === 'cash';
-                const infText = { tc: "通脹侵蝕", sc: "通胀侵蚀", en: "Inflation" }[currentLang];
+                const riskValText = assetRisks[analysisState.asset][currentLang];
                 const drawdown = document.getElementById('ui-max-drawdown');
-                if(drawdown) drawdown.innerText = isCash ? infText : `-${analysisState.risk}`;
+                if(drawdown) drawdown.innerText = isCash ? riskValText : `-${riskValText}`;
+                document.getElementById('ui-risk-note').innerText = rates[analysisState.asset].riskDetail[currentLang];
             }, 500);
         }
 
