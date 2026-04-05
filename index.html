@@ -12,7 +12,7 @@
         .glass { background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(12px); }
         .loading-bar { width: 0%; height: 4px; background: #3b82f6; transition: width 0.4s ease-out; }
         .lang-btn-active { background-color: #3b82f6 !important; color: white !important; }
-        .chart-container { position: relative; height: 320px; width: 100%; margin-top: -10px; }
+        .chart-container { position: relative; height: 320px; width: 100%; }
         @keyframes fadeInScale { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
         .modal-animate { animation: fadeInScale 0.3s ease-out forwards; }
         .profile-img { object-fit: cover; }
@@ -179,7 +179,7 @@
         </div>
     </div>
 
-    <!-- 消息提示 -->
+    <!-- 提示彈窗 -->
     <div id="msg-modal" class="fixed inset-0 bg-black/70 z-[200] hidden items-center justify-center p-6 backdrop-blur-md">
         <div class="bg-white p-8 rounded-[2.5rem] max-w-xs w-full text-center shadow-2xl modal-animate border border-slate-100">
             <div class="text-5xl mb-4">⚠️</div>
@@ -205,7 +205,7 @@
 
         const dictionary = {
             tc: {
-                title: "個人稅務帳戶收益分析", subtitle: "逾20年專業管理經驗導航", quote: "「透過精確的數據分析，了解您的資產在市場波動中的表現。」",
+                title: "個人稅務帳戶收益分析", headerTag: "Alex Chan | Individual Insurance Broker", subtitle: "逾20年專業管理經驗導航", quote: "「透過精確的數據分析，了解您的資產在市場波動中的表現。」",
                 labelName: "您的稱呼", labelAccType: "帳戶類型", labelAssetType: "目前存放方式", labelBalanceTFSA: "CRA 累積供款額度 (CAD)", labelBalanceRRSP: "RRSP 扣稅額度 (CAD)",
                 optCash: "銀行定期 / GIC", optFund: "互惠基金", optStock: "藍籌股票", btnScan: "⚡ 啟動 AI 收益與風險分析", footerNote: "* 本分析系統僅供模擬參考用途。過往回報並不代表未來收益。",
                 loadingTitle: "正在模擬市場波動場景...", loadingHint: "正在對比歷史數據與資產表現空間...",
@@ -219,7 +219,7 @@
                 backupText: (name, gap, acc, asset, risk) => `你好 ${name}，選擇存放 ${acc} 於銀行定期是一個非常穩健的決定。但數據顯示，17 年後的模擬複利缺口高達 $${gap}。如果您目前配置面臨歷史高達 ${risk} 的下行風險，專業配置系統能提供合約保證機制以消除此風險。`
             },
             sc: {
-                title: "个人税务账户收益分析", subtitle: "逾20年专业管理经验导航", quote: "「通过精确的数据分析，了解您的资产在市场波动中的表现。」",
+                title: "个人税务账户收益分析", headerTag: "Alex Chan | Individual Insurance Broker", subtitle: "逾20年专业管理经验导航", quote: "「通过精确的数据分析，了解您的资产在市场波动中的表现。」",
                 labelName: "您的称呼", labelAccType: "账户类型", labelAssetType: "目前存放方式", labelBalanceTFSA: "CRA 累计供款额度 (CAD)", labelBalanceRRSP: "RRSP 扣税额度 (CAD)",
                 optCash: "银行定期 / GIC", optFund: "互惠基金", optStock: "蓝筹股票", btnScan: "⚡ 启动 AI 收益与风险分析", footerNote: "* 本分析系统仅供模拟参考用途。过往回报并不代表未来收益。",
                 loadingTitle: "正在模拟市场波动场景...", loadingHint: "正在对比历史数据与资产表现空间...",
@@ -233,7 +233,7 @@
                 backupText: (name, gap, acc, asset, risk) => `你好 ${name}，选择存放 ${acc} 於银行定期是非常稳健的决定。但数据显示，17 年後的模拟复利缺口高达 $${gap}。如果您目前配置面临历史高达 ${risk} 的下行风险，专业配置系统能提供合约保证机制以消除此风险。`
             },
             en: {
-                title: "Tax-Account Yield Analysis", subtitle: "Guided by 20+ Years of Professional Management", quote: "「Analyze assets with precision and understand your performance against market volatility.」",
+                title: "Tax-Account Yield Analysis", headerTag: "Alex Chan | Individual Insurance Broker", subtitle: "Guided by 20+ Years of Professional Management", quote: "「Analyze assets with precision and understand your performance against market volatility.」",
                 labelName: "Your Name", labelAccType: "Account Type", labelAssetType: "Current Method", labelBalanceTFSA: "CRA Room (CAD)", labelBalanceRRSP: "RRSP Limit (CAD)",
                 optCash: "Bank Savings / GIC", optFund: "Mutual Funds", optStock: "Blue-chip Stocks", btnScan: "⚡ Launch AI Yield & Risk Analysis", footerNote: "* Simulation purposes only. Past performance does not guarantee future results.",
                 loadingTitle: "Simulating market scenarios...", loadingHint: "Comparing performance and lifestyle impacts...",
@@ -243,7 +243,8 @@
                 btnReset: "↺ Start New Analysis", msgTitle: "Notification", msgBtn: "Got it", waBtn: "Text Alex for Consultation",
                 wcTitle: "WeChat ID Copied", wcBtn: "Open WeChat",
                 chartLabelTarget: "Pro-Managed Portfolio*", chartLabelCurrent: "Current Strategy Simulation",
-                closing: "<br><br>To gain a comprehensive understanding of your financial health, maximize your assets within risk tolerance, and fully leverage your tax-advantaged accounts, you are invited to connect with Alex for a consultation. With over 20 years of distinguished experience in banking and independent financial advisory, Alex provides precise insights to navigate your wealth optimization."
+                closing: "<br><br>To gain a comprehensive understanding of your financial health, maximize your assets within risk tolerance, and fully leverage your tax-advantaged accounts, you are invited to connect with Alex for a consultation. With over 20 years of distinguished experience in banking and independent financial advisory, Alex provides precise insights to navigate your wealth optimization.",
+                backupText: (name, gap, acc, asset, risk) => `Hello ${name}, choosing ${acc} in savings is safe. However, the $${gap} simulated gap in 17 years is massive. If your current setup faces a ${risk} drawdown risk, our pro-managed portfolio offers a contractual guarantee to eliminate this risk.`
             }
         };
 
@@ -280,7 +281,6 @@
             safeSet('msg-modal-title', d.msgTitle);
             safeSet('msg-modal-btn', d.msgBtn);
             safeSet('wechat-modal-title', d.wcTitle);
-            safeSet('wechat-modal-btn', d.wcBtn);
 
             updateLabelByAccount();
 
@@ -356,14 +356,14 @@
                 
                 關鍵指令：
                 1. 財富缺口：$${gapStr}。
-                2. 必須包含具體比喻 (不准提及任何具體商業品牌名稱，包括汽車品牌名)：
-                   - 若缺口 > $1.5M：足以支付高尚住宅區海景獨立屋的優厚首期。
-                   - 若缺口 $800k-$1.5M：足以全款購置一間寬敞的全新聯排別墅 (Townhouse)。
+                2. 必須包含具體類別比喻 (不可提及品牌名，必須強制包含以下比喻之一)：
+                   - 若缺口 > $1.5M：足以全款支付高尚住宅區海景獨立屋的優厚首期。
+                   - 若缺口 $800k-$1.5M：足以全款購置一間寬敞的全新聯排別墅全款。
                    - 若缺口 $350k-$800k：足以購買一部頂級豪華的 Class A 大型露營車。
                    - 若缺口 $150k-$350k：足以全款買入一部頂配版豪華跑車或重型越野皮卡。
-                   - 其他：足以添置一部全新款式的高性能全電動 SUV。
-                3. 合規性：提到「合約級別保證」受條款約束。讚賞客戶現有的穩定性，再點出長期通脹下的機會成本。
-                4. 語言純淨：絕對嚴禁在正文中混合其他語言。報告開頭不要有任何標題。
+                   - 其他：添置一部全新款式的高性能全電動 SUV。
+                3. 合規性：提到「合約級別保證」受條款約束。讚賞穩定性，指出通脹下的機會成本。
+                4. 語言純淨度 (極重要)：嚴禁在正文中混合其他語言。若要求為 ${langPrompt}，全篇必須只有該語言文字。
                 5. 結尾必須包含： "${dictionary[currentLang].closing.replace('<br><br>', '')}"`;
 
             try {
@@ -372,8 +372,8 @@
                     body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
                 });
                 const data = await response.json();
-                const aiText = data.candidates?.[0]?.content?.parts?.[0]?.text || dictionary[currentLang].backupText(name, gapStr, accType, assetType, rates[assetType].risk);
-                document.getElementById('report-content').innerHTML = aiText.replace(/\n/g, '<br>');
+                const aiText = data.candidates?.[0]?.content?.parts?.[0]?.text;
+                document.getElementById('report-content').innerHTML = aiText ? aiText.replace(/\n/g, '<br>') : dictionary[currentLang].backupText(name, gapStr, accType, assetType, rates[assetType].risk);
                 finish();
             } catch (e) { 
                 document.getElementById('report-content').innerHTML = dictionary[currentLang].backupText(name, gapStr, accType, assetType, rates[assetType].risk) + dictionary[currentLang].closing;
@@ -414,9 +414,9 @@
                 },
                 options: {
                     responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } },
-                    layout: { padding: { top: 15, right: 15, bottom: 5 } },
+                    layout: { padding: { top: 25, right: 15, bottom: 5 } },
                     scales: {
-                        y: { display: true, position: 'right', grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { font: { size: 9 }, callback: (val) => '$' + (val/1000) + 'k' }, suggestedMax: Math.max(...dataPro) * 1.12 },
+                        y: { display: true, position: 'right', grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { font: { size: 9 }, callback: (val) => '$' + (val/1000) + 'k' }, suggestedMax: Math.max(...dataPro) * 1.15 },
                         x: { display: true, grid: { display: false }, ticks: { font: { size: 9 }, autoSkip: true, maxTicksLimit: 6 } }
                     }
                 },
