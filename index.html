@@ -154,7 +154,7 @@
             </button>
 
             <div id="result-footer-actions" class="hidden space-y-2">
-                <!-- 繁體版 (IG) / 英文版 (Email) / 簡體版 (WeChat) -->
+                <!-- 繁體版 (IG Message) / 英文版 (Email) / 簡體版 (WeChat) -->
                 <a id="cta-primary-link" href="#" target="_blank" class="w-full text-white font-black py-3 rounded-xl flex items-center justify-center no-underline shadow-lg active:scale-95 transition-all text-sm">
                     <span id="ui-primary-text">聯繫顧問獲取分析</span>
                 </a>
@@ -268,7 +268,7 @@
             const wcBtn = document.getElementById('cta-wechat-btn');
             
             if (lang === 'tc') {
-                primaryLink.href = "https://www.instagram.com/catholicalex/"; // 更新為正確的 IG 網址
+                primaryLink.href = "https://ig.me/m/catholicalex"; // 更新為直接私訊連結
                 primaryLink.className = "w-full bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500 text-white font-black py-3 rounded-xl flex items-center justify-center no-underline shadow-lg active:scale-95 transition-all text-sm";
                 primaryLink.classList.remove('hidden');
                 wcBtn.classList.add('hidden');
@@ -339,8 +339,6 @@
             analysisState = { isFinished: true, v1: finalCurrent, v2: finalPro, r1: rates[assetType].yield, balance, name, asset: assetType, acc: accType, gap: gapStr, riskKey: assetType };
 
             const msgBodyTC = `你好 Alex！我係 ${name}，我剛剛完成咗分析報告 (${accType})，想請教專業配置建議。`;
-            // 注意：WhatsApp 號碼可以視需求保留或更換
-            // document.getElementById('cta-wa-link').href = `https://wa.me/17783198129?text=${encodeURIComponent(msgBodyTC)}`;
 
             const langPrompt = { tc: "廣東話繁體中文", sc: "簡體中文", en: "Professional English" }[currentLang];
             let analogyStr = analogies[currentLang].suv;
