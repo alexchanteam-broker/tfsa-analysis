@@ -8,7 +8,6 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&family=Noto+Sans+SC:wght@400;700;900&family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        /* 鎖定 body 滾動，改由內部容器控制 */
         body { 
             font-family: 'Inter', 'Noto Sans TC', 'Noto Sans SC', sans-serif; 
             background-color: #f1f5f9; 
@@ -28,7 +27,6 @@
         @keyframes fadeInScale { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
         .modal-animate { animation: fadeInScale 0.3s ease-out forwards; }
         .profile-img { object-fit: cover; }
-        /* 隱藏捲動條但保留功能 */
         .custom-scroll::-webkit-scrollbar { width: 0px; background: transparent; }
         .custom-scroll { scrollbar-width: none; -ms-overflow-style: none; }
     </style>
@@ -39,7 +37,6 @@
         
         <!-- 固定頂部 -->
         <header class="flex-shrink-0 z-20 shadow-sm">
-            <!-- 語言切換 -->
             <div class="bg-gray-50 border-b border-gray-100 px-4 py-2 flex justify-end items-center">
                 <div class="flex bg-gray-200 p-1 rounded-full text-[10px] font-bold shadow-sm space-x-1">
                     <button id="btn-tc" onclick="setLanguage('tc')" class="px-3 py-1 rounded-full transition-all lang-btn-active">繁</button>
@@ -47,7 +44,6 @@
                     <button id="btn-en" onclick="setLanguage('en')" class="px-3 py-1 rounded-full transition-all text-[10px]">EN</button>
                 </div>
             </div>
-            <!-- Header 資訊 -->
             <div class="bg-slate-900 p-5 text-white">
                 <div class="flex items-center space-x-3 text-left">
                     <div class="relative flex-shrink-0">
@@ -67,8 +63,6 @@
 
         <!-- 中間可捲動區 -->
         <main class="flex-grow overflow-y-auto custom-scroll bg-white text-left">
-            
-            <!-- 第一步：輸入表單 -->
             <div id="step-form" class="p-6 space-y-5">
                 <div class="text-center pt-2">
                     <p id="ui-quote" class="text-slate-500 text-[13px] italic font-bold leading-relaxed">「透過精確的數據分析，了解您的資產在市場波動中的表現。」</p>
@@ -105,7 +99,6 @@
                 </div>
             </div>
 
-            <!-- 第二步：載入中 -->
             <div id="step-loading" class="hidden p-16 text-center space-y-8">
                 <div class="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
                 <h3 id="ui-loading-title" class="text-lg font-black text-slate-800">正在模擬市場波動場景...</h3>
@@ -115,7 +108,6 @@
                 <p id="loading-hint" class="text-[10px] text-slate-400 italic">正在對比歷史數據與生活價值空間...</p>
             </div>
 
-            <!-- 第三步：分析結果內容 -->
             <div id="step-result" class="hidden p-5 space-y-6 pb-20">
                 <div class="flex items-center justify-between text-blue-600 border-b border-blue-50 pb-2">
                     <span id="ui-result-label" class="font-black text-xs italic tracking-widest uppercase">分析報告</span>
@@ -126,15 +118,14 @@
                     <div class="chart-container"><canvas id="wealthChart"></canvas></div>
                 </div>
 
-                <!-- 方案對比卡片 -->
                 <div class="grid grid-cols-2 gap-2">
-                    <div class="p-3 bg-red-50 rounded-2xl border border-red-200 relative overflow-hidden">
+                    <div class="p-3 bg-red-50 rounded-2xl border border-red-200 relative overflow-hidden text-left">
                         <div class="text-[7px] font-black text-red-400 mb-1 uppercase tracking-widest" id="ui-tag-current">目前策略表現</div>
                         <p id="ui-risk-title" class="text-[9px] font-bold text-red-600 uppercase">下行/購買力風險</p>
                         <p id="ui-max-drawdown" class="text-lg font-black text-red-700">- --%</p>
                         <p id="ui-risk-note" class="text-[7px] text-red-500 mt-0.5 italic leading-tight">資產增長受限</p>
                     </div>
-                    <div class="p-3 bg-green-50 rounded-2xl border border-green-200 relative overflow-hidden">
+                    <div class="p-3 bg-green-50 rounded-2xl border border-green-200 relative overflow-hidden text-left">
                         <div class="text-[7px] font-black text-green-500 mb-1 uppercase tracking-widest" id="ui-tag-pro">專業配置優勢</div>
                         <div class="absolute -right-1 -top-1 opacity-10 text-green-600 text-2xl">🛡️</div>
                         <p id="ui-safe-title" class="text-[9px] font-bold text-green-700 uppercase">配置保障機制</p>
@@ -143,9 +134,9 @@
                     </div>
                 </div>
                 
-                <div id="report-content" class="text-slate-700 leading-relaxed text-[14px] space-y-3 px-1 italic"></div>
+                <div id="report-content" class="text-slate-700 leading-relaxed text-[14px] text-left space-y-3 px-1 italic"></div>
 
-                <div class="p-4 bg-blue-50 rounded-3xl border border-blue-100 mt-4">
+                <div class="p-4 bg-blue-50 rounded-3xl border border-blue-100 mt-4 text-left">
                     <p class="text-blue-900 text-[10px] font-black flex items-center mb-1">
                         <span class="mr-1">💡</span> <span id="ui-note-title">數據備註與披露</span>
                     </p>
@@ -154,22 +145,22 @@
             </div>
         </main>
 
-        <!-- 固定底部按鈕 -->
+        <!-- 固定底部 -->
         <footer class="flex-shrink-0 bg-slate-900 p-4 sm:p-6 space-y-2 z-20 border-t border-slate-800">
             <button id="btn-submit-action" onclick="startAnalysis()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-black py-4 rounded-xl shadow-xl transition-all transform active:scale-95 flex items-center justify-center text-sm">
                 <span id="ui-btn-scan">⚡ 啟動 AI 收益與風險分析</span>
             </button>
 
             <div id="result-footer-actions" class="hidden space-y-2">
-                <a id="cta-wa-link" href="#" target="_blank" class="w-full bg-[#25D366] text-white font-black py-3 rounded-xl flex items-center justify-center no-underline shadow-lg active:scale-95 transition-all text-sm">
-                    <span id="ui-wa-text">WhatsApp 聯繫顧問獲取分析</span>
+                <!-- 繁體版 (IG) / 英文版 (Email) / 簡體版 (WeChat) -->
+                <a id="cta-primary-link" href="#" target="_blank" class="w-full text-white font-black py-3 rounded-xl flex items-center justify-center no-underline shadow-lg active:scale-95 transition-all text-sm">
+                    <span id="ui-primary-text">聯繫顧問獲取分析</span>
                 </a>
+                
                 <button id="cta-wechat-btn" onclick="copyWeChat()" class="hidden w-full bg-[#07C160] text-white font-black py-3 rounded-xl flex items-center justify-center shadow-lg active:scale-95 transition-all text-sm">
                     <span id="ui-wc-text">微信聯繫顧問</span>
                 </button>
-                <a id="cta-sms-link" href="sms:+17783198129" class="hidden w-full bg-blue-500 text-white font-black py-3 rounded-xl flex items-center justify-center no-underline shadow-lg active:scale-95 transition-all text-sm">
-                    <span id="ui-sms-text">Text for Consultation</span>
-                </a>
+
                 <button id="ui-btn-reset" onclick="resetApp()" class="w-full bg-slate-700 text-white font-bold py-2 rounded-xl active:scale-95 transition-all text-[10px]">
                     ↺ <span id="ui-reset-text">重新開始分析</span>
                 </button>
@@ -183,7 +174,7 @@
             <div class="text-5xl mb-4">✅</div>
             <h3 id="wechat-modal-title" class="text-lg font-black text-slate-900 mb-2">已成功複製微信號</h3>
             <p id="wechat-modal-tip" class="text-slate-500 text-[12px] mb-6 leading-relaxed italic">WeChat ID: <span class="font-bold text-blue-600">catholicalex</span><br>請前往微信搜索並添加 Alex 為好友。</p>
-            <button onclick="closeWechatModal()" class="w-full bg-slate-900 text-white py-3 rounded-2xl font-black shadow-lg active:scale-95">前往微信</button>
+            <button onclick="closeWechatModal()" class="w-full bg-slate-900 text-white py-3 rounded-2xl font-black shadow-lg">前往微信</button>
         </div>
     </div>
 
@@ -191,14 +182,13 @@
         <div class="bg-white p-8 rounded-[2rem] max-w-xs w-full shadow-2xl modal-animate border border-slate-100">
             <div class="text-4xl mb-4">⚠️</div>
             <h3 id="msg-modal-title" class="text-lg font-black text-slate-900 mb-2">系統提示</h3>
-            <p id="msg-text" class="text-slate-500 text-[13px] mb-6 leading-relaxed italic text-left"></p>
-            <button onclick="closeMsg()" class="w-full bg-slate-900 text-white py-3 rounded-xl font-bold active:scale-95">了解</button>
+            <p id="msg-text" class="text-slate-500 text-[13px] mb-6 leading-relaxed text-left"></p>
+            <button onclick="closeMsg()" class="w-full bg-slate-900 text-white py-3 rounded-xl font-bold">了解</button>
         </div>
     </div>
 
     <script>
         const apiKey = "AIzaSyCx5OJu8NnZhNSsh1e0-6iKkW-mpUUAG0o"; 
-
         let currentLang = 'tc';
         let wealthChart = null;
         let analysisState = { isFinished: false, v1: 0, v2: 0, r1: 0, balance: 0, name: '', asset: '', acc: '', gap: '', riskKey: '' };
@@ -210,16 +200,43 @@
         };
 
         const rates = { 
-            cash: { yield: 0.020, advantage: { tc: "本金安全性與心理穩定性", sc: "本金安全性与心理稳定性", en: "principal security and psychological stability" }, riskDetail: { tc: "雖然無下行風險，但購買力會因通脹令增長歸零", sc: "虽然无下行风险，但购买力会因通胀令增长归零", en: "Inflation will erode purchasing power." } }, 
-            fund: { yield: 0.045, advantage: { tc: "分散風險的初步嘗試與專業代管", sc: "分散风险的初步尝试与专业代管", en: "initial risk diversification and professional oversight" }, riskDetail: { tc: "若遇市場崩盤，本金將面臨顯著損失", sc: "若遇市场崩盘，本金将面临显著损失", en: "Significant potential loss during crashes." } }, 
-            stock: { yield: 0.060, advantage: { tc: "對市場增長與資產流動性的積極追求", sc: "对市场增长与资产流动性的积极追求", en: "active pursuit of market growth and liquidity" }, riskDetail: { tc: "高度市場波動，無任何保本保障", sc: "高度市场波动，无任何保本保障", en: "High volatility with no principal protection." } }, 
+            cash: { yield: 0.020, advantage: { tc: "本金安全性與心理穩定性", sc: "本金安全性与心理稳定性", en: "principal security" }, riskDetail: { tc: "雖然無下行風險，但購買力會因通脹令增長歸零", sc: "虽然无下行风险，但购买力会因通胀令增长归零", en: "Inflation will erode purchasing power." } }, 
+            fund: { yield: 0.045, advantage: { tc: "分散風險的初步嘗試與專業代管", sc: "分散风险的初步尝试与专业代管", en: "risk diversification" }, riskDetail: { tc: "若遇市場崩盤，本金將面臨顯著損失", sc: "若遇市场崩盘，本金将面临显著损失", en: "Significant potential loss during crashes." } }, 
+            stock: { yield: 0.060, advantage: { tc: "對市場增長與資產流動性的積極追求", sc: "对市场增长与资产流动性的积极追求", en: "active growth pursuit" }, riskDetail: { tc: "高度市場波動，無任何保本保障", sc: "高度市场波动，无任何保本保障", en: "High volatility with no protection." } }, 
             pro: { yield: 0.110 } 
         };
 
         const analogies = {
             tc: { house: "足以支付溫哥華高尚住宅區獨立屋的優厚首期", townhouse: "足以全款購置一間寬敞的全新聯排別墅 (Townhouse)", rv: "足以購買一部頂級豪華的 Class A 大型露營車", car: "足以全款買入一部頂配版豪華跑車或重型越野皮卡", suv: "足以添置一部全新款式的高性能全電動 SUV" },
             sc: { house: "足以支付温哥华高尚住宅区独立屋的优厚首期", townhouse: "足以全款购置一间宽敞的全新联排别墅 (Townhouse)", rv: "足以购买一部顶级豪华的 Class A 大型露营车", car: "足以全款买入一部顶配版豪华跑车或重型越野皮卡", suv: "足以添置一部全新款式的高性能全电动 SUV" },
-            en: { house: "equivalent to a substantial down payment for a detached house in a prime neighborhood", townhouse: "enough to purchase a spacious brand-new Townhouse in full cash", rv: "enough to purchase a top-tier Luxury Motorhome", car: "equivalent to the full price of a top-spec luxury sports car or heavy-duty pickup", suv: "enough to purchase a brand-new high-performance all-electric SUV" }
+            en: { house: "equivalent to a substantial down payment for a house", townhouse: "enough for a brand-new Townhouse in cash", rv: "enough to purchase a Luxury Motorhome", car: "the full price of a top-spec luxury sports car", suv: "a brand-new high-performance all-electric SUV" }
+        };
+
+        const dictionary = {
+            tc: {
+                title: "個人稅務帳戶收益分析", headerTag: "Alex Chan | Individual Insurance Broker", subtitle: "逾20年財富管理經驗導航", quote: "「透過精確的數據分析，了解您的資產在市場波動中的表現。」",
+                labelName: "您的稱呼", labelAccType: "帳戶類型", labelAssetType: "目前存放方式", labelBalanceTFSA: "CRA 累積供款額度 (CAD)", labelBalanceRRSP: "RRSP 扣稅額度 (CAD)",
+                btnScan: "⚡ 啟動 AI 收益與風險分析", resultLabel: "分析報告", tagCurrent: "目前策略表現", tagPro: "專業配置優勢", chartHeader: "17年模擬累積收益增長軌跡", riskTitle: "下行/購買力風險", safeTitle: "配置保障機制", safeStatus: "合約級別保證", safeNote: "受保單條款約束",
+                noteTitle: "數據備註與披露", noteDesc: "模擬數據參考加拿大市場歷史平均。專業配置採用具備「合約級別保證」機制的收益優化組合。",
+                wcTitle: "已成功複製微信號", primaryBtnLabel: "Instagram 聯繫顧問", resetBtn: "重新開始分析", msgTitle: "系統提示",
+                chartLabelTarget: "專業管理的投資組合*", chartLabelCurrent: "目前策略模擬表現", closing: "<br><br>如果您希望全面審視財務現狀，在風險可控的前提下追求資產回報最大化，並極大化稅務帳戶的優勢，誠邀您聯絡 Alex 進行初步諮詢。"
+            },
+            sc: {
+                title: "个人税务账户收益分析", headerTag: "Alex Chan | Individual Insurance Broker", subtitle: "逾20年财富管理经验导航", quote: "「通过精确的数据分析，了解您的资产在市场波动中的表現。」",
+                labelName: "您的称呼", labelAccType: "账户类型", labelAssetType: "目前存放方式", labelBalanceTFSA: "CRA 累计供款额度 (CAD)", labelBalanceRRSP: "RRSP 扣税额度 (CAD)",
+                btnScan: "⚡ 启动 AI 收益与风险分析", resultLabel: "分析报告", tagCurrent: "目前策略表现", tagPro: "专业配置优势", chartHeader: "17年模拟累计收益增长轨迹", riskTitle: "下行/购买力风险", safeTitle: "配置保障機制", safeStatus: "合约级别保证", safeNote: "受保单条款约束",
+                noteTitle: "数据备注与披露", noteDesc: "目前配置数据参考加拿大市场历史平均。专业配置采用具备「合约级别保证」机制的收益优化组合。",
+                wcTitle: "已成功复制微信号", wcBtnLabel: "微信聯繫顧問", resetBtn: "重新開始分析", msgTitle: "系统提示",
+                chartLabelTarget: "专业管理的投资组合*", chartLabelCurrent: "目前策略模拟表现", closing: "<br><br>如果您希望全面审视财务现状，在风险可控的前提下追求资产回报最大化，并极大化税务账户的优势，诚邀您联絡 Alex 进行初步咨询。"
+            },
+            en: {
+                title: "Tax-Account Yield Analysis", headerTag: "Alex Chan | Individual Insurance Broker", subtitle: "Guided by 20+ Years of Wealth Management", quote: "「Analyze assets with precision and understand your performance against market volatility.」",
+                labelName: "Your Name", labelAccType: "Account Type", labelAssetType: "Current Method", labelBalanceTFSA: "CRA Room (CAD)", labelBalanceRRSP: "RRSP Limit (CAD)",
+                btnScan: "⚡ Launch AI Yield & Risk Analysis", resultLabel: "Analysis Report", tagCurrent: "Current Strategy", tagPro: "Professional Edge", chartHeader: "17-Year Simulated Growth Trajectory", riskTitle: "Downside Risk", safeTitle: "Protection Mechanism", safeStatus: "Contractual Guarantee", safeNote: "Subject to policy terms",
+                noteTitle: "Disclosure & References", noteDesc: "Data refers to historical averages. Professional allocation uses guaranteed portfolios.",
+                wcTitle: "WeChat ID Copied", primaryBtnLabel: "Email for Consultation", resetBtn: "Start New Analysis", msgTitle: "Notification",
+                chartLabelTarget: "Pro-Managed Portfolio*", chartLabelCurrent: "Current Strategy Simulation", closing: "<br><br>To gain a comprehensive understanding of your financial health, maximize your assets within risk tolerance, and fully leverage your tax-advantaged accounts, you are invited to connect with Alex for a consultation."
+            }
         };
 
         function setLanguage(lang) {
@@ -229,14 +246,13 @@
 
             safeSet('ui-title', d.title); safeSet('ui-header-tag', d.headerTag); safeSet('ui-subtitle', d.subtitle);
             safeSet('ui-quote', d.quote); safeSet('label-name', d.labelName); safeSet('label-acc-type', d.labelAccType);
-            safeSet('label-asset-type', d.labelAssetType); safeSet('opt-cash', d.optCash); safeSet('opt-fund', d.optFund);
-            safeSet('opt-stock', d.optStock); safeSet('ui-btn-scan', d.btnScan); safeSet('ui-result-label', d.resultLabel);
+            safeSet('label-asset-type', d.labelAssetType); safeSet('ui-btn-scan', d.btnScan); safeSet('ui-result-label', d.resultLabel);
             safeSet('ui-chart-header', d.chartHeader); safeSet('ui-risk-title', d.riskTitle); safeSet('ui-safe-title', d.safeTitle);
             safeSet('ui-safe-status', d.safeStatus); safeSet('ui-safe-note', d.safeNote); safeSet('ui-note-title', d.noteTitle);
             safeSet('ui-note-desc', d.noteDesc); safeSet('wechat-modal-title', d.wcTitle);
             safeSet('ui-tag-current', d.tagCurrent); safeSet('ui-tag-pro', d.tagPro);
-            safeSet('ui-wc-text', d.wcBtnLabel); safeSet('ui-wa-text', d.waBtn); safeSet('ui-sms-text', d.smsBtn); safeSet('ui-reset-text', d.resetBtn);
-            safeSet('msg-modal-title', d.msgTitle);
+            safeSet('ui-reset-text', d.resetBtn); safeSet('msg-modal-title', d.msgTitle);
+            safeSet('ui-primary-text', d.primaryBtnLabel);
 
             updateLabelByAccount();
 
@@ -245,16 +261,29 @@
                 if(btn) btn.className = l === lang ? 'px-3 py-1 rounded-full transition-all lang-btn-active' : 'px-3 py-1 rounded-full transition-all';
             });
 
-            const wa = document.getElementById('cta-wa-link'); const wc = document.getElementById('cta-wechat-btn'); const sms = document.getElementById('cta-sms-link');
-            if(wa) wa.classList.toggle('hidden', lang === 'sc' || lang === 'en');
-            if(wc) wc.classList.toggle('hidden', lang !== 'sc');
-            if(sms) sms.classList.toggle('hidden', lang !== 'en');
+            // 更新聯絡按鈕屬性
+            const primaryLink = document.getElementById('cta-primary-link');
+            const wcBtn = document.getElementById('cta-wechat-btn');
+            
+            if (lang === 'tc') {
+                primaryLink.href = "https://www.instagram.com/alexchanteam/"; // 這裡放您的 IG 網址
+                primaryLink.className = "w-full bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500 text-white font-black py-3 rounded-xl flex items-center justify-center no-underline shadow-lg active:scale-95 transition-all text-sm";
+                primaryLink.classList.remove('hidden');
+                wcBtn.classList.add('hidden');
+            } else if (lang === 'en') {
+                primaryLink.href = "mailto:alexchanteam@gmail.com?subject=Inquiry regarding Tax-Advantaged Account Analysis";
+                primaryLink.className = "w-full bg-slate-800 text-white font-black py-3 rounded-xl flex items-center justify-center no-underline shadow-lg active:scale-95 transition-all text-sm";
+                primaryLink.classList.remove('hidden');
+                wcBtn.classList.add('hidden');
+            } else {
+                primaryLink.classList.add('hidden');
+                wcBtn.classList.remove('hidden');
+            }
 
             if (analysisState.isFinished) {
                 renderChart(analysisState.v1, analysisState.v2, analysisState.r1);
                 const riskValText = assetRisks[analysisState.riskKey][currentLang];
-                const drawdown = document.getElementById('ui-max-drawdown');
-                if(drawdown) drawdown.innerText = analysisState.riskKey === 'cash' ? riskValText : `-${riskValText}`;
+                document.getElementById('ui-max-drawdown').innerText = analysisState.riskKey === 'cash' ? riskValText : `-${riskValText}`;
                 
                 const gapNum = parseInt(analysisState.gap.replace(/,/g,''));
                 let analogyStr = analogies[currentLang].suv;
@@ -264,11 +293,9 @@
                 else if (gapNum > 150000) analogyStr = analogies[currentLang].car;
 
                 const assetAdv = rates[analysisState.riskKey].advantage[currentLang];
-
                 const backupText = currentLang === 'en' 
-                    ? `Hello ${analysisState.name}, choosing ${analysisState.acc} via ${analysisState.asset} reflects your focus on ${assetAdv}. However, the $${analysisState.gap} simulated gap in 17 years is massive, <b>${analogyStr}</b>. While your current tool has its merits, our pro-managed portfolio adds a contractual guarantee to eliminate drawdown risks.`
+                    ? `Hello ${analysisState.name}, choosing ${analysisState.acc} via ${analysisState.asset} reflects your focus on ${assetAdv}. However, the $${analysisState.gap} simulated gap in 17 years is massive, <b>${analogyStr}</b>. Our pro-managed portfolio adds a contractual guarantee to eliminate drawdown risks.`
                     : `你好 ${analysisState.name}，選擇將 ${analysisState.acc} 存放於目前配置，體現了您對「${assetAdv}」的考量。但數據顯示，17 年後的模擬複利缺口高達 $${analysisState.gap}，這筆錢<b>${analogyStr}</b>。專業配置系統不僅優化增長，還能提供合約保證機制以消除市場風險。`;
-                
                 document.getElementById('report-content').innerHTML = backupText + d.closing;
             }
         }
@@ -309,9 +336,6 @@
 
             analysisState = { isFinished: true, v1: finalCurrent, v2: finalPro, r1: rates[assetType].yield, balance, name, asset: assetType, acc: accType, gap: gapStr, riskKey: assetType };
 
-            const msgBodyTC = `你好 Alex！我係 ${name}，我剛剛完成咗分析報告 (${accType})，想請教專業配置建議。`;
-            document.getElementById('cta-wa-link').href = `https://wa.me/17783198129?text=${encodeURIComponent(msgBodyTC)}`;
-
             const langPrompt = { tc: "廣東話繁體中文", sc: "簡體中文", en: "Professional English" }[currentLang];
             let analogyStr = analogies[currentLang].suv;
             if (gapInt > 1500000) analogyStr = analogies[currentLang].house;
@@ -342,9 +366,7 @@
                 const aiText = data.candidates?.[0]?.content?.parts?.[0]?.text;
                 document.getElementById('report-content').innerHTML = aiText ? aiText.replace(/\n/g, '<br>') : "Generating report...";
                 finish();
-            } catch (e) { 
-                finish();
-            }
+            } catch (e) { finish(); }
         }
 
         function finish() {
@@ -357,10 +379,7 @@
                 const riskValText = assetRisks[analysisState.riskKey][currentLang];
                 document.getElementById('ui-max-drawdown').innerText = analysisState.riskKey === 'cash' ? riskValText : `-${riskValText}`;
                 document.getElementById('ui-risk-note').innerText = rates[analysisState.riskKey].riskDetail[currentLang];
-                
-                if (document.getElementById('report-content').innerText === "Generating report...") {
-                   setLanguage(currentLang);
-                }
+                if (document.getElementById('report-content').innerText === "Generating report...") { setLanguage(currentLang); }
             }, 500);
         }
 
@@ -418,33 +437,6 @@
             document.getElementById('btn-submit-action').classList.remove('hidden');
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
-
-        const dictionary = {
-            tc: {
-                title: "個人稅務帳戶收益分析", headerTag: "Alex Chan | Individual Insurance Broker", subtitle: "逾20年財富管理經驗導航", quote: "「透過精確的數據分析，了解您的資產在市場波動中的表現。」",
-                labelName: "您的稱呼", labelAccType: "帳戶類型", labelAssetType: "目前存放方式", labelBalanceTFSA: "CRA 累積供款額度 (CAD)", labelBalanceRRSP: "RRSP 扣稅額度 (CAD)",
-                optCash: "銀行定期 / GIC", optFund: "互惠基金", optStock: "藍籌股/ETF", btnScan: "⚡ 啟動 AI 收益與風險分析", resultLabel: "分析報告", tagCurrent: "目前策略表現", tagPro: "專業配置優勢", chartHeader: "17年模擬累積收益增長軌跡", riskTitle: "下行/購買力風險", safeTitle: "配置保障機制", safeStatus: "合約級別保證", safeNote: "受保單條款約束",
-                noteTitle: "數據備註與披露", noteDesc: "模擬數據參考加拿大市場歷史平均。專業配置採用具備「合約級別保證」機制的收益優化組合。",
-                wcTitle: "已成功複製微信號", wcBtnLabel: "微信聯繫顧問", waBtn: "WhatsApp 聯繫顧問獲取分析", smsBtn: "Text for Consultation", resetBtn: "重新開始分析", msgTitle: "系統提示",
-                chartLabelTarget: "專業管理的投資組合*", chartLabelCurrent: "目前策略模擬表現", closing: "<br><br>如果您希望全面審視財務現狀，在風險可控的前提下追求資產回報最大化，並極大化稅務帳戶的優勢，誠邀您聯絡 Alex 進行初步諮詢。"
-            },
-            sc: {
-                title: "个人税务账户收益分析", headerTag: "Alex Chan | Individual Insurance Broker", subtitle: "逾20年财富管理经验导航", quote: "「通过精确的数据分析，了解您的资产在市场波动中的表现。」",
-                labelName: "您的称呼", labelAccType: "账户类型", labelAssetType: "目前存放方式", labelBalanceTFSA: "CRA 累计供款额度 (CAD)", labelBalanceRRSP: "RRSP 扣税额度 (CAD)",
-                optCash: "银行定期 / GIC", optFund: "互惠基金", optStock: "蓝筹股/ETF", btnScan: "⚡ 启动 AI 收益与风险分析", resultLabel: "分析报告", tagCurrent: "目前策略表现", tagPro: "专业配置优势", chartHeader: "17年模拟累计收益增长轨迹", riskTitle: "下行/购买力风险", safeTitle: "配置保障機制", safeStatus: "合约级别保证", safeNote: "受保单条款约束",
-                noteTitle: "数据备注与披露", noteDesc: "目前配置数据参考加拿大市场历史平均。专业配置采用具备「合约级别保证」机制的收益优化组合。",
-                wcTitle: "已成功复制微信号", wcBtnLabel: "微信聯繫顧問", waBtn: "微信联系顾问獲取分析", smsBtn: "Text for Consultation", resetBtn: "重新開始分析", msgTitle: "系统提示",
-                chartLabelTarget: "专业管理的投资组合*", chartLabelCurrent: "目前策略模拟表现", closing: "<br><br>如果您希望全面审视财务现状，在风险可控的前提下追求资产回报最大化，并极大化税务账户的优势，诚邀您联络 Alex 进行初步咨询。"
-            },
-            en: {
-                title: "Tax-Account Yield Analysis", headerTag: "Alex Chan | Individual Insurance Broker", subtitle: "Guided by 20+ Years of Wealth Management", quote: "「Analyze assets with precision and understand your performance against market volatility.」",
-                labelName: "Your Name", labelAccType: "Account Type", labelAssetType: "Current Method", labelBalanceTFSA: "CRA Room (CAD)", labelBalanceRRSP: "RRSP Limit (CAD)",
-                optCash: "Bank Savings / GIC", optFund: "Mutual Funds", optStock: "Stocks/ETFs", btnScan: "⚡ Launch AI Yield & Risk Analysis", resultLabel: "Analysis Report", tagCurrent: "Current Strategy", tagPro: "Professional Edge", chartHeader: "17-Year Simulated Growth Trajectory", riskTitle: "Downside Risk", safeTitle: "Protection Mechanism", safeStatus: "Contractual Guarantee", safeNote: "Subject to policy terms",
-                noteTitle: "Disclosure & References", noteDesc: "Data refers to historical averages. Professional allocation uses guaranteed portfolios.",
-                wcTitle: "WeChat ID Copied", wcBtnLabel: "Contact via WeChat", waBtn: "Text for Consultation", smsBtn: "Text for Consultation", resetBtn: "Start New Analysis", msgTitle: "Notification",
-                chartLabelTarget: "Pro-Managed Portfolio*", chartLabelCurrent: "Current Strategy Simulation", closing: "<br><br>To gain a comprehensive understanding of your financial health, maximize your assets within risk tolerance, and fully leverage your tax-advantaged accounts, you are invited to connect with Alex for a consultation."
-            }
-        };
 
         window.onload = () => setLanguage('tc');
     </script>
