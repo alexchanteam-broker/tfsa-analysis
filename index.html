@@ -8,6 +8,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&family=Noto+Sans+SC:wght@400;700;900&family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
+        /* 鎖定 body 滾動，改由內部容器控制 */
         body { 
             font-family: 'Inter', 'Noto Sans TC', 'Noto Sans SC', sans-serif; 
             background-color: #f1f5f9; 
@@ -27,6 +28,7 @@
         @keyframes fadeInScale { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
         .modal-animate { animation: fadeInScale 0.3s ease-out forwards; }
         .profile-img { object-fit: cover; }
+        /* 隱藏捲動條但保留功能 */
         .custom-scroll::-webkit-scrollbar { width: 0px; background: transparent; }
         .custom-scroll { scrollbar-width: none; -ms-overflow-style: none; }
     </style>
@@ -227,7 +229,7 @@
                 btnScan: "⚡ 启动 AI 收益与风险分析", resultLabel: "分析报告", tagCurrent: "目前策略表现", tagPro: "专业配置优势", chartHeader: "17年模拟累计收益增长轨迹", riskTitle: "下行/购买力风险", safeTitle: "配置保障機制", safeStatus: "合约级别保证", safeNote: "受保单条款约束",
                 noteTitle: "数据备注与披露", noteDesc: "目前配置数据参考加拿大市场历史平均。专业配置采用具备「合约级别保证」机制的收益优化组合。",
                 wcTitle: "已成功复制微信号", wcBtnLabel: "微信聯繫顧問", resetBtn: "重新開始分析", msgTitle: "系统提示",
-                chartLabelTarget: "专业管理的投资组合*", chartLabelCurrent: "目前策略模拟表现", closing: "<br><br>如果您希望全面审视财务现状，在风险可控的前提下追求资产回报最大化，并极大化税务账户的优势，诚邀您联絡 Alex 进行初步咨询。"
+                chartLabelTarget: "专业管理的投资组合*", chartLabelCurrent: "目前策略模拟表现", closing: "<br><br>如果您希望全面审视财务现状，在风险可控的前提下追求资产回报最大化，并极大化税务账户的优势，诚邀您联络 Alex 进行初步咨询。"
             },
             en: {
                 title: "Tax-Account Yield Analysis", headerTag: "Alex Chan | Individual Insurance Broker", subtitle: "Guided by 20+ Years of Wealth Management", quote: "「Analyze assets with precision and understand your performance against market volatility.」",
@@ -266,7 +268,7 @@
             const wcBtn = document.getElementById('cta-wechat-btn');
             
             if (lang === 'tc') {
-                primaryLink.href = "https://www.instagram.com/alexchanteam/"; // 這裡放您的 IG 網址
+                primaryLink.href = "https://www.instagram.com/catholicalex/"; // 更新為正確的 IG 網址
                 primaryLink.className = "w-full bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500 text-white font-black py-3 rounded-xl flex items-center justify-center no-underline shadow-lg active:scale-95 transition-all text-sm";
                 primaryLink.classList.remove('hidden');
                 wcBtn.classList.add('hidden');
@@ -335,6 +337,10 @@
             const gapStr = gapInt.toLocaleString();
 
             analysisState = { isFinished: true, v1: finalCurrent, v2: finalPro, r1: rates[assetType].yield, balance, name, asset: assetType, acc: accType, gap: gapStr, riskKey: assetType };
+
+            const msgBodyTC = `你好 Alex！我係 ${name}，我剛剛完成咗分析報告 (${accType})，想請教專業配置建議。`;
+            // 注意：WhatsApp 號碼可以視需求保留或更換
+            // document.getElementById('cta-wa-link').href = `https://wa.me/17783198129?text=${encodeURIComponent(msgBodyTC)}`;
 
             const langPrompt = { tc: "廣東話繁體中文", sc: "簡體中文", en: "Professional English" }[currentLang];
             let analogyStr = analogies[currentLang].suv;
