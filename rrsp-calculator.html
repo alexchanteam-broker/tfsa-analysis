@@ -5,26 +5,156 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RRSP & CCB 增幅計算器 | Alex Chan</title>
     <style>
-        body { font-family: -apple-system, sans-serif; background: #f4f7f6; padding: 20px; color: #333; }
-        .card { background: white; border-radius: 15px; padding: 25px; max-width: 500px; margin: auto; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        h2 { color: #2c3e50; text-align: center; font-size: 1.2rem; }
-        .input-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 0.9rem; }
-        input, select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
-        .result-box { background: #e8f4fd; padding: 15px; border-radius: 10px; margin-top: 20px; border-left: 5px solid #3498db; }
-        .result-item { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 1rem; }
-        .highlight { color: #e67e22; font-weight: bold; font-size: 1.2rem; }
-        .total { border-top: 1px solid #ccc; padding-top: 10px; font-weight: bold; color: #27ae60; font-size: 1.3rem; }
-        .footer { text-align: center; font-size: 0.8rem; color: #7f8c8d; margin-top: 20px; }
+        /* 專業金融配色與全局樣式 */
+        :root {
+            --primary-navy: #0A2540; /* 深藍色 - 專業感 */
+            --accent-blue: #0070BA;  /* PayPal藍 - 動作引導 */
+            --gain-green: #27AE60;   /* 收益綠 - 財務回報 */
+            --bg-color: #F4F7F9;
+            --text-dark: #333;
+        }
+
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+            background-color: var(--bg-color); 
+            padding: 20px; 
+            color: var(--text-dark); 
+            display: flex; 
+            justify-content: center;
+        }
+
+        .card { 
+            background: white; 
+            border-radius: 20px; 
+            padding: 30px; 
+            width: 100%;
+            max-width: 450px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08); 
+        }
+
+        /* 個人頭像區域 */
+        .profile-area {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        .profile-photo {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            border: 4px solid white;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            object-fit: cover;
+        }
+        .profile-name {
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-top: 10px;
+            color: var(--primary-navy);
+        }
+        .profile-title {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+        }
+
+        h2 { 
+            color: var(--primary-navy); 
+            text-align: center; 
+            font-size: 1.3rem; 
+            margin-bottom: 25px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 15px;
+        }
+
+        /* 輸入區域樣式 */
+        .input-group { margin-bottom: 18px; }
+        label { 
+            display: block; 
+            margin-bottom: 7px; 
+            font-weight: 600; 
+            font-size: 0.9rem; 
+            color: #555;
+        }
+        input, select { 
+            width: 100%; 
+            padding: 12px; 
+            border: 1px solid #ddd; 
+            border-radius: 10px; 
+            box-sizing: border-box; 
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+        input:focus, select:focus {
+            border-color: var(--accent-blue);
+            outline: none;
+        }
+
+        /* 結果顯示區域 */
+        .result-box { 
+            background: var(--bg-color); 
+            padding: 20px; 
+            border-radius: 12px; 
+            margin-top: 25px; 
+        }
+        .result-item { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            margin-bottom: 12px; 
+            font-size: 1rem; 
+        }
+        .highlight { 
+            color: var(--primary-navy); 
+            font-weight: 700; 
+            font-size: 1.2rem; 
+        }
+        .total { 
+            border-top: 2px solid #ccc; 
+            padding-top: 15px; 
+            font-weight: 800; 
+            color: var(--gain-green); 
+            font-size: 1.4rem; 
+        }
+        .roi-label { font-size: 0.8rem; color: #7f8c8d; }
+
+        /* IG 聯絡按鈕 */
+        .dm-button {
+            display: block;
+            background-color: var(--primary-navy);
+            color: white;
+            text-align: center;
+            padding: 15px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: bold;
+            margin-top: 25px;
+            transition: background-color 0.2s;
+        }
+        .dm-button:hover {
+            background-color: var(--accent-blue);
+        }
+
+        .footer { 
+            text-align: center; 
+            font-size: 0.75rem; 
+            color: #95a5a6; 
+            margin-top: 25px; 
+            line-height: 1.4;
+        }
     </style>
 </head>
 <body>
 
 <div class="card">
-    <h2>💰 RRSP 節稅 & 牛奶金優化計算</h2>
+    <div class="profile-area">
+        <img src="profile.jpg" alt="Alex Chan" class="profile-photo" onerror="this.src='https://via.placeholder.com/90?text=Alex'">
+        <div class="profile-name">Alex Chan</div>
+        <div class="profile-title">Richmond 專業稅務策劃 | 保險</div>
+    </div>
+
+    <h2>🇨🇦 RRSP x 牛奶金優化計算</h2>
     
     <div class="input-group">
-        <label>家庭年收入 (Family Net Income):</label>
+        <label>家庭年收入 (稅後 AFNI):</label>
         <input type="number" id="income" value="100000" step="5000">
     </div>
 
@@ -45,47 +175,65 @@
 
     <div class="result-box">
         <div class="result-item">
-            <span>預算節省稅金 (BC省):</span>
+            <span>預算節省稅金 (BC):</span>
             <span id="tax-savings" class="highlight">$0</span>
         </div>
         <div class="result-item">
-            <span>預計額外增加牛奶金 (年):</span>
+            <span>預計額外增加牛奶金 (CCB):</span>
             <span id="ccb-gain" class="highlight">$0</span>
         </div>
         <div class="result-item total">
             <span>首年總現金回報:</span>
-            <span id="total-return">$0</span>
+            <div style="text-align: right;">
+                <span id="total-return">$0</span><br>
+                <span class="roi-label">(相當於 <span id="roi-percent">0</span>% 即時回報)</span>
+            </div>
         </div>
     </div>
     
+    <a href="https://www.instagram.com/alexchan.richmond/" class="dm-button">
+        📩 DM 我獲取精確分析
+    </a>
+    
     <div class="footer">
-        *此計算僅供參考，實際金額以 CRA 評估為準。<br>
-        聯絡 Alex Chan 獲取精確稅務分析。
+        *此計算基於預估 BC 邊際稅率及 CCB 公式。<br>
+        實際金額受多種因素影響，應以 CRA 評估為準。
     </div>
 </div>
 
 <script>
     function calculate() {
-        const income = parseFloat(document.getElementById('income').value);
-        const rrsp = parseFloat(document.getElementById('rrsp').value);
+        const income = parseFloat(document.getElementById('income').value) || 0;
+        const rrsp = parseFloat(document.getElementById('rrsp').value) || 0;
         const kids = parseInt(document.getElementById('kids').value);
 
-        // 1. 估算 BC 省邊際稅率 (簡化版)
-        let taxRate = 0.20;
-        if (income > 110000) taxRate = 0.38;
-        else if (income > 80000) taxRate = 0.31;
-        else if (income > 50000) taxRate = 0.23;
+        if (rrsp <= 0) {
+            updateUI(0, 0, 0, 0);
+            return;
+        }
+
+        // 1. 估算 BC 省邊際稅率 (2025-2026 年度概算)
+        let taxRate = 0.2006; // < $47,937
+        if (income > 252752) taxRate = 0.535;
+        else if (income > 181812) taxRate = 0.498;
+        else if (income > 173205) taxRate = 0.461;
+        else if (income > 144489) taxRate = 0.437;
+        else if (income > 111733) taxRate = 0.407;
+        else if (income > 96866) taxRate = 0.3829;
+        else if (income > 86529) taxRate = 0.3279;
+        else if (income > 55867) taxRate = 0.31;
+        else if (income > 47937) taxRate = 0.227;
         
         const taxSavings = rrsp * taxRate;
 
         // 2. 估算 CCB 回收率 (Clawback Rate)
-        // 根據收入區間，每少 $1 收入可多攞返幾多 CCB
+        // 這是最關鍵部分，簡化邏輯基於超出 $36,502 後的收入
         let ccbRate = 0;
-        if (income > 79000) {
+        if (income > 79000) { // 收入較高區間
             if (kids === 1) ccbRate = 0.032;
             else if (kids === 2) ccbRate = 0.057;
             else if (kids >= 3) ccbRate = 0.08;
-        } else if (income > 36000) {
+        } else if (income > 36502) { // 收入中等區間
             if (kids === 1) ccbRate = 0.07;
             else if (kids === 2) ccbRate = 0.135;
             else if (kids >= 3) ccbRate = 0.19;
@@ -93,17 +241,23 @@
 
         const ccbGain = rrsp * ccbRate;
         const total = taxSavings + ccbGain;
+        const roi = rrsp > 0 ? (total / rrsp) * 100 : 0;
 
-        document.getElementById('tax-savings').innerText = '$' + taxSavings.toLocaleString(undefined, {maximumFractionDigits: 0});
-        document.getElementById('ccb-gain').innerText = '$' + ccbGain.toLocaleString(undefined, {maximumFractionDigits: 0});
+        updateUI(taxSavings, ccbGain, total, roi);
+    }
+
+    function updateUI(tax, ccb, total, roi) {
+        document.getElementById('tax-savings').innerText = '$' + tax.toLocaleString(undefined, {maximumFractionDigits: 0});
+        document.getElementById('ccb-gain').innerText = '$' + ccb.toLocaleString(undefined, {maximumFractionDigits: 0});
         document.getElementById('total-return').innerText = '$' + total.toLocaleString(undefined, {maximumFractionDigits: 0});
+        document.getElementById('roi-percent').innerText = roi.toFixed(1);
     }
 
     document.querySelectorAll('input, select').forEach(el => {
         el.addEventListener('input', calculate);
     });
 
-    calculate();
+    calculate(); // 初始化計算
 </script>
 
 </body>
