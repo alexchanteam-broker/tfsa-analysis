@@ -11,7 +11,7 @@ import {
 // ==========================================
 const ADVISOR_NAME = "Alex Chan";
 const ADVISOR_TITLE = "Individual Insurance Broker";
-// 精確套用你上傳的本地照片檔案名稱
+// 完美套用你上傳的本地照片檔案名稱
 const AVATAR_URL = "WhatsApp Image 2026-04-06 at 1.17.08 AM.jpeg"; 
 const WATERMARK_TEXT = "ALEX CHAN";
 
@@ -166,7 +166,6 @@ const App = () => {
         </div>
       </nav>
 
-      {}
       <div className="md:hidden flex bg-white border-b border-slate-200 overflow-x-auto z-10">
         {['summary', 'details', 'education'].map((tab) => (
           <button
@@ -181,7 +180,6 @@ const App = () => {
         ))}
       </div>
 
-      {}
       <main className="flex-1 max-w-[1400px] mx-auto w-full px-4 md:px-6 py-8 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8">
           
@@ -233,7 +231,7 @@ const App = () => {
 
                 <div>
                   <label className="flex justify-between text-sm font-bold text-slate-700 mb-3">
-                    <span>投資組合預期回報</span>
+                    <span>增長型組合預期回報</span>
                     <span className="text-blue-600 font-bold text-lg">{investmentReturn}%</span>
                   </label>
                   <input 
@@ -272,7 +270,6 @@ const App = () => {
             </div>
           </div>
 
-          {}
           <div className="lg:col-span-8 space-y-6">
             {activeTab === 'summary' && (
               <div className="space-y-6 animate-in fade-in duration-500">
@@ -319,7 +316,6 @@ const App = () => {
                   </div>
                 </div>
 
-                {}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {/* 策略 A 卡片 */}
                   <div className="bg-gradient-to-b from-emerald-50 to-white p-6 md:p-8 rounded-3xl border border-emerald-100 relative overflow-hidden flex flex-col h-full shadow-sm hover:shadow-md transition-shadow">
@@ -409,7 +405,6 @@ const App = () => {
               </div>
             )}
 
-            {}
             {activeTab === 'details' && (
               <div className="space-y-6 animate-in fade-in duration-500">
                  <div className="bg-white p-8 rounded-3xl shadow-sm border border-slate-200/60">
@@ -464,7 +459,6 @@ const App = () => {
               </div>
             )}
 
-            {}
             {activeTab === 'education' && (
               <div className="space-y-8 animate-in fade-in duration-500">
                 <section className="bg-white p-8 rounded-3xl shadow-sm border border-slate-200/60">
@@ -514,7 +508,6 @@ const App = () => {
         </div>
       </main>
 
-      {}
       <footer className="mt-auto py-8 text-center text-slate-400 text-xs px-4 relative z-10 bg-slate-900 w-full border-t border-slate-800">
         <p className="font-bold text-slate-300 mb-2">Designed for Professional Financial Advisory</p>
         <p>本系統之預測數據僅供教學與模擬用途。實際稅務扣減資格及投資回報，依閣下所屬司法管轄區之稅法及金融機構最新政策為準。</p>
