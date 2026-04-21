@@ -1,517 +1,211 @@
 import React, { useState, useMemo } from 'react';
-import { 
-  AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer 
-} from 'recharts';
-import { 
-  TrendingUp, ShieldCheck, ArrowRightLeft, DollarSign, PiggyBank, Wallet, AlertCircle, Briefcase
-} from 'lucide-react';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
+import { Calculator, TrendingUp } from 'lucide-react';
 
-// ==========================================
-// 顧問專屬設定區
-// ==========================================
 const ADVISOR_NAME = "Alex Chan";
 const ADVISOR_TITLE = "Individual Insurance Broker";
-const AVATAR_URL = "WhatsApp Image 2026-04-06 at 1.17.08 AM.jpeg"; 
-const WATERMARK_TEXT = "ALEX CHAN";
+const AVATAR_URL = "WhatsApp Image 2026-04-06 at 1.17.08 AM.jpeg";
 
 const App = () => {
-  const [loanAmount, setLoanAmount] = useState(100000); 
-  const [interestRate, setInterestRate] = useState(5.45); 
-  const [marginalTaxRate, setMarginalTaxRate] = useState(30); 
-  const [investmentReturn, setInvestmentReturn] = useState(9); 
-  const [years, setYears] = useState(10); 
-  const [activeTab, setActiveTab] = useState('summary');
+  const [loanAmount, setLoanAmount] = useState(100000);
+  const [interestRate, setInterestRate] = useState(5.45);
+  const [marginalTaxRate, setMarginalTaxRate] = useState(30);
+  const [investmentReturn, setInvestmentReturn] = useState(9);
+  const [years, setYears] = useState(10);
 
   const stats = useMemo(() => {
-    // 基本利息與稅務回贈計算
-    const annualInterestExpense = loanAmount * (interestRate / 100);
-    const taxRefund = annualInterestExpense * (marginalTaxRate / 100);
-    const effectiveAnnualCost = annualInterestExpense - taxRefund;
-    const effectiveRate = (effectiveAnnualCost / loanAmount) * 100;
-    const netSpread = investmentReturn - effectiveRate;
-    const inclusionRate = 0.5; // 資本增值稅 inclusion rate (50%)
+    // 稅後有效利息計算 (利息可 100% 抵稅)
+    const effectiveRate = interestRate * (1 - marginalTaxRate / 100);
+    const annualEffectiveCost = loanAmount * (effectiveRate / 100);
+    const totalEffectiveCost = annualEffectiveCost * years;
 
     const chartData = [];
-    let regularValue = 0; 
     
-    // 逐年計算資產增長
+    // 逐年計算圖表數據
     for (let i = 0; i <= years; i++) {
-      // 策略 A: 借貸投資 (Lump Sum)
+      // 資產增長 (複利計算)
       const investmentValue = loanAmount * Math.pow(1 + (investmentReturn / 100), i);
+      // 累積總成本 (本金 + 每年支付的稅後淨利息)
+      const accumulatedCost = loanAmount + (annualEffectiveCost * i);
       
-      // 策略 B: 定期定額 (DCA，無借貸)
-      if (i > 0) {
-        regularValue = regularValue * (1 + (investmentReturn / 100)) + effectiveAnnualCost;
-      }
-      
-      const netEquity = investmentValue - loanAmount; 
-
-      // 策略 A 稅務計算 (扣除 50% Inclusion Rate 的增值稅)
-      const levTaxableGain = netEquity > 0 ? netEquity * inclusionRate : 0;
-      const levCGTax = levTaxableGain * (marginalTaxRate / 100);
-      const levAfterTaxEquity = netEquity - levCGTax;
-
-      // 策略 B 稅務計算
-      const dcaTotalPrincipal = effectiveAnnualCost * i;
-      const dcaGrossProfit = regularValue - dcaTotalPrincipal;
-      const dcaTaxableGain = dcaGrossProfit > 0 ? dcaGrossProfit * inclusionRate : 0;
-      const dcaCGTax = dcaTaxableGain * (marginalTaxRate / 100);
-      const dcaAfterTaxEquity = regularValue - dcaCGTax;
-
       chartData.push({
         year: `第${i}年`,
-        levAfterTaxEquity: Math.round(levAfterTaxEquity), 
-        dcaAfterTaxEquity: Math.round(dcaAfterTaxEquity),
-        regularValue: Math.round(regularValue)
+        投資總資產: Math.round(investmentValue),
+        總成本含本金: Math.round(accumulatedCost),
       });
     }
 
-    const finalInvestmentValue = loanAmount * Math.pow(1 + (investmentReturn / 100), years);
-    const finalNetEquity = finalInvestmentValue - loanAmount;
-    const finalLevTaxableGain = finalNetEquity > 0 ? finalNetEquity * inclusionRate : 0;
-    const finalLevCGTax = finalLevTaxableGain * (marginalTaxRate / 100);
-    const finalLevAfterTaxProfit = finalNetEquity - finalLevCGTax;
-
-    const finalDcaTotalPrincipal = effectiveAnnualCost * years;
-    const finalDcaGrossProfit = chartData[years].regularValue - finalDcaTotalPrincipal;
-    const finalDcaTaxableGain = finalDcaGrossProfit > 0 ? finalDcaGrossProfit * inclusionRate : 0;
-    const finalDcaCGTax = finalDcaTaxableGain * (marginalTaxRate / 100);
-    const finalDcaAfterTaxTotal = chartData[years].regularValue - finalDcaCGTax;
+    // 最終年份計算
+    const finalGrossValue = chartData[years].投資總資產;
+    const grossProfit = finalGrossValue - loanAmount; // 稅前純利
+    
+    // 資本增值稅計算 (加拿大標準: 50% Inclusion Rate)
+    let cgTax = 0;
+    if (grossProfit > 0) {
+      cgTax = grossProfit * 0.5 * (marginalTaxRate / 100);
+    }
+    
+    // 最終落袋 = 總資產 - 貸款本金 - 總支付利息 - 增值稅
+    const finalNetProfit = finalGrossValue - loanAmount - totalEffectiveCost - cgTax;
 
     return {
-      annualInterestExpense,
-      taxRefund,
-      effectiveAnnualCost,
       effectiveRate,
-      netSpread,
-      chartData,
-      totalProfit: finalNetEquity, 
-      levCGTax: finalLevCGTax,
-      levAfterTaxProfit: finalLevAfterTaxProfit, 
-      regularTotalProfit: chartData[years].regularValue, 
-      dcaCGTax: finalDcaCGTax,
-      dcaAfterTaxTotal: finalDcaAfterTaxTotal, 
-      dcaTotalPrincipal: finalDcaTotalPrincipal,
-      totalTaxSaved: taxRefund * years
+      totalEffectiveCost,
+      grossProfit,
+      cgTax,
+      finalNetProfit,
+      chartData
     };
   }, [loanAmount, interestRate, marginalTaxRate, investmentReturn, years]);
 
   const formatHKD = (val) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(val);
 
   return (
-    <div className="min-h-screen bg-[#f8fafc] text-slate-800 font-sans relative overflow-hidden flex flex-col">
-      
-      {/* 隱藏的全局浮水印 - 防止盜圖 */}
-      <div className="fixed inset-0 pointer-events-none flex items-center justify-center z-0 overflow-hidden opacity-[0.03]">
-        <div className="text-[10rem] font-black text-slate-900 transform -rotate-45 whitespace-nowrap tracking-widest">
-          {WATERMARK_TEXT} {WATERMARK_TEXT}
-        </div>
-      </div>
-
-      {/* 導覽列與顧問名片 */}
-      <nav className="bg-white/90 backdrop-blur-md border-b border-slate-200 sticky top-0 z-20 shadow-sm">
-        <div className="max-w-[1400px] mx-auto px-6 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
-          
-          <div className="flex items-center gap-3">
-            <div className="bg-slate-900 p-2.5 rounded-xl shadow-md">
-              <TrendingUp className="text-emerald-400" size={24} />
+    <div className="min-h-screen bg-[#f8fafc] text-slate-800 font-sans p-4 md:p-8">
+      <div className="max-w-5xl mx-auto space-y-6">
+        
+        {/* 頭部顧問資訊 (防盜版與專業展示) */}
+        <header className="flex flex-col sm:flex-row items-center justify-between bg-white p-5 rounded-2xl shadow-sm border border-slate-200 gap-4">
+          <div className="flex items-center gap-3 w-full sm:w-auto justify-center sm:justify-start">
+            <div className="bg-indigo-600 p-2.5 rounded-xl text-white shadow-md">
+              <Calculator size={24} />
             </div>
             <div>
-              <h1 className="text-xl md:text-2xl font-bold text-slate-900 tracking-tight">
-                資產優化與稅務槓桿系統
-              </h1>
-              <p className="text-xs text-slate-500 font-medium tracking-wide uppercase">Institutional Grade Analysis</p>
+              <h1 className="text-xl font-bold text-slate-800 tracking-tight">借貸投資精簡分析器</h1>
+              <p className="text-xs text-slate-500 font-medium">Tax-Optimized Leverage Strategy</p>
             </div>
           </div>
-
-          <div className="flex items-center gap-6">
-            <div className="hidden md:flex bg-slate-100 p-1 rounded-xl border border-slate-200">
-              {['summary', 'details', 'education'].map((tab) => (
-                <button
-                  key={tab}
-                  onClick={() => setActiveTab(tab)}
-                  className={`px-6 py-2 rounded-lg text-sm font-bold transition-all duration-300 ${
-                    activeTab === tab 
-                      ? 'bg-white shadow-sm text-slate-900' 
-                      : 'text-slate-400 hover:text-slate-600'
-                  }`}
-                >
-                  {tab === 'summary' ? '策略對比' : tab === 'details' ? '數據透視' : '機制解析'}
-                </button>
-              ))}
+          <div className="flex items-center gap-4 pl-0 sm:pl-6 sm:border-l border-slate-100">
+            <div className="text-right hidden sm:block">
+              <p className="text-sm font-bold text-slate-900">{ADVISOR_NAME}</p>
+              <p className="text-xs text-slate-500">{ADVISOR_TITLE}</p>
             </div>
-
-            {/* 顧問專屬頭像 */}
-            <div className="flex items-center gap-3 pl-6 border-l border-slate-200">
-              <div className="text-right hidden lg:block">
-                <p className="text-sm font-bold text-slate-900">{ADVISOR_NAME}</p>
-                <p className="text-xs text-slate-500">{ADVISOR_TITLE}</p>
-              </div>
-              <div className="h-12 w-12 rounded-full ring-2 ring-emerald-500 overflow-hidden shadow-md bg-slate-200 flex items-center justify-center relative">
-                <img 
-                  src={AVATAR_URL} 
-                  alt={ADVISOR_NAME} 
-                  className="h-full w-full object-cover relative z-10"
-                  onError={(e) => {
-                    e.target.style.display = 'none';
-                    if(e.target.nextSibling) e.target.nextSibling.style.display = 'flex';
-                  }}
-                />
-                <div className="absolute inset-0 hidden items-center justify-center bg-slate-200 text-emerald-700 font-bold text-lg">
-                  {ADVISOR_NAME.charAt(0)}
-                </div>
-              </div>
+            <div className="h-14 w-14 rounded-full overflow-hidden border-2 border-indigo-100 shadow-sm shrink-0">
+              <img 
+                src={AVATAR_URL} 
+                alt="Avatar" 
+                className="w-full h-full object-cover"
+                onError={(e) => { e.target.style.display = 'none'; }}
+              />
             </div>
           </div>
-        </div>
-      </nav>
+        </header>
 
-      {/* 手機版 Tab */}
-      <div className="md:hidden flex bg-white border-b border-slate-200 overflow-x-auto z-10">
-        {['summary', 'details', 'education'].map((tab) => (
-          <button
-            key={tab}
-            onClick={() => setActiveTab(tab)}
-            className={`flex-1 py-3 text-sm font-bold whitespace-nowrap px-4 ${
-              activeTab === tab ? 'text-slate-900 border-b-2 border-emerald-500 bg-slate-50' : 'text-slate-400'
-            }`}
-          >
-             {tab === 'summary' ? '策略對比' : tab === 'details' ? '數據透視' : '機制解析'}
-          </button>
-        ))}
-      </div>
-
-      <main className="flex-1 max-w-[1400px] mx-auto w-full px-4 md:px-6 py-8 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8">
+        {}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           
-          <div className="lg:col-span-4 space-y-6">
-            <section className="bg-white/90 backdrop-blur-sm p-6 md:p-8 rounded-3xl shadow-sm border border-slate-200/60 relative overflow-hidden">
-              <Briefcase className="absolute -right-4 -bottom-4 text-slate-50 opacity-50" size={160} />
-              
-              <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-8 flex items-center gap-2 relative z-10">
-                <Wallet size={16} /> 參數演算核心
-              </h3>
-              
-              <div className="space-y-8 relative z-10">
-                <div>
-                  <label className="flex justify-between text-sm font-bold text-slate-700 mb-3">
-                    <span>融資貸款金額</span>
-                    <span className="text-emerald-600 font-mono text-lg">{formatHKD(loanAmount)}</span>
-                  </label>
-                  <input 
-                    type="range" min="50000" max="2000000" step="10000"
-                    value={loanAmount} onChange={(e) => setLoanAmount(Number(e.target.value))}
-                    className="w-full h-3 bg-slate-100 rounded-lg appearance-none cursor-pointer accent-emerald-500 shadow-inner"
-                  />
-                </div>
+          {/* 左側：滑桿控制面板 */}
+          <div className="md:col-span-1 bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-6">
+            <h2 className="font-bold border-b border-slate-100 pb-3 text-slate-700 tracking-wide">參數設定區</h2>
+            
+            <div>
+              <label className="flex justify-between text-sm mb-2">
+                <span className="font-medium text-slate-600">借貸本金 (Lump Sum)</span>
+                <span className="font-bold text-indigo-600">{formatHKD(loanAmount)}</span>
+              </label>
+              <input type="range" min="50000" max="2000000" step="50000" value={loanAmount} onChange={e => setLoanAmount(Number(e.target.value))} className="w-full h-2 bg-slate-100 rounded-lg appearance-none cursor-pointer accent-indigo-600" />
+            </div>
 
-                <div className="grid grid-cols-2 gap-6">
-                  <div className="bg-slate-50 p-3 rounded-2xl border border-slate-100">
-                    <label className="block text-xs font-bold text-slate-500 mb-2 uppercase tracking-wider">銀行貸款利率</label>
-                    <div className="flex items-center gap-1">
-                      <input 
-                        type="number" step="0.01" value={interestRate} 
-                        onChange={(e) => setInterestRate(Number(e.target.value))}
-                        className="w-full bg-transparent text-xl font-mono font-bold text-slate-800 focus:outline-none"
-                      />
-                      <span className="text-slate-400 font-bold">%</span>
-                    </div>
-                  </div>
-                  <div className="bg-slate-50 p-3 rounded-2xl border border-slate-100">
-                    <label className="block text-xs font-bold text-slate-500 mb-2 uppercase tracking-wider">邊際稅率</label>
-                    <div className="flex items-center gap-1">
-                      <input 
-                        type="number" value={marginalTaxRate} 
-                        onChange={(e) => setMarginalTaxRate(Number(e.target.value))}
-                        className="w-full bg-transparent text-xl font-mono font-bold text-slate-800 focus:outline-none"
-                      />
-                      <span className="text-slate-400 font-bold">%</span>
-                    </div>
-                  </div>
-                </div>
+            <div>
+              <label className="flex justify-between text-sm mb-2">
+                <span className="font-medium text-slate-600">銀行名義利率</span>
+                <span className="font-bold text-slate-800">{interestRate}%</span>
+              </label>
+              <input type="range" min="1" max="10" step="0.1" value={interestRate} onChange={e => setInterestRate(Number(e.target.value))} className="w-full h-2 bg-slate-100 rounded-lg appearance-none cursor-pointer accent-indigo-600" />
+            </div>
 
-                <div>
-                  <label className="flex justify-between text-sm font-bold text-slate-700 mb-3">
-                    <span>增長型組合預期回報</span>
-                    <span className="text-blue-600 font-bold text-lg">{investmentReturn}%</span>
-                  </label>
-                  <input 
-                    type="range" min="0" max="15" step="0.5"
-                    value={investmentReturn} onChange={(e) => setInvestmentReturn(Number(e.target.value))}
-                    className="w-full h-3 bg-slate-100 rounded-lg appearance-none cursor-pointer accent-blue-600 shadow-inner"
-                  />
-                </div>
-
-                <div>
-                  <label className="flex justify-between text-sm font-bold text-slate-700 mb-3">
-                    <span>投資年期規劃</span>
-                    <span className="text-indigo-600 font-bold text-lg">{years} 年</span>
-                  </label>
-                  <input 
-                    type="range" min="1" max="30" step="1"
-                    value={years} onChange={(e) => setYears(Number(e.target.value))}
-                    className="w-full h-3 bg-slate-100 rounded-lg appearance-none cursor-pointer accent-indigo-600 shadow-inner"
-                  />
-                </div>
+            <div className="bg-slate-50 p-3 rounded-xl border border-slate-100">
+              <label className="flex justify-between text-sm mb-2">
+                <span className="font-medium text-slate-600">邊際稅率 (退稅率)</span>
+                <span className="font-bold text-slate-800">{marginalTaxRate}%</span>
+              </label>
+              <input type="range" min="0" max="50" step="1" value={marginalTaxRate} onChange={e => setMarginalTaxRate(Number(e.target.value))} className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-600" />
+              <div className="mt-3 pt-2 border-t border-slate-200 flex justify-between items-center text-sm">
+                <span className="text-slate-500">退稅後實際利率:</span>
+                <span className="font-black text-emerald-600 text-lg">{stats.effectiveRate.toFixed(2)}%</span>
               </div>
-            </section>
+            </div>
 
-            <div className="bg-slate-900 p-8 rounded-3xl text-white shadow-xl relative overflow-hidden border border-slate-800">
-              <div className="absolute -right-10 -top-10 w-40 h-40 bg-emerald-500/20 rounded-full blur-3xl"></div>
-              <h4 className="text-xs font-bold text-emerald-400 uppercase tracking-widest mb-4 flex items-center gap-2">
-                <ShieldCheck size={16}/> 稅務優化後的真實成本
-              </h4>
-              <div className="flex items-end gap-3 mb-2">
-                <span className="text-5xl font-black tracking-tighter">{stats.effectiveRate.toFixed(2)}%</span>
-                <span className="text-slate-500 text-lg mb-2 line-through">{interestRate}%</span>
-              </div>
-              <p className="text-slate-400 text-sm leading-relaxed mt-4 border-t border-slate-700/50 pt-4">
-                在 {marginalTaxRate}% 稅率下，政府透過退稅承擔了你 <span className="text-white font-bold">{marginalTaxRate}%</span> 的利息支出，創造了強大的正向利差 (Spread: {stats.netSpread.toFixed(2)}%)。
-              </p>
+            <div>
+              <label className="flex justify-between text-sm mb-2">
+                <span className="font-medium text-slate-600">投資預期年回報</span>
+                <span className="font-bold text-emerald-600">{investmentReturn}%</span>
+              </label>
+              <input type="range" min="1" max="15" step="0.5" value={investmentReturn} onChange={e => setInvestmentReturn(Number(e.target.value))} className="w-full h-2 bg-slate-100 rounded-lg appearance-none cursor-pointer accent-emerald-500" />
+            </div>
+
+            <div>
+              <label className="flex justify-between text-sm mb-2">
+                <span className="font-medium text-slate-600">投資年期</span>
+                <span className="font-bold text-slate-800">{years} 年</span>
+              </label>
+              <input type="range" min="1" max="30" step="1" value={years} onChange={e => setYears(Number(e.target.value))} className="w-full h-2 bg-slate-100 rounded-lg appearance-none cursor-pointer accent-indigo-600" />
             </div>
           </div>
 
-          <div className="lg:col-span-8 space-y-6">
-            {activeTab === 'summary' && (
-              <div className="space-y-6 animate-in fade-in duration-500">
-                
-                <div className="bg-white/90 backdrop-blur-sm p-6 md:p-8 rounded-3xl shadow-sm border border-slate-200/60">
-                  <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
-                    <div>
-                      <h3 className="text-xl font-bold text-slate-900 flex items-center gap-2">
-                        累積稅後淨資產對比
-                      </h3>
-                      <p className="text-sm text-slate-500 mt-1">已精確扣除 50% Inclusion Rate 之資本增值稅</p>
-                    </div>
-                    <div className="bg-slate-50 px-4 py-2 rounded-xl border border-slate-200 text-sm font-bold text-slate-700 shadow-sm">
-                      第 {years} 年資產預測
-                    </div>
-                  </div>
-                  
-                  <div className="h-[380px] w-full">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <AreaChart data={stats.chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                        <defs>
-                          <linearGradient id="colorLev" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#10b981" stopOpacity={0.3}/>
-                            <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
-                          </linearGradient>
-                          <linearGradient id="colorDca" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3}/>
-                            <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
-                          </linearGradient>
-                        </defs>
-                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
-                        <XAxis dataKey="year" axisLine={false} tickLine={false} tick={{fill: '#64748b', fontSize: 12}} dy={10} />
-                        <YAxis tickFormatter={(v) => `$${v/1000}k`} axisLine={false} tickLine={false} tick={{fill: '#64748b', fontSize: 12}} />
-                        <Tooltip 
-                          formatter={(value) => formatHKD(value)}
-                          contentStyle={{ borderRadius: '16px', border: '1px solid #e2e8f0', boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1)', padding: '12px', backgroundColor: 'rgba(255, 255, 255, 0.95)' }}
-                          itemStyle={{ fontWeight: 'bold' }}
-                        />
-                        <Legend verticalAlign="top" height={40} iconType="circle" wrapperStyle={{ fontSize: '14px', fontWeight: '500' }} />
-                        <Area type="monotone" dataKey="levAfterTaxEquity" name="策略 A: 借貸投資 (稅後落袋)" stroke="#10b981" fillOpacity={1} fill="url(#colorLev)" strokeWidth={4} />
-                        <Area type="monotone" dataKey="dcaAfterTaxEquity" name="策略 B: 無借貸定投 (稅後落袋)" stroke="#3b82f6" fillOpacity={1} fill="url(#colorDca)" strokeWidth={4} />
-                      </AreaChart>
-                    </ResponsiveContainer>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="bg-gradient-to-b from-emerald-50 to-white p-6 md:p-8 rounded-3xl border border-emerald-100 relative overflow-hidden flex flex-col h-full shadow-sm hover:shadow-md transition-shadow">
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="flex items-center gap-3">
-                        <div className="bg-emerald-100 p-2.5 rounded-xl text-emerald-600">
-                          <TrendingUp size={24} />
-                        </div>
-                        <h4 className="text-lg font-black text-slate-900">策略 A: 借貸投資</h4>
-                      </div>
-                      <span className="text-xs font-bold bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full">Lump Sum</span>
-                    </div>
-                    
-                    <p className="text-slate-600 text-sm mb-6 leading-relaxed">
-                      一筆過投入 <span className="font-bold text-slate-800">{formatHKD(loanAmount)}</span>，每年僅需支付稅後淨利息 <span className="font-bold text-slate-800">{formatHKD(stats.effectiveAnnualCost)}</span>。
-                    </p>
-                    
-                    <div className="mt-auto space-y-3 bg-white p-5 rounded-2xl border border-emerald-50">
-                      <div className="flex justify-between text-sm text-slate-500">
-                        <span>期末稅前利潤：</span>
-                        <span className="font-bold text-slate-700">{formatHKD(stats.totalProfit)}</span>
-                      </div>
-                      <div className="flex justify-between text-sm text-red-500">
-                        <span>資本增值稅 (扣除)：</span>
-                        <span>-{formatHKD(stats.levCGTax)}</span>
-                      </div>
-                      <div className="h-px bg-emerald-100 w-full my-2"></div>
-                      <div className="flex justify-between items-end">
-                        <span className="text-sm font-bold text-slate-900">最終稅後落袋：</span>
-                        <span className="font-black text-emerald-600 text-3xl">{formatHKD(stats.levAfterTaxProfit)}</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="bg-gradient-to-b from-blue-50 to-white p-6 md:p-8 rounded-3xl border border-blue-100 relative overflow-hidden flex flex-col h-full shadow-sm hover:shadow-md transition-shadow">
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="flex items-center gap-3">
-                        <div className="bg-blue-100 p-2.5 rounded-xl text-blue-600">
-                          <PiggyBank size={24} />
-                        </div>
-                        <h4 className="text-lg font-black text-slate-900">策略 B: 定期定額</h4>
-                      </div>
-                      <span className="text-xs font-bold bg-blue-100 text-blue-700 px-3 py-1 rounded-full">DCA</span>
-                    </div>
-                    
-                    <p className="text-slate-600 text-sm mb-6 leading-relaxed">
-                      不借貸。將等同於利息支出的 <span className="font-bold text-slate-800">{formatHKD(stats.effectiveAnnualCost)}</span> 每年投入相同的投資組合。
-                    </p>
-                    
-                    <div className="mt-auto space-y-3 bg-white p-5 rounded-2xl border border-blue-50">
-                      <div className="flex justify-between text-sm text-slate-500">
-                        <span>期末稅前總資產：</span>
-                        <span className="font-bold text-slate-700">{formatHKD(stats.regularTotalProfit)}</span>
-                      </div>
-                      <div className="flex justify-between text-sm text-red-500">
-                        <span>資本增值稅 (扣除)：</span>
-                        <span>-{formatHKD(stats.dcaCGTax)}</span>
-                      </div>
-                      <div className="h-px bg-blue-100 w-full my-2"></div>
-                      <div className="flex justify-between items-end">
-                        <span className="text-sm font-bold text-slate-900">最終稅後落袋：</span>
-                        <span className="font-black text-blue-600 text-3xl">{formatHKD(stats.dcaAfterTaxTotal)}</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="bg-slate-900 p-8 rounded-3xl border border-slate-800 flex flex-col md:flex-row items-center justify-between text-white shadow-2xl gap-6 relative overflow-hidden">
-                  <div className="absolute right-0 top-0 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/4"></div>
-                  <div className="relative z-10">
-                    <h4 className="font-black text-xl mb-2 flex items-center gap-3">
-                      <TrendingUp className="text-emerald-400" size={28}/>
-                      相同現金流下的「財富放大效應」
-                    </h4>
-                    <p className="text-slate-400 text-sm">
-                      利用稅務寬減與提前入市的時間價值，策略 A 比策略 B 額外創造了多少純利潤？
-                    </p>
-                  </div>
-                  <div className="text-right shrink-0 relative z-10 bg-slate-800/50 p-4 rounded-2xl border border-slate-700">
-                    <p className="text-sm text-slate-400 font-bold mb-1 uppercase tracking-wider">稅後額外淨賺</p>
-                    <p className="text-5xl font-black text-emerald-400 drop-shadow-md">
-                      +{formatHKD(stats.levAfterTaxProfit - (stats.dcaAfterTaxTotal - stats.dcaTotalPrincipal))}
-                    </p>
-                  </div>
-                </div>
+          {}
+          {/* 右側：結果與圖表 */}
+          <div className="md:col-span-2 space-y-6 flex flex-col">
+            
+            {/* 總結數據卡片 */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-center">
+                <p className="text-xs text-slate-500 font-bold uppercase tracking-wider mb-1">期末稅前總利潤</p>
+                <p className="text-xl font-bold text-slate-800">{formatHKD(stats.grossProfit)}</p>
               </div>
-            )}
-
-            {activeTab === 'details' && (
-              <div className="space-y-6 animate-in fade-in duration-500">
-                 <div className="bg-white p-8 rounded-3xl shadow-sm border border-slate-200/60">
-                  <h3 className="text-2xl font-black text-slate-900 mb-8">稅務套利 (Tax Arbitrage) 深度解析</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                    <div className="space-y-6">
-                      <div className="bg-slate-50 p-6 rounded-2xl border border-slate-100">
-                        <div className="flex justify-between items-end mb-4">
-                          <span className="text-sm font-bold text-slate-500">原始銀行利息 (名義成本)</span>
-                          <span className="text-lg font-black text-slate-800">{interestRate}%</span>
-                        </div>
-                        <div className="h-4 w-full bg-slate-200 rounded-full overflow-hidden">
-                          <div className="h-full bg-slate-400 rounded-full w-full"></div>
-                        </div>
-                      </div>
-                      
-                      <div className="bg-emerald-50 p-6 rounded-2xl border border-emerald-100">
-                        <div className="flex justify-between items-end mb-4">
-                          <span className="text-sm font-bold text-emerald-700">有效利息負擔 (退稅後真實成本)</span>
-                          <span className="text-2xl font-black text-emerald-600">{stats.effectiveRate.toFixed(2)}%</span>
-                        </div>
-                        <div className="h-4 w-full bg-emerald-100 rounded-full overflow-hidden">
-                          <div className="h-full bg-emerald-500 rounded-full transition-all duration-1000" style={{width: `${(stats.effectiveRate/interestRate)*100}%`}}></div>
-                        </div>
-                        <p className="text-xs text-emerald-600/80 font-bold mt-4">
-                          * 稅務局承擔了 {marginalTaxRate}% 的利息支出。
-                        </p>
-                      </div>
-                    </div>
-                    
-                    <div className="bg-slate-900 p-8 rounded-3xl text-white shadow-xl">
-                      <h4 className="font-bold text-emerald-400 mb-6 flex items-center gap-3 text-lg">
-                        <DollarSign size={24} /> 為何選擇增長型組合？
-                      </h4>
-                      <ul className="space-y-5 text-sm text-slate-300">
-                        <li className="flex items-start gap-4">
-                          <div className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center shrink-0 border border-slate-700 text-emerald-400 font-bold">1</div>
-                          <div><strong className="text-white block mb-1">保本基金 (Seg Funds) 護城河</strong> 即使投資進取，保本基金提供到期或身故保證，鎖住下行風險。</div>
-                        </li>
-                        <li className="flex items-start gap-4">
-                          <div className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center shrink-0 border border-slate-700 text-emerald-400 font-bold">2</div>
-                          <div><strong className="text-white block mb-1">鎖定正向利差 (Positive Spread)</strong> 當有效成本僅為 {stats.effectiveRate.toFixed(2)}%，追求 8-10% 的長期回報能產生幾何級數的財富槓桿效應。</div>
-                        </li>
-                        <li className="flex items-start gap-4">
-                          <div className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center shrink-0 border border-slate-700 text-emerald-400 font-bold">3</div>
-                          <div><strong className="text-white block mb-1">不對稱稅制優勢</strong> 利息支出 <span className="text-emerald-400">100% 可扣稅</span>，但賺取的資本增值僅需繳納 <span className="text-emerald-400">50% 的稅</span>，這是富人積累財富的合法捷徑。</div>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
+              <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-center">
+                <p className="text-xs text-slate-500 font-bold uppercase tracking-wider mb-1">扣除增值稅與利息成本</p>
+                <p className="text-xl font-bold text-red-500">-{formatHKD(stats.cgTax + stats.totalEffectiveCost)}</p>
               </div>
-            )}
-
-            {activeTab === 'education' && (
-              <div className="space-y-8 animate-in fade-in duration-500">
-                <section className="bg-white p-8 rounded-3xl shadow-sm border border-slate-200/60">
-                  <h2 className="text-2xl font-black mb-8 text-slate-900">投資策略與風險管理手冊</h2>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="bg-slate-50 p-8 rounded-3xl border border-slate-100 hover:border-slate-300 transition-colors">
-                      <h3 className="font-black text-slate-800 mb-4 flex items-center gap-3 text-lg">
-                        <ArrowRightLeft className="text-blue-500"/> 利息抵稅之法律基礎
-                      </h3>
-                      <p className="text-slate-600 text-sm leading-relaxed mb-6">
-                        根據稅法，如果借入資金的明確用途是為了賺取投資收益（如股息、利息），該筆借貸產生的利息費用可在申報個人所得稅時，100% 從應課稅收入中扣除。
-                      </p>
-                      <div className="bg-white p-4 rounded-xl text-sm font-mono text-slate-700 border border-slate-200 shadow-sm text-center">
-                        有效成本 = 名義利率 × (1 - 邊際稅率)
-                      </div>
-                    </div>
-
-                    <div className="bg-slate-50 p-8 rounded-3xl border border-slate-100 hover:border-slate-300 transition-colors">
-                      <h3 className="font-black text-slate-800 mb-4 flex items-center gap-3 text-lg">
-                        <ShieldCheck className="text-emerald-500"/> 保本基金不可或缺的角色
-                      </h3>
-                      <p className="text-slate-600 text-sm leading-relaxed mb-6">
-                        借貸投資最忌諱市場崩盤導致血本無歸。保本基金 (Segregated Funds) 結合了增長潛力與保險合約的法律保障，是防禦的核心。
-                      </p>
-                      <ul className="text-sm text-slate-700 space-y-2 font-bold bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-                        <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 bg-emerald-500 rounded-full"></div> 本金保證 (75% 或 100% 到期保證)</li>
-                        <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 bg-emerald-500 rounded-full"></div> 潛在債權人保護 (Creditor Protection)</li>
-                        <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 bg-emerald-500 rounded-full"></div> 避開遺產認證程序 (Skip Probate)</li>
-                      </ul>
-                    </div>
-                  </div>
-
-                  <div className="mt-8 p-6 border-l-4 border-amber-500 bg-amber-50 rounded-r-2xl">
-                    <h4 className="font-black text-amber-900 flex items-center gap-2 mb-3 text-lg">
-                      <AlertCircle size={24} /> 專業風險披露 (Risk Disclosure)
-                    </h4>
-                    <p className="text-sm text-amber-800 leading-relaxed font-medium">
-                      槓桿具有雙面刃效應。投資者必須具備穩定的日常現金流以支付每月的利息（稅務回贈通常每年報稅時才發放）。如遇央行大幅加息或市場長期熊市，將產生心理壓力。請務必在專業財務策劃師的指導下執行此策略。
-                    </p>
-                  </div>
-                </section>
+              <div className="bg-indigo-600 p-5 rounded-2xl shadow-md flex flex-col justify-center border border-indigo-700 relative overflow-hidden">
+                <div className="absolute -right-4 -top-4 w-16 h-16 bg-white/10 rounded-full blur-xl"></div>
+                <p className="text-xs text-indigo-100 font-bold uppercase tracking-wider mb-1 relative z-10">最終稅後落袋淨賺</p>
+                <p className="text-3xl font-black text-white relative z-10">{formatHKD(stats.finalNetProfit)}</p>
               </div>
-            )}
+            </div>
+
+            {/* 面積圖 */}
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex-1 min-h-[350px] flex flex-col">
+              <h3 className="font-bold text-slate-800 mb-6 flex items-center gap-2">
+                <TrendingUp size={20} className="text-indigo-600"/>
+                資產成長 vs 成本 趨勢圖 (已計算複利)
+              </h3>
+              <div className="flex-1 w-full relative">
+                <ResponsiveContainer width="100%" height="100%" className="absolute inset-0">
+                  <AreaChart data={stats.chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                    <defs>
+                      <linearGradient id="colorAsset" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#10b981" stopOpacity={0.3}/>
+                        <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
+                      </linearGradient>
+                      <linearGradient id="colorCost" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#ef4444" stopOpacity={0.2}/>
+                        <stop offset="95%" stopColor="#ef4444" stopOpacity={0}/>
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
+                    <XAxis dataKey="year" axisLine={false} tickLine={false} tick={{fill: '#64748b', fontSize: 12}} dy={10} />
+                    <YAxis tickFormatter={(val) => `$${val/1000}k`} axisLine={false} tickLine={false} tick={{fill: '#64748b', fontSize: 12}} />
+                    <Tooltip 
+                      formatter={(value) => formatHKD(value)}
+                      contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1)', padding: '12px' }}
+                    />
+                    <Legend verticalAlign="top" height={36} iconType="circle" />
+                    <Area type="monotone" dataKey="投資總資產" stroke="#10b981" strokeWidth={3} fillOpacity={1} fill="url(#colorAsset)" />
+                    <Area type="monotone" dataKey="總成本含本金" stroke="#ef4444" strokeWidth={3} fillOpacity={1} fill="url(#colorCost)" />
+                  </AreaChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
 
           </div>
         </div>
-      </main>
-
-      <footer className="mt-auto py-8 text-center text-slate-400 text-xs px-4 relative z-10 bg-slate-900 w-full border-t border-slate-800">
-        <p className="font-bold text-slate-300 mb-2">Designed for Professional Financial Advisory</p>
-        <p>本系統之預測數據僅供教學與模擬用途。實際稅務扣減資格及投資回報，依閣下所屬司法管轄區之稅法及金融機構最新政策為準。</p>
-        <p className="mt-3 text-slate-500">© 2026 {ADVISOR_NAME} - 資產優化與稅務分析系統 | Confidential</p>
-      </footer>
+        
+        {/* 底部免責聲明 */}
+        <footer className="text-center text-slate-400 text-xs py-4">
+          <p>© 2026 {ADVISOR_NAME} - 此精簡版分析器僅供教學與展示用途，實際稅務狀況請諮詢專業稅務會計師。</p>
+        </footer>
+      </div>
     </div>
   );
 };
