@@ -11,7 +11,6 @@ import {
 // ==========================================
 const ADVISOR_NAME = "Alex Chan";
 const ADVISOR_TITLE = "Individual Insurance Broker";
-// 綁定你上傳的照片
 const AVATAR_URL = "WhatsApp Image 2026-04-06 at 1.17.08 AM.jpeg"; 
 const WATERMARK_TEXT = "ALEX CHAN";
 
@@ -30,7 +29,7 @@ const App = () => {
     const effectiveAnnualCost = annualInterestExpense - taxRefund;
     const effectiveRate = (effectiveAnnualCost / loanAmount) * 100;
     const netSpread = investmentReturn - effectiveRate;
-    const inclusionRate = 0.5; // 資本增值稅 inclusion rate 加拿大標準預設 50%
+    const inclusionRate = 0.5; // 資本增值稅 inclusion rate (50%)
 
     const chartData = [];
     let regularValue = 0; 
