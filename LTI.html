@@ -5,7 +5,6 @@ import {
 import { 
   TrendingUp, 
   ShieldCheck, 
-  Info, 
   ArrowRightLeft,
   DollarSign,
   PiggyBank,
@@ -15,13 +14,13 @@ import {
 } from 'lucide-react';
 
 // ==========================================
-// 顧問專屬設定區 (可自行替換為你的真實資料)
+// 顧問專屬設定區
 // ==========================================
 const ADVISOR_NAME = "Alex Chan";
 const ADVISOR_TITLE = "Individual Insurance Broker";
-// 替換為你的真實頭像網址 (請先將你的照片上傳至網路圖床如 Imgur，再將網址貼到此處)
-const AVATAR_URL = "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=256&h=256&q=80"; // 暫時使用專業商務示範照
-const WATERMARK_TEXT = "ALEX CHAN FINANCIAL ADVISORY";
+// 完美套用你上傳的本地照片檔案名稱
+const AVATAR_URL = "profile.jpg"; 
+const WATERMARK_TEXT = "hkca_man";
 
 const App = () => {
   const [loanAmount, setLoanAmount] = useState(100000); 
@@ -69,9 +68,6 @@ const App = () => {
       });
     }
 
-    const levGrossProfit = chartData[years].levAfterTaxEquity + (chartData[years].levAfterTaxEquity > 0 ? chartData[years].levAfterTaxEquity / (1 - (inclusionRate * marginalTaxRate / 100)) * (inclusionRate * marginalTaxRate / 100) : 0); // Reverse calculate gross for display if needed, but using direct calc below is safer.
-    
-    // Exact Final Calculations
     const finalInvestmentValue = loanAmount * Math.pow(1 + (investmentReturn / 100), years);
     const finalNetEquity = finalInvestmentValue - loanAmount;
     const finalLevTaxableGain = finalNetEquity > 0 ? finalNetEquity * inclusionRate : 0;
@@ -131,7 +127,6 @@ const App = () => {
           </div>
 
           <div className="flex items-center gap-6">
-            {/* 平板優化的 Tab 按鈕 */}
             <div className="hidden md:flex bg-slate-100 p-1 rounded-xl border border-slate-200">
               {['summary', 'details', 'education'].map((tab) => (
                 <button
@@ -154,7 +149,7 @@ const App = () => {
                 <p className="text-sm font-bold text-slate-900">{ADVISOR_NAME}</p>
                 <p className="text-xs text-slate-500">{ADVISOR_TITLE}</p>
               </div>
-              <div className="h-12 w-12 rounded-full ring-2 ring-emerald-500 overflow-hidden shadow-md">
+              <div className="h-12 w-12 rounded-full ring-2 ring-emerald-500 overflow-hidden shadow-md bg-white">
                 <img src={AVATAR_URL} alt="Advisor" className="h-full w-full object-cover" />
               </div>
             </div>
@@ -162,7 +157,6 @@ const App = () => {
         </div>
       </nav>
 
-      {/* 手機版 Tab (在小螢幕顯示) */}
       <div className="md:hidden flex bg-white border-b border-slate-200 overflow-x-auto z-10">
         {['summary', 'details', 'education'].map((tab) => (
           <button
@@ -180,10 +174,8 @@ const App = () => {
       <main className="flex-1 max-w-[1400px] mx-auto w-full px-4 md:px-6 py-8 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8">
           
-          {/* 左側參數面板：適配 Tab S11 觸控 */}
           <div className="lg:col-span-4 space-y-6">
             <section className="bg-white/90 backdrop-blur-sm p-6 md:p-8 rounded-3xl shadow-sm border border-slate-200/60 relative overflow-hidden">
-              {/* 面板內部浮水印 */}
               <Briefcase className="absolute -right-4 -bottom-4 text-slate-50 opacity-50" size={160} />
               
               <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-8 flex items-center gap-2 relative z-10">
@@ -254,7 +246,6 @@ const App = () => {
               </div>
             </section>
 
-            {/* 稅務優化結果卡片 */}
             <div className="bg-slate-900 p-8 rounded-3xl text-white shadow-xl relative overflow-hidden border border-slate-800">
               <div className="absolute -right-10 -top-10 w-40 h-40 bg-emerald-500/20 rounded-full blur-3xl"></div>
               <h4 className="text-xs font-bold text-emerald-400 uppercase tracking-widest mb-4 flex items-center gap-2">
@@ -270,13 +261,9 @@ const App = () => {
             </div>
           </div>
 
-          {/* 右側圖表與結果區：16:10 寬螢幕最佳化 */}
           <div className="lg:col-span-8 space-y-6">
-            
             {activeTab === 'summary' && (
               <div className="space-y-6 animate-in fade-in duration-500">
-                
-                {/* 雙重面積對比圖 */}
                 <div className="bg-white/90 backdrop-blur-sm p-6 md:p-8 rounded-3xl shadow-sm border border-slate-200/60">
                   <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
                     <div>
@@ -319,7 +306,6 @@ const App = () => {
                   </div>
                 </div>
 
-                {/* 策略對比卡片 */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {/* 策略 A 卡片 */}
                   <div className="bg-gradient-to-b from-emerald-50 to-white p-6 md:p-8 rounded-3xl border border-emerald-100 relative overflow-hidden flex flex-col h-full shadow-sm hover:shadow-md transition-shadow">
@@ -388,7 +374,6 @@ const App = () => {
                   </div>
                 </div>
                 
-                {/* 總結 Banner */}
                 <div className="bg-slate-900 p-8 rounded-3xl border border-slate-800 flex flex-col md:flex-row items-center justify-between text-white shadow-2xl gap-6 relative overflow-hidden">
                   <div className="absolute right-0 top-0 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/4"></div>
                   <div className="relative z-10">
