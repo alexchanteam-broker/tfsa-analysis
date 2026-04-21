@@ -29,7 +29,7 @@ const App = () => {
     const effectiveAnnualCost = annualInterestExpense - taxRefund;
     const effectiveRate = (effectiveAnnualCost / loanAmount) * 100;
     const netSpread = investmentReturn - effectiveRate;
-    const inclusionRate = 0.5; // 加拿大資本增值稅 inclusion rate 預設 50%
+    const inclusionRate = 0.5; // 資本增值稅 inclusion rate 預設 50%
 
     const chartData = [];
     let regularValue = 0; 
@@ -148,7 +148,6 @@ const App = () => {
                 <p className="text-xs text-slate-500">{ADVISOR_TITLE}</p>
               </div>
               <div className="h-12 w-12 rounded-full ring-2 ring-emerald-500 overflow-hidden shadow-md bg-slate-200 flex items-center justify-center relative">
-                {/* 使用你提供的照片名稱 */}
                 <img 
                   src={AVATAR_URL} 
                   alt={ADVISOR_NAME} 
@@ -218,7 +217,7 @@ const App = () => {
                     </div>
                   </div>
                   <div className="bg-slate-50 p-3 rounded-2xl border border-slate-100">
-                    <label className="block text-xs font-bold text-slate-500 mb-2 uppercase tracking-wider">閣下邊際稅率</label>
+                    <label className="block text-xs font-bold text-slate-500 mb-2 uppercase tracking-wider">邊際稅率</label>
                     <div className="flex items-center gap-1">
                       <input 
                         type="number" value={marginalTaxRate} 
@@ -512,7 +511,7 @@ const App = () => {
       <footer className="mt-auto py-8 text-center text-slate-400 text-xs px-4 relative z-10 bg-slate-900 w-full border-t border-slate-800">
         <p className="font-bold text-slate-300 mb-2">Designed for Professional Financial Advisory</p>
         <p>本系統之預測數據僅供教學與模擬用途。實際稅務扣減資格及投資回報，依閣下所屬司法管轄區之稅法及金融機構最新政策為準。</p>
-        <p className="mt-3 text-slate-500">© 2024 {ADVISOR_NAME} - 資產優化與稅務分析系統 | Confidential</p>
+        <p className="mt-3 text-slate-500">© 2026 {ADVISOR_NAME} - 資產優化與稅務分析系統 | Confidential</p>
       </footer>
     </div>
   );
