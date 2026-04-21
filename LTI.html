@@ -3,14 +3,7 @@ import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer 
 } from 'recharts';
 import { 
-  TrendingUp, 
-  ShieldCheck, 
-  ArrowRightLeft,
-  DollarSign,
-  PiggyBank,
-  Wallet,
-  AlertCircle,
-  Briefcase
+  TrendingUp, ShieldCheck, ArrowRightLeft, DollarSign, PiggyBank, Wallet, AlertCircle, Briefcase
 } from 'lucide-react';
 
 // ==========================================
@@ -18,9 +11,9 @@ import {
 // ==========================================
 const ADVISOR_NAME = "Alex Chan";
 const ADVISOR_TITLE = "Individual Insurance Broker";
-// 完美套用你上傳的本地照片檔案名稱
-const AVATAR_URL = "profile.jpg"; 
-const WATERMARK_TEXT = "hkca_man";
+// 精確套用你上傳的本地照片檔案名稱
+const AVATAR_URL = "WhatsApp Image 2026-04-06 at 1.17.08 AM.jpeg"; 
+const WATERMARK_TEXT = "ALEX CHAN";
 
 const App = () => {
   const [loanAmount, setLoanAmount] = useState(100000); 
@@ -101,15 +94,17 @@ const App = () => {
   const formatHKD = (val) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(val);
 
   return (
-    <div className="min-h-screen bg-[#f1f5f9] text-slate-800 font-sans relative overflow-hidden flex flex-col">
+    <div className="min-h-screen bg-[#f8fafc] text-slate-800 font-sans relative overflow-hidden flex flex-col">
       
+      {}
       {/* 隱藏的全局浮水印 - 防止盜圖 */}
-      <div className="fixed inset-0 pointer-events-none flex items-center justify-center z-0 overflow-hidden opacity-[0.02]">
-        <div className="text-[12rem] font-black text-slate-900 transform -rotate-45 whitespace-nowrap">
+      <div className="fixed inset-0 pointer-events-none flex items-center justify-center z-0 overflow-hidden opacity-[0.03]">
+        <div className="text-[10rem] font-black text-slate-900 transform -rotate-45 whitespace-nowrap tracking-widest">
           {WATERMARK_TEXT} {WATERMARK_TEXT}
         </div>
       </div>
 
+      {}
       {/* 導覽列與顧問名片 */}
       <nav className="bg-white/80 backdrop-blur-md border-b border-slate-200 sticky top-0 z-20 shadow-sm">
         <div className="max-w-[1400px] mx-auto px-6 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
@@ -143,20 +138,31 @@ const App = () => {
               ))}
             </div>
 
-            {/* 顧問專屬頭像 (防盜用核心) */}
+            {}
+            {/* 顧問專屬頭像 */}
             <div className="flex items-center gap-3 pl-6 border-l border-slate-200">
               <div className="text-right hidden lg:block">
                 <p className="text-sm font-bold text-slate-900">{ADVISOR_NAME}</p>
                 <p className="text-xs text-slate-500">{ADVISOR_TITLE}</p>
               </div>
-              <div className="h-12 w-12 rounded-full ring-2 ring-emerald-500 overflow-hidden shadow-md bg-white">
-                <img src={AVATAR_URL} alt="Advisor" className="h-full w-full object-cover" />
+              <div className="h-12 w-12 rounded-full ring-2 ring-emerald-500 overflow-hidden shadow-md bg-slate-200 flex items-center justify-center">
+                <img 
+                  src={AVATAR_URL} 
+                  alt={ADVISOR_NAME} 
+                  className="h-full w-full object-cover"
+                  onError={(e) => {
+                    // Fallback to initials if image fails to load
+                    e.target.style.display = 'none';
+                    e.target.parentElement.innerHTML = `<span class="text-emerald-700 font-bold text-lg">${ADVISOR_NAME.charAt(0)}</span>`;
+                  }}
+                />
               </div>
             </div>
           </div>
         </div>
       </nav>
 
+      {}
       <div className="md:hidden flex bg-white border-b border-slate-200 overflow-x-auto z-10">
         {['summary', 'details', 'education'].map((tab) => (
           <button
@@ -174,6 +180,7 @@ const App = () => {
       <main className="flex-1 max-w-[1400px] mx-auto w-full px-4 md:px-6 py-8 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8">
           
+          {}
           <div className="lg:col-span-4 space-y-6">
             <section className="bg-white/90 backdrop-blur-sm p-6 md:p-8 rounded-3xl shadow-sm border border-slate-200/60 relative overflow-hidden">
               <Briefcase className="absolute -right-4 -bottom-4 text-slate-50 opacity-50" size={160} />
@@ -189,7 +196,7 @@ const App = () => {
                     <span className="text-emerald-600 font-mono text-lg">{formatHKD(loanAmount)}</span>
                   </label>
                   <input 
-                    type="range" min="50000" max="1000000" step="10000"
+                    type="range" min="50000" max="2000000" step="10000"
                     value={loanAmount} onChange={(e) => setLoanAmount(Number(e.target.value))}
                     className="w-full h-3 bg-slate-100 rounded-lg appearance-none cursor-pointer accent-emerald-500 shadow-inner"
                   />
@@ -246,6 +253,7 @@ const App = () => {
               </div>
             </section>
 
+            {}
             <div className="bg-slate-900 p-8 rounded-3xl text-white shadow-xl relative overflow-hidden border border-slate-800">
               <div className="absolute -right-10 -top-10 w-40 h-40 bg-emerald-500/20 rounded-full blur-3xl"></div>
               <h4 className="text-xs font-bold text-emerald-400 uppercase tracking-widest mb-4 flex items-center gap-2">
@@ -261,6 +269,7 @@ const App = () => {
             </div>
           </div>
 
+          {}
           <div className="lg:col-span-8 space-y-6">
             {activeTab === 'summary' && (
               <div className="space-y-6 animate-in fade-in duration-500">
@@ -295,17 +304,18 @@ const App = () => {
                         <YAxis tickFormatter={(v) => `$${v/1000}k`} axisLine={false} tickLine={false} tick={{fill: '#64748b', fontSize: 12}} />
                         <Tooltip 
                           formatter={(value) => formatHKD(value)}
-                          contentStyle={{ borderRadius: '16px', border: '1px solid #e2e8f0', boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1)', padding: '12px' }}
+                          contentStyle={{ borderRadius: '16px', border: '1px solid #e2e8f0', boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1)', padding: '12px', backgroundColor: 'rgba(255, 255, 255, 0.95)' }}
                           itemStyle={{ fontWeight: 'bold' }}
                         />
                         <Legend verticalAlign="top" height={40} iconType="circle" wrapperStyle={{ fontSize: '14px', fontWeight: '500' }} />
-                        <Area type="monotone" dataKey="levAfterTaxEquity" name="策略 A: 借貸投資 (稅後純利潤)" stroke="#10b981" fillOpacity={1} fill="url(#colorLev)" strokeWidth={4} />
-                        <Area type="monotone" dataKey="dcaAfterTaxEquity" name="策略 B: 無借貸月供 (稅後總資產)" stroke="#3b82f6" fillOpacity={1} fill="url(#colorDca)" strokeWidth={4} />
+                        <Area type="monotone" dataKey="levAfterTaxEquity" name="策略 A: 借貸投資 (稅後落袋)" stroke="#10b981" fillOpacity={1} fill="url(#colorLev)" strokeWidth={4} />
+                        <Area type="monotone" dataKey="dcaAfterTaxEquity" name="策略 B: 無借貸定投 (稅後落袋)" stroke="#3b82f6" fillOpacity={1} fill="url(#colorDca)" strokeWidth={4} />
                       </AreaChart>
                     </ResponsiveContainer>
                   </div>
                 </div>
 
+                {}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {/* 策略 A 卡片 */}
                   <div className="bg-gradient-to-b from-emerald-50 to-white p-6 md:p-8 rounded-3xl border border-emerald-100 relative overflow-hidden flex flex-col h-full shadow-sm hover:shadow-md transition-shadow">
@@ -374,6 +384,7 @@ const App = () => {
                   </div>
                 </div>
                 
+                {}
                 <div className="bg-slate-900 p-8 rounded-3xl border border-slate-800 flex flex-col md:flex-row items-center justify-between text-white shadow-2xl gap-6 relative overflow-hidden">
                   <div className="absolute right-0 top-0 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/4"></div>
                   <div className="relative z-10">
@@ -395,13 +406,14 @@ const App = () => {
               </div>
             )}
 
+            {}
             {activeTab === 'details' && (
               <div className="space-y-6 animate-in fade-in duration-500">
                  <div className="bg-white p-8 rounded-3xl shadow-sm border border-slate-200/60">
                   <h3 className="text-2xl font-black text-slate-900 mb-8">稅務套利 (Tax Arbitrage) 深度解析</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                     <div className="space-y-6">
-                      <div className="bg-slate-50 p-6 rounded-2xl">
+                      <div className="bg-slate-50 p-6 rounded-2xl border border-slate-100">
                         <div className="flex justify-between items-end mb-4">
                           <span className="text-sm font-bold text-slate-500">原始銀行利息 (名義成本)</span>
                           <span className="text-lg font-black text-slate-800">{interestRate}%</span>
@@ -449,6 +461,7 @@ const App = () => {
               </div>
             )}
 
+            {}
             {activeTab === 'education' && (
               <div className="space-y-8 animate-in fade-in duration-500">
                 <section className="bg-white p-8 rounded-3xl shadow-sm border border-slate-200/60">
@@ -498,7 +511,8 @@ const App = () => {
         </div>
       </main>
 
-      <footer className="mt-auto py-8 text-center text-slate-400 text-xs px-4 relative z-10 bg-slate-900 w-full">
+      {}
+      <footer className="mt-auto py-8 text-center text-slate-400 text-xs px-4 relative z-10 bg-slate-900 w-full border-t border-slate-800">
         <p className="font-bold text-slate-300 mb-2">Designed for Professional Financial Advisory</p>
         <p>本系統之預測數據僅供教學與模擬用途。實際稅務扣減資格及投資回報，依閣下所屬司法管轄區之稅法及金融機構最新政策為準。</p>
         <p className="mt-3 text-slate-500">© 2024 {ADVISOR_NAME} - 資產優化與稅務分析系統 | Confidential</p>
