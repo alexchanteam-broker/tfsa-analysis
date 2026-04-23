@@ -85,7 +85,7 @@
     <!-- 警告提示 (絕對定位在頂部) -->
     <div id="warning-banner" class="hidden relative z-20 bg-rose-500/10 border-b border-rose-500/50 text-rose-200 px-6 py-3 flex items-center justify-center gap-3 text-sm backdrop-blur-sm">
         <i data-lucide="alert-triangle" class="w-5 h-5 flex-shrink-0 text-rose-500"></i>
-        <p><strong>系統風險提示：</strong> 當前稅後有效融資成本已高於預期年化回報率，槓桿操作將導致淨資產受損。</p>
+        <p><strong>系統風險提示：</strong> 當前稅後有效融資成本已高於假設年化回報率，槓桿操作將導致淨資產受損。</p>
     </div>
 
     <!-- 主要內容區 -->
@@ -120,9 +120,9 @@
                     <span class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 font-bold">%</span>
                 </div>
             </div>
-            <!-- 輸入：回報 -->
+            <!-- 輸入：回報 (合規用語修改) -->
             <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 shadow-sm hover:border-slate-600 transition-colors">
-                <label class="text-xs text-slate-400 font-medium uppercase tracking-wider mb-2 block">預期回報 (Return)</label>
+                <label class="text-xs text-slate-400 font-medium uppercase tracking-wider mb-2 block">假設回報 (Assumed Return)</label>
                 <div class="relative">
                     <input type="number" id="input-return" value="9" step="0.1" min="0" oninput="updateDashboard()" 
                            class="w-full pl-3 pr-8 py-2 bg-slate-950 border border-slate-800 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-lg font-bold text-blue-400 transition-all text-right">
@@ -253,6 +253,21 @@
 
             </div>
         </div>
+
+        <!-- LLQP 監管合規披露 (Compliance Disclaimer) -->
+        <footer class="mt-4 pt-6 border-t border-slate-800 text-slate-400 text-[11px] sm:text-xs leading-relaxed pb-8 text-justify">
+            <div class="flex items-center gap-2 mb-3">
+                <i data-lucide="scale" class="w-4 h-4 text-slate-500"></i>
+                <h4 class="font-bold text-slate-300">法定合規與風險披露聲明 (Legal & Regulatory Disclaimers)</h4>
+            </div>
+            <div class="space-y-2">
+                <p><strong>1. 僅供教育與概念演示 (Educational Purposes Only)：</strong>本系統生成之所有數據、圖表及分析均為基於用戶輸入參數之假設性推演（Illustration），僅供教育及概念探討用途，並不構成任何具體的保險、投資、理財、稅務或法律建議。</p>
+                <p><strong>2. 無回報保證 (No Guarantees)：</strong>系統所用之「假設年化回報」不代表或保證實際投資回報。金融市場具有波動性，實際投資價值可能隨市場升跌，過往表現絕不預示未來結果。</p>
+                <p><strong>3. 借貸投資風險 (Leverage Risk)：</strong>借錢進行投資涉及極高風險。無論投資價值如何變化，甚至出現重大虧損，投資者仍有法律責任全額償還貸款本金及所有應計利息。利息成本的增加或投資價值的下跌可能會大幅擴大虧損。</p>
+                <p><strong>4. 稅務建議免責 (No Tax Advice)：</strong>系統內之稅務護盾及抵扣計算基於現行一般稅務原則（如加拿大 CRA 相關指引）。稅務法律及條例隨時可能發生變更，且每位納稅人的具體情況不同。本分析不構成專業稅務意見，在執行任何槓桿或稅務策略前，強烈建議尋求獨立且具專業資格之會計師或稅務顧問意見。</p>
+                <p><strong>5. 產品條款與財務需求分析 (FNA)：</strong>如本策略涉及保本基金（Segregated Funds）或其他保險產品，所有保本保證均受限於所發行保險公司之保單合約條款及細則。持牌人 Alex Chan 乃獨立保險經紀，在提供任何具體產品建議前，將按監管要求進行完整的財務需求分析 (Financial Needs Analysis, FNA)，以確保建議符合客戶的風險承受能力及財務狀況。</p>
+            </div>
+        </footer>
     </main>
 
     <script>
