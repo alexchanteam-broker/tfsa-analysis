@@ -15,34 +15,17 @@
     <script src="https://unpkg.com/lucide@latest"></script>
 
     <style>
-        /* 自定義滑桿樣式優化，提升平板觸控體驗 */
-        input[type=range] {
-            -webkit-appearance: none;
-            width: 100%;
-            background: transparent;
+        /* 隱藏原生數字輸入框的上下箭頭 */
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { 
+            -webkit-appearance: none; 
+            margin: 0; 
         }
-        input[type=range]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            height: 24px;
-            width: 24px;
-            border-radius: 50%;
-            background: #f59e0b; /* Amber 500 */
-            cursor: pointer;
-            margin-top: -8px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-            border: 2px solid #fff;
+        input[type=number] {
+            -moz-appearance: textfield;
         }
-        input[type=range]::-webkit-slider-runnable-track {
-            width: 100%;
-            height: 8px;
-            cursor: pointer;
-            background: #e2e8f0;
-            border-radius: 4px;
-        }
-        input[type=range]:focus {
-            outline: none;
-        }
-        /* 隱藏原生滾動條，保持版面整潔 */
+        
+        /* 隱藏原生滾動條 */
         ::-webkit-scrollbar {
             width: 6px;
             height: 6px;
@@ -51,196 +34,224 @@
             background: transparent;
         }
         ::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
+            background: #475569;
             border-radius: 3px;
+        }
+        
+        /* 深色輸入框自動填充修復 */
+        input:-webkit-autofill,
+        input:-webkit-autofill:hover, 
+        input:-webkit-autofill:focus, 
+        input:-webkit-autofill:active{
+            -webkit-box-shadow: 0 0 0 30px #0f172a inset !important;
+            -webkit-text-fill-color: white !important;
         }
     </style>
 </head>
-<body class="min-h-screen bg-slate-50 text-slate-800 font-sans relative overflow-x-hidden flex flex-col">
+<body class="min-h-screen bg-slate-950 text-slate-200 font-sans relative overflow-x-hidden flex flex-col">
 
-    <!-- 防盜浮水印 -->
-    <div class="fixed inset-0 pointer-events-none opacity-5 flex items-center justify-center overflow-hidden z-0">
-        <div class="transform -rotate-45 text-[12rem] font-black whitespace-nowrap text-blue-900">
+    <!-- 防盜浮水印 (融入深色背景) -->
+    <div class="fixed inset-0 pointer-events-none opacity-[0.03] flex items-center justify-center overflow-hidden z-0">
+        <div class="transform -rotate-45 text-[12rem] font-black whitespace-nowrap text-slate-100">
             hkca_man • hkca_man
         </div>
     </div>
 
-    <!-- 頂部導航欄 (個人品牌 - 海軍藍 x 金) -->
-    <header class="relative z-10 bg-blue-950 border-b-4 border-amber-500 px-6 py-4 flex justify-between items-center shadow-lg">
+    <!-- 頂部導航欄 (高階黑曜石質感) -->
+    <header class="relative z-10 bg-slate-900 border-b border-slate-800 px-6 py-4 flex justify-between items-center shadow-lg">
         <div class="flex items-center gap-3">
-            <div class="p-2 bg-white/10 rounded-lg">
-                <i data-lucide="landmark" class="w-6 h-6 text-amber-400"></i>
+            <div class="p-2 bg-emerald-500/10 border border-emerald-500/20 rounded-lg">
+                <i data-lucide="bar-chart-2" class="w-6 h-6 text-emerald-400"></i>
             </div>
             <div>
                 <h1 class="text-xl font-bold tracking-wide text-white">資產優化與稅務槓桿系統</h1>
-                <p class="text-xs text-amber-400/80 uppercase tracking-wider">Institutional Grade Analysis</p>
+                <p class="text-xs text-slate-400 uppercase tracking-wider">Institutional Wealth Analytics</p>
             </div>
         </div>
         <div class="flex items-center gap-4">
             <div class="text-right hidden sm:block">
                 <div class="font-bold text-white text-lg">Alex Chan</div>
-                <div class="text-sm text-amber-400 font-medium">Individual Insurance Broker</div>
+                <div class="text-sm text-emerald-400 font-medium">Individual Insurance Broker</div>
             </div>
-            <!-- 頭像設定：請將 src 替換為你的真實圖片網址 -->
+            <!-- 頭像 -->
             <img 
-                src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=256&h=256&q=80" 
+                src="profile.jpg" 
                 alt="Alex Chan" 
-                class="w-12 h-12 rounded-full border-2 border-amber-500 object-cover shadow-lg bg-white"
+                class="w-12 h-12 rounded-full border-2 border-slate-700 object-cover shadow-lg bg-slate-800"
             />
         </div>
     </header>
 
-    <!-- 主要內容區 (Split Layout for Tablet S11) -->
-    <main class="relative z-10 flex-1 p-6 flex flex-col lg:flex-row gap-6 w-full max-w-[1600px] mx-auto">
+    <!-- 警告提示 (絕對定位在頂部) -->
+    <div id="warning-banner" class="hidden relative z-20 bg-rose-500/10 border-b border-rose-500/50 text-rose-200 px-6 py-3 flex items-center justify-center gap-3 text-sm backdrop-blur-sm">
+        <i data-lucide="alert-triangle" class="w-5 h-5 flex-shrink-0 text-rose-500"></i>
+        <p><strong>系統風險提示：</strong> 當前稅後有效融資成本已高於預期年化回報率，槓桿操作將導致淨資產受損。</p>
+    </div>
+
+    <!-- 主要內容區 -->
+    <main class="relative z-10 flex-1 p-6 flex flex-col gap-6 w-full max-w-[1800px] mx-auto">
         
-        <!-- 左側控制面板 (白底金邊) -->
-        <aside class="w-full lg:w-[380px] flex-shrink-0 flex flex-col gap-6">
-            <div class="bg-white border-t-4 border-t-amber-500 rounded-2xl p-6 shadow-xl relative overflow-hidden">
-                <h2 class="text-lg font-bold text-blue-950 mb-6 flex items-center gap-2">
-                    <i data-lucide="briefcase" class="w-5 h-5 text-amber-500"></i> 策略參數設定
-                </h2>
-
-                <div class="space-y-7">
-                    <!-- 貸款金額 -->
-                    <div class="space-y-3">
-                        <div class="flex justify-between items-end">
-                            <label class="text-sm text-slate-500 font-medium">融資本金 (Principal)</label>
-                            <span id="val-principal" class="text-xl font-bold text-blue-950"></span>
-                        </div>
-                        <input type="range" id="input-principal" min="50000" max="1000000" step="10000" value="100000" oninput="updateDashboard()">
-                    </div>
-
-                    <!-- 銀行貸款利率 -->
-                    <div class="space-y-3">
-                        <div class="flex justify-between items-end">
-                            <label class="text-sm text-slate-500 font-medium">名義借貸利率 (Nominal Rate)</label>
-                            <span id="val-rate" class="text-xl font-bold text-blue-950"></span>
-                        </div>
-                        <input type="range" id="input-rate" min="3" max="10" step="0.1" value="5.45" oninput="updateDashboard()">
-                    </div>
-
-                    <!-- 邊際稅率 -->
-                    <div class="space-y-3">
-                        <div class="flex justify-between items-end">
-                            <label class="text-sm text-slate-500 font-medium">邊際稅率 (Marginal Tax Rate)</label>
-                            <span id="val-mtr" class="text-xl font-bold text-blue-950"></span>
-                        </div>
-                        <input type="range" id="input-mtr" min="20" max="55" step="1" value="40" oninput="updateDashboard()">
-                    </div>
-
-                    <!-- 預期回報 -->
-                    <div class="space-y-3">
-                        <div class="flex justify-between items-end">
-                            <label class="text-sm text-slate-500 font-medium">預期年化回報 (Expected Return)</label>
-                            <span id="val-return" class="text-xl font-bold text-blue-600"></span>
-                        </div>
-                        <input type="range" id="input-return" min="3" max="15" step="0.5" value="9" oninput="updateDashboard()">
-                        <!-- 覆寫預期回報的滑桿顏色 -->
-                        <style>#input-return::-webkit-slider-thumb { background: #2563eb; }</style>
-                    </div>
-
-                    <!-- 投資年期 -->
-                    <div class="space-y-3">
-                        <div class="flex justify-between items-end">
-                            <label class="text-sm text-slate-500 font-medium">投資年期規劃 (Horizon)</label>
-                            <span id="val-years" class="text-xl font-bold text-blue-950"></span>
-                        </div>
-                        <input type="range" id="input-years" min="5" max="30" step="1" value="10" oninput="updateDashboard()">
-                        <style>#input-years::-webkit-slider-thumb { background: #172554; }</style>
-                    </div>
-                </div>
-                
-                <!-- 警告提示 (預設隱藏) -->
-                <div id="warning-banner" class="hidden mt-8 p-4 bg-red-50 border-l-4 border-red-500 rounded-r-lg flex items-start gap-3 text-red-800 text-sm">
-                    <i data-lucide="alert-triangle" class="w-5 h-5 flex-shrink-0 text-red-500 mt-0.5"></i>
-                    <p><strong>風險提示：</strong> 稅後有效融資成本已高於預期回報率，此槓桿操作將導致財產淨值受損。</p>
+        <!-- 頂部控制帶 (Control Ribbon) - 5 欄並排，適合橫屏 -->
+        <section class="grid grid-cols-2 lg:grid-cols-5 gap-4">
+            <!-- 輸入：本金 -->
+            <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 shadow-sm hover:border-slate-600 transition-colors">
+                <label class="text-xs text-slate-400 font-medium uppercase tracking-wider mb-2 block">融資本金 (Principal)</label>
+                <div class="relative">
+                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 font-bold">$</span>
+                    <input type="number" id="input-principal" value="100000" step="10000" min="0" oninput="updateDashboard()" 
+                           class="w-full pl-7 pr-3 py-2 bg-slate-950 border border-slate-800 rounded-lg focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 text-lg font-bold text-white transition-all text-right">
                 </div>
             </div>
-        </aside>
+            <!-- 輸入：利率 -->
+            <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 shadow-sm hover:border-slate-600 transition-colors">
+                <label class="text-xs text-slate-400 font-medium uppercase tracking-wider mb-2 block">名義借貸利率 (Rate)</label>
+                <div class="relative">
+                    <input type="number" id="input-rate" value="5.45" step="0.01" min="0" oninput="updateDashboard()" 
+                           class="w-full pl-3 pr-8 py-2 bg-slate-950 border border-slate-800 rounded-lg focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 text-lg font-bold text-white transition-all text-right">
+                    <span class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 font-bold">%</span>
+                </div>
+            </div>
+            <!-- 輸入：稅率 -->
+            <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 shadow-sm hover:border-slate-600 transition-colors">
+                <label class="text-xs text-slate-400 font-medium uppercase tracking-wider mb-2 block">邊際稅率 (Tax Rate)</label>
+                <div class="relative">
+                    <input type="number" id="input-mtr" value="40" step="1" min="0" oninput="updateDashboard()" 
+                           class="w-full pl-3 pr-8 py-2 bg-slate-950 border border-slate-800 rounded-lg focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 text-lg font-bold text-white transition-all text-right">
+                    <span class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 font-bold">%</span>
+                </div>
+            </div>
+            <!-- 輸入：回報 -->
+            <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 shadow-sm hover:border-slate-600 transition-colors">
+                <label class="text-xs text-slate-400 font-medium uppercase tracking-wider mb-2 block">預期回報 (Return)</label>
+                <div class="relative">
+                    <input type="number" id="input-return" value="9" step="0.1" min="0" oninput="updateDashboard()" 
+                           class="w-full pl-3 pr-8 py-2 bg-slate-950 border border-slate-800 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-lg font-bold text-blue-400 transition-all text-right">
+                    <span class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 font-bold">%</span>
+                </div>
+            </div>
+            <!-- 輸入：年期 -->
+            <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 shadow-sm hover:border-slate-600 transition-colors lg:col-span-1 col-span-2">
+                <label class="text-xs text-slate-400 font-medium uppercase tracking-wider mb-2 block">規劃年期 (Horizon)</label>
+                <div class="relative">
+                    <input type="number" id="input-years" value="10" step="1" min="1" oninput="updateDashboard()" 
+                           class="w-full pl-3 pr-10 py-2 bg-slate-950 border border-slate-800 rounded-lg focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-lg font-bold text-indigo-300 transition-all text-right">
+                    <span class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 font-bold">年</span>
+                </div>
+            </div>
+        </section>
 
-        <!-- 右側圖表與數據面板 -->
-        <div class="flex-1 flex flex-col gap-6 overflow-hidden">
+        <!-- 下方主要區域：圖表 (左 70%) + 數據面板 (右 30%) -->
+        <div class="flex flex-col lg:flex-row gap-6 flex-1">
             
-            <!-- 頂部四格數據卡 -->
-            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm border-l-4 border-l-blue-950">
-                    <div class="text-slate-500 text-xs sm:text-sm font-medium mb-1">稅後有效融資成本</div>
-                    <div id="out-effective-rate" class="text-2xl sm:text-3xl font-black text-blue-950 truncate"></div>
-                    <div class="text-[10px] sm:text-xs text-slate-400 mt-2">利息支出全額抵稅後</div>
-                </div>
-
-                <div class="bg-blue-950 rounded-xl p-5 shadow-md relative overflow-hidden border border-blue-900">
-                    <div class="absolute -right-2 -bottom-4 opacity-20">
-                        <i data-lucide="shield-check" class="w-24 h-24 text-amber-500"></i>
+            <!-- 左側：圖表與教育模組 -->
+            <div class="flex-1 flex flex-col gap-6">
+                <!-- 大型圖表區 -->
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl flex-1 flex flex-col min-h-[450px]">
+                    <div class="flex justify-between items-start mb-6">
+                        <div>
+                            <h2 class="text-lg font-bold text-white flex items-center gap-2">
+                                <i data-lucide="activity" class="w-5 h-5 text-emerald-500"></i> 財富增長軌跡分析 (稅後淨利潤)
+                            </h2>
+                            <p class="text-xs text-slate-500 mt-1">模擬期間已完全扣除資本增值稅及借貸利息成本</p>
+                        </div>
+                        <!-- 自定義圖例 -->
+                        <div class="flex flex-col items-end gap-2 bg-slate-950/50 p-2 rounded-lg border border-slate-800/50">
+                            <span class="text-xs font-bold text-emerald-400 flex items-center"><i class="inline-block w-2 h-2 rounded-full bg-emerald-500 mr-2 shadow-[0_0_8px_rgba(16,185,129,0.8)]"></i>策略 A (槓桿投資)</span>
+                            <span class="text-xs font-bold text-sky-400 flex items-center"><i class="inline-block w-2 h-2 rounded-full bg-sky-500 mr-2 shadow-[0_0_8px_rgba(14,165,233,0.8)]"></i>策略 B (等額定投)</span>
+                        </div>
                     </div>
-                    <div class="text-blue-200 text-xs sm:text-sm font-medium mb-1 relative z-10">累計稅務抵扣效益</div>
-                    <div id="out-tax-shield" class="text-2xl sm:text-3xl font-black text-amber-400 relative z-10 truncate"></div>
-                    <div class="text-[10px] sm:text-xs text-blue-300 mt-2 relative z-10">政府資助之利息總額</div>
-                </div>
-
-                <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm border-t-4 border-t-amber-500">
-                    <div class="text-slate-500 text-xs sm:text-sm font-medium mb-1">策略 A：槓桿單筆投資</div>
-                    <div id="out-stratA" class="text-2xl sm:text-3xl font-black text-amber-500 truncate"></div>
-                    <div class="text-[10px] sm:text-xs text-slate-400 mt-2">稅後淨利潤 (已扣各項成本)</div>
-                </div>
-
-                <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm border-t-4 border-t-blue-300">
-                    <div class="text-slate-500 text-xs sm:text-sm font-medium mb-1">策略 B：等額現金流定投</div>
-                    <div id="out-stratB" class="text-2xl sm:text-3xl font-black text-blue-900 truncate"></div>
-                    <div class="text-[10px] sm:text-xs text-slate-400 mt-2">稅後淨利潤 (僅扣增值稅)</div>
-                </div>
-            </div>
-
-            <!-- 中央大型圖表 -->
-            <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-xl flex-1 flex flex-col min-h-[400px]">
-                <div class="flex justify-between items-start sm:items-center mb-6 flex-col sm:flex-row gap-4">
-                    <div>
-                        <h2 class="text-xl font-bold text-blue-950">財富增長軌跡：稅後淨利潤對比</h2>
-                        <p class="text-sm text-slate-500 mt-1">槓桿策略之財富放大倍數為定期投資的 <span id="out-multiplier" class="text-amber-600 font-bold"></span></p>
-                    </div>
-                    <div class="text-left sm:text-right bg-amber-50 px-4 py-2 rounded-lg border border-amber-100 w-full sm:w-auto">
-                        <div class="text-xs text-amber-700 font-medium">財富增值差距 (Wealth Gap)</div>
-                        <div id="out-wealth-gap" class="text-xl sm:text-2xl font-black text-amber-500"></div>
+                    
+                    <div class="relative flex-1 w-full h-full">
+                        <canvas id="wealthChart"></canvas>
                     </div>
                 </div>
-                
-                <div class="relative flex-1 w-full h-full min-h-[300px]">
-                    <canvas id="wealthChart"></canvas>
-                </div>
-            </div>
 
-            <!-- 底部教育模組 -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm flex gap-4">
-                    <div class="p-3 bg-amber-50 rounded-lg h-fit border border-amber-100 hidden sm:block">
-                        <i data-lucide="trending-up" class="w-6 h-6 text-amber-500"></i>
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-blue-950 mb-3 text-base">槓桿策略核心優勢</h3>
-                        <ul class="text-sm text-slate-600 space-y-2 list-disc list-inside marker:text-amber-500">
-                            <li><strong class="text-blue-900">時間價值 (Time in the Market):</strong> 資金提早全額入市，最大化複利效應。</li>
-                            <li><strong class="text-blue-900">稅務護盾 (Tax Shield):</strong> 融資利息全額抵扣個人入息稅，有效降低借貸成本。</li>
-                            <li><strong class="text-blue-900">稅務套利 (Tax Arbitrage):</strong> 利息獲 100% 抵稅，而資本增值僅需繳納 50% 稅率。</li>
-                            <li>保留個人流動現金，維持生活品質，避免資金被完全鎖死。</li>
+                <!-- 底部教育模組 (並排) -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-5 shadow-sm">
+                        <h3 class="font-bold text-white mb-3 text-sm flex items-center gap-2">
+                            <i data-lucide="zap" class="w-4 h-4 text-emerald-500"></i> 槓桿策略優勢分析
+                        </h3>
+                        <ul class="text-xs text-slate-400 space-y-2 list-none">
+                            <li class="flex gap-2"><i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-500/70 shrink-0"></i> <span><strong class="text-slate-300">時間價值:</strong> 資金提早全額入市，最大化市場複利效應。</span></li>
+                            <li class="flex gap-2"><i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-500/70 shrink-0"></i> <span><strong class="text-slate-300">稅務護盾:</strong> 融資利息全額抵扣個人入息稅，有效降低成本。</span></li>
+                            <li class="flex gap-2"><i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-500/70 shrink-0"></i> <span><strong class="text-slate-300">稅務套利:</strong> 成本 100% 抵稅，但最終資本增值僅需繳 50% 稅率。</span></li>
                         </ul>
                     </div>
-                </div>
-                
-                <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm flex gap-4">
-                    <div class="p-3 bg-blue-50 rounded-lg h-fit border border-blue-100 hidden sm:block">
-                        <i data-lucide="shield-check" class="w-6 h-6 text-blue-800"></i>
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-blue-950 mb-3 text-base">風險管理與資產保護機制</h3>
-                        <ul class="text-sm text-slate-600 space-y-2 list-disc list-inside marker:text-blue-800">
-                            <li><strong class="text-amber-600">利率波動風險:</strong> 若名義貸款利率大幅飆升，可能侵蝕整體投資利潤。</li>
-                            <li><strong class="text-amber-600">無強制平倉風險:</strong> 採用指定融資結構，避免傳統孖展 (Margin Call) 之強平風險。</li>
-                            <li><strong class="text-amber-600">資產安全網:</strong> 配合保本基金 (Segregated Funds) 提供到期本金保證，鎖定下行風險。</li>
+                    
+                    <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-5 shadow-sm">
+                        <h3 class="font-bold text-white mb-3 text-sm flex items-center gap-2">
+                            <i data-lucide="shield-alert" class="w-4 h-4 text-amber-500"></i> 風險管理與資產保護
+                        </h3>
+                        <ul class="text-xs text-slate-400 space-y-2 list-none">
+                            <li class="flex gap-2"><i data-lucide="alert-circle" class="w-4 h-4 text-amber-500/70 shrink-0"></i> <span><strong class="text-slate-300">利率風險:</strong> 若名義貸款利率大幅飆升，可能侵蝕投資利潤。</span></li>
+                            <li class="flex gap-2"><i data-lucide="alert-circle" class="w-4 h-4 text-amber-500/70 shrink-0"></i> <span><strong class="text-slate-300">無強平機制:</strong> 專屬融資結構，避免傳統孖展 (Margin Call) 強制平倉風險。</span></li>
+                            <li class="flex gap-2"><i data-lucide="alert-circle" class="w-4 h-4 text-amber-500/70 shrink-0"></i> <span><strong class="text-slate-300">本金保護:</strong> 可配合保本基金 (Seg Funds)，提供到期及身故本金保證。</span></li>
                         </ul>
                     </div>
                 </div>
             </div>
-            
+
+            <!-- 右側：垂直數據總結柱 (Data Stack) -->
+            <div class="w-full lg:w-[320px] flex-shrink-0 flex flex-col gap-4">
+                
+                <!-- 成本披露區 (紅/橙) -->
+                <div class="flex flex-col gap-3 p-4 bg-slate-900 border border-slate-800 rounded-2xl relative overflow-hidden">
+                    <div class="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-rose-500 to-amber-500"></div>
+                    
+                    <div>
+                        <div class="text-slate-400 text-xs font-bold uppercase tracking-wider mb-1 flex items-center gap-1">
+                            <i data-lucide="receipt" class="w-3 h-3 text-rose-500"></i> 每年稅後利息支出
+                        </div>
+                        <div id="out-annual-interest" class="text-2xl font-black text-rose-500"></div>
+                        <div class="text-[10px] text-slate-500 mt-1">基於有效成本率 <span id="out-effective-rate" class="font-bold text-rose-400"></span></div>
+                    </div>
+                    
+                    <div class="h-px w-full bg-slate-800 my-1"></div>
+                    
+                    <div>
+                        <div class="text-slate-400 text-xs font-bold uppercase tracking-wider mb-1 flex items-center gap-1">
+                            <i data-lucide="landmark" class="w-3 h-3 text-amber-500"></i> 累計稅務抵扣效益
+                        </div>
+                        <div id="out-tax-shield" class="text-xl font-bold text-amber-400"></div>
+                        <div class="text-[10px] text-slate-500 mt-1">期內總利息獲政府資助額度</div>
+                    </div>
+                </div>
+
+                <!-- 策略 A 總結 (綠) -->
+                <div class="p-5 bg-emerald-950/20 border border-emerald-900/50 rounded-2xl relative overflow-hidden group hover:bg-emerald-950/40 transition-colors">
+                    <div class="absolute top-0 right-0 w-16 h-16 bg-emerald-500/10 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"></div>
+                    <div class="text-emerald-500/80 text-xs font-bold uppercase tracking-wider mb-1">策略 A 最終淨利潤</div>
+                    <div class="text-sm font-medium text-emerald-400 mb-1">槓桿單筆投資</div>
+                    <div id="out-stratA" class="text-3xl font-black text-emerald-400 drop-shadow-[0_0_10px_rgba(16,185,129,0.3)]"></div>
+                </div>
+
+                <!-- 策略 B 總結 (藍) -->
+                <div class="p-5 bg-sky-950/20 border border-sky-900/50 rounded-2xl relative overflow-hidden group hover:bg-sky-950/40 transition-colors">
+                    <div class="absolute top-0 right-0 w-16 h-16 bg-sky-500/10 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"></div>
+                    <div class="text-sky-500/80 text-xs font-bold uppercase tracking-wider mb-1">策略 B 最終淨利潤</div>
+                    <div class="text-sm font-medium text-sky-400 mb-1">等額現金流定投</div>
+                    <div id="out-stratB" class="text-3xl font-black text-sky-400 drop-shadow-[0_0_10px_rgba(14,165,233,0.3)]"></div>
+                </div>
+
+                <!-- 財富差距總結 -->
+                <div class="p-5 bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700 rounded-2xl shadow-lg mt-auto">
+                    <div class="text-slate-400 text-xs font-bold uppercase tracking-wider mb-2">期末財富增值差距</div>
+                    <div id="out-wealth-gap" class="text-3xl font-black text-white leading-none mb-3"></div>
+                    
+                    <div class="space-y-2">
+                        <div class="flex justify-between items-center text-xs bg-slate-950/50 px-3 py-2 rounded-lg">
+                            <span class="text-slate-400">利潤放大倍數</span>
+                            <span id="out-multiplier" class="font-bold text-emerald-400"></span>
+                        </div>
+                        <div class="flex justify-between items-center text-xs bg-slate-950/50 px-3 py-2 rounded-lg">
+                            <span class="text-slate-400">期內總利息開支</span>
+                            <span id="out-total-interest" class="font-bold text-rose-400"></span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
         </div>
     </main>
 
@@ -255,24 +266,17 @@
         let chartInstance = null;
 
         function updateDashboard() {
-            // 1. 獲取輸入值
-            const principal = parseFloat(document.getElementById('input-principal').value);
-            const nominalRate = parseFloat(document.getElementById('input-rate').value) / 100;
-            const mtr = parseFloat(document.getElementById('input-mtr').value) / 100;
-            const expectedReturn = parseFloat(document.getElementById('input-return').value) / 100;
-            const years = parseInt(document.getElementById('input-years').value);
-
-            // 更新左側顯示數值
-            document.getElementById('val-principal').textContent = formatCurrency.format(principal);
-            document.getElementById('val-rate').textContent = formatPercent(nominalRate * 100);
-            document.getElementById('val-mtr').textContent = formatPercent(mtr * 100);
-            document.getElementById('val-return').textContent = formatPercent(expectedReturn * 100);
-            document.getElementById('val-years').textContent = `${years} 年`;
+            // 1. 獲取手動輸入值
+            const principal = parseFloat(document.getElementById('input-principal').value) || 0;
+            const nominalRate = parseFloat(document.getElementById('input-rate').value) / 100 || 0;
+            const mtr = parseFloat(document.getElementById('input-mtr').value) / 100 || 0;
+            const expectedReturn = parseFloat(document.getElementById('input-return').value) / 100 || 0;
+            const years = parseInt(document.getElementById('input-years').value) || 0;
 
             // 2. 商業邏輯運算
-            const inclusionRate = 0.5; // 加拿大資本增值稅 Inclusion Rate (50%)
+            const inclusionRate = 0.5; // 50% 資本增值稅率
             const annualInterest = principal * nominalRate;
-            const netAnnualInterest = annualInterest * (1 - mtr); // 扣稅後的真實利息支出
+            const netAnnualInterest = annualInterest * (1 - mtr); 
             
             const labels = [];
             const stratAData = [];
@@ -290,7 +294,7 @@
                 const stratATotalInterestPaid = netAnnualInterest * year;
                 const stratATrueNetWealth = stratANetProfit - stratATotalInterestPaid;
 
-                // 策略 B: 定期投資 (將每年省下的稅後利息投入)
+                // 策略 B: 定期投資
                 let stratBFutureValue = 0;
                 let stratBTotalInvested = 0;
                 for (let i = 1; i <= year; i++) {
@@ -303,7 +307,7 @@
                 const stratBNetProfit = stratBGrossProfit - stratBCGTax;
                 const stratBTrueNetWealth = stratBNetProfit;
 
-                labels.push(`第 ${year} 年`);
+                labels.push(`Year ${year}`);
                 stratAData.push(Math.round(stratATrueNetWealth));
                 stratBData.push(Math.round(stratBTrueNetWealth));
 
@@ -320,34 +324,14 @@
             const isNegativeSpread = effectiveRate >= expectedReturn;
             const multiplier = finalStratB > 0 ? (finalStratA / finalStratB).toFixed(1) : 0;
 
-            // 3. 更新 UI 面板
+            // 3. 更新 UI 文本
+            document.getElementById('out-annual-interest').textContent = formatCurrency.format(netAnnualInterest);
+            document.getElementById('out-total-interest').textContent = formatCurrency.format(netAnnualInterest * years);
+
             const elEffectiveRate = document.getElementById('out-effective-rate');
             elEffectiveRate.textContent = formatPercent(effectiveRate * 100);
-            if (isNegativeSpread) {
-                elEffectiveRate.classList.remove('text-blue-950');
-                elEffectiveRate.classList.add('text-red-500');
-            } else {
-                elEffectiveRate.classList.remove('text-red-500');
-                elEffectiveRate.classList.add('text-blue-950');
-            }
-
-            document.getElementById('out-tax-shield').textContent = formatCurrency.format(totalTaxShield);
-            document.getElementById('out-stratA').textContent = formatCurrency.format(finalStratA);
-            document.getElementById('out-stratB').textContent = formatCurrency.format(finalStratB);
             
-            document.getElementById('out-multiplier').textContent = `${multiplier} 倍`;
-            
-            const elWealthGap = document.getElementById('out-wealth-gap');
-            if (wealthGap >= 0) {
-                elWealthGap.textContent = `+${formatCurrency.format(wealthGap)}`;
-                elWealthGap.classList.remove('text-red-500');
-                elWealthGap.classList.add('text-amber-500');
-            } else {
-                elWealthGap.textContent = formatCurrency.format(wealthGap);
-                elWealthGap.classList.remove('text-amber-500');
-                elWealthGap.classList.add('text-red-500');
-            }
-
+            // 警告處理
             const warningBanner = document.getElementById('warning-banner');
             if (isNegativeSpread) {
                 warningBanner.classList.remove('hidden');
@@ -355,21 +339,38 @@
                 warningBanner.classList.add('hidden');
             }
 
-            // 4. 更新圖表
+            document.getElementById('out-tax-shield').textContent = formatCurrency.format(totalTaxShield);
+            document.getElementById('out-stratA').textContent = formatCurrency.format(finalStratA);
+            document.getElementById('out-stratB').textContent = formatCurrency.format(finalStratB);
+            
+            document.getElementById('out-multiplier').textContent = `${multiplier}x`;
+            
+            const elWealthGap = document.getElementById('out-wealth-gap');
+            if (wealthGap >= 0) {
+                elWealthGap.textContent = `+${formatCurrency.format(wealthGap)}`;
+                elWealthGap.classList.remove('text-rose-500');
+                elWealthGap.classList.add('text-white');
+            } else {
+                elWealthGap.textContent = formatCurrency.format(wealthGap);
+                elWealthGap.classList.remove('text-white');
+                elWealthGap.classList.add('text-rose-500');
+            }
+
+            // 4. 更新深色圖表
             renderChart(labels, stratAData, stratBData);
         }
 
         function renderChart(labels, dataA, dataB) {
             const ctx = document.getElementById('wealthChart').getContext('2d');
             
-            // 創建漸層
+            // 深色漸層 (發光效果)
             const gradientA = ctx.createLinearGradient(0, 0, 0, 400);
-            gradientA.addColorStop(0, 'rgba(245, 158, 11, 0.5)'); // amber-500
-            gradientA.addColorStop(1, 'rgba(245, 158, 11, 0)');
+            gradientA.addColorStop(0, 'rgba(16, 185, 129, 0.4)'); // Emerald
+            gradientA.addColorStop(1, 'rgba(16, 185, 129, 0)');
 
             const gradientB = ctx.createLinearGradient(0, 0, 0, 400);
-            gradientB.addColorStop(0, 'rgba(30, 58, 138, 0.3)'); // blue-900
-            gradientB.addColorStop(1, 'rgba(30, 58, 138, 0)');
+            gradientB.addColorStop(0, 'rgba(14, 165, 233, 0.4)'); // Sky blue
+            gradientB.addColorStop(1, 'rgba(14, 165, 233, 0)');
 
             if (chartInstance) {
                 chartInstance.data.labels = labels;
@@ -377,32 +378,41 @@
                 chartInstance.data.datasets[1].data = dataB;
                 chartInstance.update();
             } else {
+                Chart.defaults.color = '#64748b'; // 全局字體顏色
+                Chart.defaults.font.family = "ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif";
+
                 chartInstance = new Chart(ctx, {
                     type: 'line',
                     data: {
                         labels: labels,
                         datasets: [
                             {
-                                label: '策略 A: 槓桿單筆投資 (Gold)',
+                                label: '策略 A: 槓桿單筆投資',
                                 data: dataA,
-                                borderColor: '#f59e0b',
+                                borderColor: '#10b981', // emerald-500
                                 backgroundColor: gradientA,
                                 borderWidth: 3,
                                 fill: true,
                                 tension: 0.4,
                                 pointRadius: 0,
-                                pointHoverRadius: 6
+                                pointHoverRadius: 6,
+                                pointBackgroundColor: '#10b981',
+                                pointBorderColor: '#fff',
+                                pointBorderWidth: 2
                             },
                             {
-                                label: '策略 B: 等額現金流定投 (Navy)',
+                                label: '策略 B: 等額現金流定投',
                                 data: dataB,
-                                borderColor: '#1e3a8a',
+                                borderColor: '#0ea5e9', // sky-500
                                 backgroundColor: gradientB,
                                 borderWidth: 3,
                                 fill: true,
                                 tension: 0.4,
                                 pointRadius: 0,
-                                pointHoverRadius: 6
+                                pointHoverRadius: 6,
+                                pointBackgroundColor: '#0ea5e9',
+                                pointBorderColor: '#fff',
+                                pointBorderWidth: 2
                             }
                         ]
                     },
@@ -415,25 +425,21 @@
                         },
                         plugins: {
                             legend: {
-                                position: 'top',
-                                labels: {
-                                    usePointStyle: true,
-                                    padding: 20,
-                                    font: { family: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif", size: 13 }
-                                }
+                                display: false // 使用 HTML 自訂圖例
                             },
                             tooltip: {
-                                backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                                titleColor: '#1e293b',
-                                bodyColor: '#1e293b',
-                                borderColor: '#e2e8f0',
+                                backgroundColor: 'rgba(15, 23, 42, 0.95)', // slate-900
+                                titleColor: '#f1f5f9',
+                                bodyColor: '#cbd5e1',
+                                borderColor: '#334155', // slate-700
                                 borderWidth: 1,
                                 padding: 12,
-                                titleFont: { size: 14, weight: 'bold' },
-                                bodyFont: { size: 13, weight: 'bold' },
+                                titleFont: { size: 13, weight: 'bold' },
+                                bodyFont: { size: 14, weight: 'bold' },
+                                boxPadding: 6,
                                 callbacks: {
                                     label: function(context) {
-                                        let label = context.dataset.label.split('(')[0] || '';
+                                        let label = context.dataset.label.split(':')[0] || '';
                                         if (label) {
                                             label += ': ';
                                         }
@@ -447,14 +453,15 @@
                         },
                         scales: {
                             x: {
-                                grid: { display: false },
-                                ticks: { color: '#64748b' }
+                                grid: { display: false, drawBorder: false },
+                                ticks: { color: '#475569', font: { size: 11 } }
                             },
                             y: {
                                 border: { display: false },
-                                grid: { color: '#e2e8f0', borderDash: [5, 5] },
+                                grid: { color: '#1e293b', borderDash: [5, 5] }, // slate-800
                                 ticks: {
-                                    color: '#64748b',
+                                    color: '#475569',
+                                    font: { size: 11 },
                                     callback: function(value) {
                                         return '$' + (value / 1000) + 'k';
                                     }
