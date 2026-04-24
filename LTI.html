@@ -47,16 +47,40 @@
             -webkit-text-fill-color: white !important;
         }
         
-        /* 列印模式優化 (橫向) */
+        /* 列印模式優化 (Letter 橫向單頁) */
         @media print {
-            @page { size: A4 landscape; margin: 5mm; }
-            body {
-                height: auto !important; overflow: visible !important;
-                -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;
+            @page { 
+                size: letter landscape; 
+                margin: 5mm; 
+            }
+            html, body {
+                width: 100vw !important;
+                height: 100vh !important;
+                max-height: 100vh !important;
+                overflow: hidden !important; /* 鎖死高度，強制單頁 */
+                -webkit-print-color-adjust: exact !important; 
+                print-color-adjust: exact !important;
                 background-color: #020617 !important;
+                margin: 0 !important;
+                padding: 0 !important;
             }
             .print\:hidden { display: none !important; }
-            .custom-scrollbar { overflow: visible !important; max-height: none !important; }
+            
+            /* 將免責聲明微調縮小，確保能完美塞入單頁底部 */
+            footer {
+                height: auto !important;
+                padding-top: 10px !important;
+                padding-bottom: 10px !important;
+            }
+            .custom-scrollbar { 
+                overflow: hidden !important; 
+                height: auto !important; 
+            }
+            footer p {
+                font-size: 8.5px !important;
+                line-height: 1.3 !important;
+                margin-bottom: 2px !important;
+            }
         }
     </style>
 </head>
