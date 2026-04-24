@@ -60,121 +60,124 @@
         }
     </style>
 </head>
-<!-- 鎖定全螢幕高度，禁用外層滾動 -->
-<body class="h-[100dvh] w-screen bg-slate-950 text-slate-200 font-sans relative overflow-hidden flex flex-col">
+<!-- 響應式優化：橫向鎖定 lg:h-[100dvh]，直向開放 min-h-screen 允許滾動 -->
+<body class="min-h-screen w-full bg-slate-950 text-slate-200 font-sans relative flex flex-col lg:h-[100dvh] lg:overflow-hidden">
 
     <!-- 防盜浮水印 -->
     <div class="absolute inset-0 pointer-events-none opacity-[0.03] flex items-center justify-center overflow-hidden z-0">
-        <div class="transform -rotate-45 text-[10rem] md:text-[12rem] font-black whitespace-nowrap text-slate-100">
+        <div class="transform -rotate-45 text-[8rem] sm:text-[10rem] md:text-[12rem] font-black whitespace-nowrap text-slate-100">
             hkca_man • hkca_man
         </div>
     </div>
 
-    <!-- 頂部導航欄 (緊湊型) -->
-    <header class="relative z-10 bg-slate-900 border-b border-slate-800 px-5 py-2.5 flex justify-between items-center shadow-lg shrink-0">
+    <!-- 頂部導航欄 (緊湊型，支援換行) -->
+    <header class="relative z-10 bg-slate-900 border-b border-slate-800 px-4 sm:px-5 py-3 lg:py-2.5 flex flex-wrap justify-between items-center shadow-lg shrink-0 gap-y-3">
         <div class="flex items-center gap-3">
             <div class="p-1.5 bg-emerald-500/10 border border-emerald-500/20 rounded-lg">
                 <i data-lucide="bar-chart-2" class="w-5 h-5 text-emerald-400"></i>
             </div>
             <div>
-                <h1 class="text-lg font-bold tracking-wide text-white leading-tight" data-i18n="app_title">資產優化與稅務槓桿系統</h1>
-                <p class="text-[10px] text-slate-400 uppercase tracking-wider" data-i18n="app_subtitle">Institutional Wealth Analytics</p>
+                <h1 class="text-base sm:text-lg font-bold tracking-wide text-white leading-tight" data-i18n="app_title">資產優化與稅務槓桿系統</h1>
+                <p class="text-[9px] sm:text-[10px] text-slate-400 uppercase tracking-wider" data-i18n="app_subtitle">Institutional Wealth Analytics</p>
             </div>
         </div>
-        <div class="flex items-center gap-3">
-            <button onclick="toggleLanguage()" class="print:hidden flex items-center gap-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 px-3 py-1.5 rounded-lg text-xs font-bold transition-all">
+        <div class="flex items-center gap-3 ml-auto">
+            <button onclick="toggleLanguage()" class="print:hidden flex items-center gap-1 sm:gap-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-bold transition-all">
                 <i data-lucide="languages" class="w-3.5 h-3.5 text-emerald-400"></i>
                 <span id="lang-btn-text">English</span>
             </button>
-            <button onclick="window.print()" class="print:hidden flex items-center gap-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 px-3 py-1.5 rounded-lg text-xs font-bold transition-all">
+            <button onclick="window.print()" class="print:hidden flex items-center gap-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-bold transition-all">
                 <i data-lucide="printer" class="w-3.5 h-3.5 text-emerald-400"></i>
                 <span class="hidden sm:inline" data-i18n="pdf_btn">生成 PDF</span>
             </button>
-            <div class="text-right hidden sm:block ml-1 border-l border-slate-700 pl-3">
+            <div class="text-right hidden md:block ml-1 border-l border-slate-700 pl-3">
                 <div class="font-bold text-white text-base leading-tight">Alex Chan</div>
                 <div class="text-[10px] text-emerald-400 font-medium" data-i18n="broker_title">Individual Insurance Broker</div>
             </div>
-            <img src="profile.jpg" alt="Alex Chan" class="w-9 h-9 rounded-full border border-slate-700 object-cover shadow-lg bg-slate-800"/>
+            <img src="profile.jpg" alt="Alex Chan" class="w-9 h-9 rounded-full border border-slate-700 object-cover shadow-lg bg-slate-800 hidden sm:block"/>
         </div>
     </header>
 
     <!-- 懸浮警告提示 -->
-    <div id="warning-banner" class="hidden absolute top-[60px] left-1/2 -translate-x-1/2 z-50 bg-rose-950/90 border border-rose-500/50 text-rose-200 px-6 py-2 rounded-b-xl shadow-2xl flex items-center gap-3 text-xs backdrop-blur-md w-max max-w-[90%]">
+    <div id="warning-banner" class="hidden fixed top-20 left-1/2 -translate-x-1/2 z-50 bg-rose-950/95 border border-rose-500/50 text-rose-200 px-6 py-2 rounded-xl shadow-2xl flex items-center gap-3 text-xs backdrop-blur-md w-max max-w-[90%] lg:absolute lg:top-[60px] lg:rounded-t-none lg:rounded-b-xl">
         <i data-lucide="alert-triangle" class="w-4 h-4 shrink-0 text-rose-500"></i>
         <p><strong data-i18n="warning_prefix">系統風險提示：</strong> <span data-i18n="warning_desc">當前稅後有效融資成本已高於假設年化回報率，槓桿操作將導致淨資產受損。</span></p>
     </div>
 
-    <!-- 主要內容區：橫向三欄佈局 (Left: 控制, Center: 圖表, Right: 總結) -->
-    <main class="relative z-10 flex-1 flex flex-row p-4 gap-4 w-full max-w-[1800px] mx-auto min-h-0">
+    <!-- 主要內容區：響應式佈局 (直向 flex-col, 橫向 lg:flex-row) -->
+    <main class="relative z-10 flex-1 flex flex-col lg:flex-row p-3 sm:p-4 gap-4 w-full max-w-[1800px] mx-auto min-h-0 overflow-y-auto lg:overflow-hidden">
         
-        <!-- 左欄：核心參數設定 (固定寬度，垂直排列) -->
-        <aside class="w-[260px] shrink-0 flex flex-col gap-3 min-h-0 overflow-y-auto custom-scrollbar pr-1">
-            <div class="flex items-center gap-2 mb-1 px-1">
+        <!-- 左欄：核心參數設定 -->
+        <aside class="w-full lg:w-[260px] shrink-0 flex flex-col gap-3 min-h-0 lg:overflow-y-auto custom-scrollbar lg:pr-1">
+            <div class="flex items-center gap-2 mb-1 px-1 hidden lg:flex">
                 <i data-lucide="sliders-horizontal" class="w-4 h-4 text-emerald-500"></i>
                 <h2 class="font-bold text-slate-300 text-sm tracking-wide" data-i18n="panel_params">核心參數設定</h2>
             </div>
 
-            <div class="bg-slate-900 border border-slate-800 rounded-xl p-3.5 shadow-sm">
-                <label class="text-[10px] text-slate-400 font-medium uppercase tracking-wider mb-1.5 block" data-i18n="lbl_principal">融資本金 (Principal)</label>
-                <div class="relative">
-                    <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-500 font-bold text-sm">$</span>
-                    <input type="number" id="input-principal" value="100000" step="10000" min="0" oninput="updateDashboard()" 
-                           class="w-full pl-6 pr-2 py-2 bg-slate-950 border border-slate-800 rounded-lg focus:outline-none focus:border-emerald-500 text-lg font-bold text-white transition-all text-right shadow-inner">
+            <!-- 直向模式下變為網格排列，橫向模式下垂直排列 -->
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-1 gap-3">
+                <div class="bg-slate-900 border border-slate-800 rounded-xl p-3 shadow-sm">
+                    <label class="text-[10px] text-slate-400 font-medium uppercase tracking-wider mb-1 block" data-i18n="lbl_principal">融資本金 (Principal)</label>
+                    <div class="relative">
+                        <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-500 font-bold text-sm">$</span>
+                        <input type="number" id="input-principal" value="100000" step="10000" min="0" oninput="updateDashboard()" 
+                               class="w-full pl-6 pr-2 py-1.5 lg:py-2 bg-slate-950 border border-slate-800 rounded-lg focus:outline-none focus:border-emerald-500 text-base lg:text-lg font-bold text-white transition-all text-right shadow-inner">
+                    </div>
                 </div>
-            </div>
 
-            <div class="bg-slate-900 border border-slate-800 rounded-xl p-3.5 shadow-sm">
-                <label class="text-[10px] text-slate-400 font-medium uppercase tracking-wider mb-1.5 block" data-i18n="lbl_rate">名義借貸利率 (Rate)</label>
-                <div class="relative">
-                    <input type="number" id="input-rate" value="5.45" step="0.01" min="0" oninput="updateDashboard()" 
-                           class="w-full pl-2 pr-6 py-2 bg-slate-950 border border-slate-800 rounded-lg focus:outline-none focus:border-emerald-500 text-lg font-bold text-white transition-all text-right shadow-inner">
-                    <span class="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-500 font-bold text-sm">%</span>
+                <div class="bg-slate-900 border border-slate-800 rounded-xl p-3 shadow-sm">
+                    <label class="text-[10px] text-slate-400 font-medium uppercase tracking-wider mb-1 block" data-i18n="lbl_rate">名義借貸利率 (Rate)</label>
+                    <div class="relative">
+                        <input type="number" id="input-rate" value="5.45" step="0.01" min="0" oninput="updateDashboard()" 
+                               class="w-full pl-2 pr-6 py-1.5 lg:py-2 bg-slate-950 border border-slate-800 rounded-lg focus:outline-none focus:border-emerald-500 text-base lg:text-lg font-bold text-white transition-all text-right shadow-inner">
+                        <span class="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-500 font-bold text-sm">%</span>
+                    </div>
                 </div>
-            </div>
 
-            <div class="bg-slate-900 border border-slate-800 rounded-xl p-3.5 shadow-sm">
-                <label class="text-[10px] text-slate-400 font-medium uppercase tracking-wider mb-1.5 block" data-i18n="lbl_tax">邊際稅率 (Tax Rate)</label>
-                <div class="relative">
-                    <input type="number" id="input-mtr" value="40" step="1" min="0" oninput="updateDashboard()" 
-                           class="w-full pl-2 pr-6 py-2 bg-slate-950 border border-slate-800 rounded-lg focus:outline-none focus:border-emerald-500 text-lg font-bold text-white transition-all text-right shadow-inner">
-                    <span class="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-500 font-bold text-sm">%</span>
+                <div class="bg-slate-900 border border-slate-800 rounded-xl p-3 shadow-sm">
+                    <label class="text-[10px] text-slate-400 font-medium uppercase tracking-wider mb-1 block" data-i18n="lbl_tax">邊際稅率 (Tax Rate)</label>
+                    <div class="relative">
+                        <input type="number" id="input-mtr" value="40" step="1" min="0" oninput="updateDashboard()" 
+                               class="w-full pl-2 pr-6 py-1.5 lg:py-2 bg-slate-950 border border-slate-800 rounded-lg focus:outline-none focus:border-emerald-500 text-base lg:text-lg font-bold text-white transition-all text-right shadow-inner">
+                        <span class="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-500 font-bold text-sm">%</span>
+                    </div>
                 </div>
-            </div>
 
-            <div class="bg-slate-900 border border-slate-800 rounded-xl p-3.5 shadow-sm">
-                <label class="text-[10px] text-slate-400 font-medium uppercase tracking-wider mb-1.5 block" data-i18n="lbl_return">假設回報 (Assumed Return)</label>
-                <div class="relative">
-                    <input type="number" id="input-return" value="9" step="0.1" min="0" oninput="updateDashboard()" 
-                           class="w-full pl-2 pr-6 py-2 bg-slate-950 border border-slate-800 rounded-lg focus:outline-none focus:border-blue-500 text-lg font-bold text-blue-400 transition-all text-right shadow-inner">
-                    <span class="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-500 font-bold text-sm">%</span>
+                <div class="bg-slate-900 border border-slate-800 rounded-xl p-3 shadow-sm">
+                    <label class="text-[10px] text-slate-400 font-medium uppercase tracking-wider mb-1 block" data-i18n="lbl_return">假設回報 (Assumed Return)</label>
+                    <div class="relative">
+                        <input type="number" id="input-return" value="9" step="0.1" min="0" oninput="updateDashboard()" 
+                               class="w-full pl-2 pr-6 py-1.5 lg:py-2 bg-slate-950 border border-slate-800 rounded-lg focus:outline-none focus:border-blue-500 text-base lg:text-lg font-bold text-blue-400 transition-all text-right shadow-inner">
+                        <span class="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-500 font-bold text-sm">%</span>
+                    </div>
                 </div>
-            </div>
 
-            <div class="bg-slate-900 border border-slate-800 rounded-xl p-3.5 shadow-sm">
-                <label class="text-[10px] text-slate-400 font-medium uppercase tracking-wider mb-1.5 block" data-i18n="lbl_horizon">規劃年期 (Horizon)</label>
-                <div class="relative">
-                    <input type="number" id="input-years" value="10" step="1" min="1" oninput="updateDashboard()" 
-                           class="w-full pl-2 pr-8 py-2 bg-slate-950 border border-slate-800 rounded-lg focus:outline-none focus:border-indigo-500 text-lg font-bold text-indigo-300 transition-all text-right shadow-inner">
-                    <span class="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-500 font-bold text-sm" data-i18n="unit_year">年</span>
+                <div class="bg-slate-900 border border-slate-800 rounded-xl p-3 shadow-sm sm:col-span-2 lg:col-span-1">
+                    <label class="text-[10px] text-slate-400 font-medium uppercase tracking-wider mb-1 block" data-i18n="lbl_horizon">規劃年期 (Horizon)</label>
+                    <div class="relative">
+                        <input type="number" id="input-years" value="10" step="1" min="1" oninput="updateDashboard()" 
+                               class="w-full pl-2 pr-8 py-1.5 lg:py-2 bg-slate-950 border border-slate-800 rounded-lg focus:outline-none focus:border-indigo-500 text-base lg:text-lg font-bold text-indigo-300 transition-all text-right shadow-inner">
+                        <span class="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-500 font-bold text-sm" data-i18n="unit_year">年</span>
+                    </div>
                 </div>
             </div>
         </aside>
 
-        <!-- 中欄：視覺主圖表與教育模組 (動態填滿剩餘寬度) -->
+        <!-- 中欄：視覺主圖表與教育模組 -->
         <section class="flex-1 flex flex-col gap-4 min-w-0 min-h-0">
             
             <!-- 核心圖表區 -->
-            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl flex-1 flex flex-col min-h-0">
-                <div class="flex justify-between items-start mb-2 shrink-0">
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl flex-1 flex flex-col min-h-[350px] lg:min-h-0">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-3 shrink-0 gap-3">
                     <div>
-                        <h2 class="text-base font-bold text-white flex items-center gap-2">
+                        <h2 class="text-sm sm:text-base font-bold text-white flex items-center gap-2">
                             <i data-lucide="activity" class="w-4 h-4 text-emerald-500"></i> <span data-i18n="chart_title">財富增長軌跡分析 (稅後淨利潤)</span>
                         </h2>
                         <p class="text-[10px] text-slate-500 mt-0.5" data-i18n="chart_subtitle">模擬期間已完全扣除資本增值稅及借貸利息成本</p>
                     </div>
-                    <div class="flex gap-4 bg-slate-950/50 px-3 py-1.5 rounded-lg border border-slate-800/50">
-                        <span class="text-[10px] font-bold text-emerald-400 flex items-center"><i class="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5 shadow-[0_0_5px_rgba(16,185,129,0.8)]"></i><span data-i18n="stratA_legend">策略 A (槓桿投資)</span></span>
-                        <span class="text-[10px] font-bold text-sky-400 flex items-center"><i class="inline-block w-1.5 h-1.5 rounded-full bg-sky-500 mr-1.5 shadow-[0_0_5px_rgba(14,165,233,0.8)]"></i><span data-i18n="stratB_legend">策略 B (等額定投)</span></span>
+                    <div class="flex flex-wrap gap-2 sm:gap-4 bg-slate-950/50 px-3 py-1.5 rounded-lg border border-slate-800/50">
+                        <span class="text-[9px] sm:text-[10px] font-bold text-emerald-400 flex items-center"><i class="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5 shadow-[0_0_5px_rgba(16,185,129,0.8)]"></i><span data-i18n="stratA_legend">策略 A (槓桿投資)</span></span>
+                        <span class="text-[9px] sm:text-[10px] font-bold text-sky-400 flex items-center"><i class="inline-block w-1.5 h-1.5 rounded-full bg-sky-500 mr-1.5 shadow-[0_0_5px_rgba(14,165,233,0.8)]"></i><span data-i18n="stratB_legend">策略 B (等額定投)</span></span>
                     </div>
                 </div>
                 
@@ -183,24 +186,24 @@
                 </div>
             </div>
 
-            <!-- 底部教育模組 (緊湊橫排) -->
-            <div class="grid grid-cols-2 gap-3 shrink-0 h-[120px]">
-                <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-3 shadow-sm flex flex-col justify-center">
+            <!-- 底部教育模組 -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 shrink-0 h-auto lg:h-[120px]">
+                <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-3 sm:p-4 shadow-sm flex flex-col justify-center">
                     <h3 class="font-bold text-white mb-2 text-xs flex items-center gap-1.5">
                         <i data-lucide="zap" class="w-3.5 h-3.5 text-emerald-500"></i> <span data-i18n="adv_title">槓桿策略優勢分析</span>
                     </h3>
-                    <ul class="text-[10px] text-slate-400 space-y-1 list-none leading-tight">
+                    <ul class="text-[10px] text-slate-400 space-y-1.5 lg:space-y-1 list-none leading-tight">
                         <li class="flex gap-1.5"><i data-lucide="check-circle-2" class="w-3 h-3 text-emerald-500/70 shrink-0 mt-0.5"></i> <span><strong class="text-slate-300" data-i18n="adv_1_title">時間價值:</strong> <span data-i18n="adv_1_desc">資金提早全額入市，最大化市場複利效應。</span></span></li>
                         <li class="flex gap-1.5"><i data-lucide="check-circle-2" class="w-3 h-3 text-emerald-500/70 shrink-0 mt-0.5"></i> <span><strong class="text-slate-300" data-i18n="adv_2_title">稅務護盾:</strong> <span data-i18n="adv_2_desc">融資利息全額抵扣個人入息稅，有效降低成本。</span></span></li>
                         <li class="flex gap-1.5"><i data-lucide="check-circle-2" class="w-3 h-3 text-emerald-500/70 shrink-0 mt-0.5"></i> <span><strong class="text-slate-300" data-i18n="adv_3_title">稅務套利:</strong> <span data-i18n="adv_3_desc">成本 100% 抵稅，但最終增值僅需繳 50% 稅率。</span></span></li>
                     </ul>
                 </div>
                 
-                <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-3 shadow-sm flex flex-col justify-center">
+                <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-3 sm:p-4 shadow-sm flex flex-col justify-center">
                     <h3 class="font-bold text-white mb-2 text-xs flex items-center gap-1.5">
                         <i data-lucide="shield-alert" class="w-3.5 h-3.5 text-amber-500"></i> <span data-i18n="risk_title">風險管理與資產保護</span>
                     </h3>
-                    <ul class="text-[10px] text-slate-400 space-y-1 list-none leading-tight">
+                    <ul class="text-[10px] text-slate-400 space-y-1.5 lg:space-y-1 list-none leading-tight">
                         <li class="flex gap-1.5"><i data-lucide="alert-circle" class="w-3 h-3 text-amber-500/70 shrink-0 mt-0.5"></i> <span><strong class="text-slate-300" data-i18n="risk_1_title">利率風險:</strong> <span data-i18n="risk_1_desc">若名義貸款利率大幅飆升，可能侵蝕投資利潤。</span></span></li>
                         <li class="flex gap-1.5"><i data-lucide="alert-circle" class="w-3 h-3 text-amber-500/70 shrink-0 mt-0.5"></i> <span><strong class="text-slate-300" data-i18n="risk_2_title">無強平機制:</strong> <span data-i18n="risk_2_desc">專屬融資結構，避免傳統孖展 (Margin Call) 強制平倉。</span></span></li>
                         <li class="flex gap-1.5"><i data-lucide="alert-circle" class="w-3 h-3 text-amber-500/70 shrink-0 mt-0.5"></i> <span><strong class="text-slate-300" data-i18n="risk_3_title">本金保護:</strong> <span data-i18n="risk_3_desc">可配合保本基金 (Seg Funds)，提供到期及身故保證。</span></span></li>
@@ -209,70 +212,73 @@
             </div>
         </section>
 
-        <!-- 右欄：財務數據總結 (固定寬度，垂直排列) -->
-        <aside class="w-[280px] shrink-0 flex flex-col gap-3 min-h-0">
-            <div class="flex items-center gap-2 mb-1 px-1">
+        <!-- 右欄：財務數據總結 -->
+        <aside class="w-full lg:w-[280px] shrink-0 flex flex-col gap-3 min-h-0 lg:overflow-y-auto custom-scrollbar">
+            <div class="flex items-center gap-2 mb-1 px-1 hidden lg:flex">
                 <i data-lucide="pie-chart" class="w-4 h-4 text-amber-500"></i>
                 <h2 class="font-bold text-slate-300 text-sm tracking-wide" data-i18n="panel_summary">財務總結分析</h2>
             </div>
             
-            <div class="flex flex-col gap-2 p-3 bg-slate-900 border border-slate-800 rounded-2xl relative overflow-hidden shrink-0">
-                <div class="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-rose-500 to-amber-500"></div>
-                <div>
-                    <div class="text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-0.5 flex items-center gap-1">
-                        <i data-lucide="receipt" class="w-3 h-3 text-rose-500"></i> <span data-i18n="summary_interest_title">每年稅後利息支出</span>
+            <!-- 直向模式下變成 2x2 網格，橫向維持單行直排 -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-3 h-full">
+                <div class="flex flex-col gap-2 p-3 sm:p-4 bg-slate-900 border border-slate-800 rounded-2xl relative overflow-hidden shrink-0">
+                    <div class="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-rose-500 to-amber-500"></div>
+                    <div>
+                        <div class="text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-0.5 flex items-center gap-1">
+                            <i data-lucide="receipt" class="w-3 h-3 text-rose-500"></i> <span data-i18n="summary_interest_title">每年稅後利息支出</span>
+                        </div>
+                        <div id="out-annual-interest" class="text-xl sm:text-2xl font-black text-rose-500 leading-none"></div>
+                        <div class="text-[9px] sm:text-[10px] text-slate-500 mt-1.5"><span data-i18n="summary_effective_base">基於有效成本率</span> <span id="out-effective-rate" class="font-bold text-rose-400"></span></div>
                     </div>
-                    <div id="out-annual-interest" class="text-xl font-black text-rose-500 leading-none"></div>
-                    <div class="text-[9px] text-slate-500 mt-1"><span data-i18n="summary_effective_base">基於有效成本率</span> <span id="out-effective-rate" class="font-bold text-rose-400"></span></div>
-                </div>
-                <div class="h-px w-full bg-slate-800 my-0.5"></div>
-                <div>
-                    <div class="text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-0.5 flex items-center gap-1">
-                        <i data-lucide="landmark" class="w-3 h-3 text-amber-500"></i> <span data-i18n="summary_shield_title">累計稅務抵扣效益</span>
+                    <div class="h-px w-full bg-slate-800 my-1 lg:my-0.5"></div>
+                    <div>
+                        <div class="text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-0.5 flex items-center gap-1">
+                            <i data-lucide="landmark" class="w-3 h-3 text-amber-500"></i> <span data-i18n="summary_shield_title">累計稅務抵扣效益</span>
+                        </div>
+                        <div id="out-tax-shield" class="text-lg sm:text-xl font-bold text-amber-400 leading-none"></div>
+                        <div class="text-[9px] sm:text-[10px] text-slate-500 mt-1.5" data-i18n="summary_shield_desc">期內總利息獲政府資助額度</div>
                     </div>
-                    <div id="out-tax-shield" class="text-lg font-bold text-amber-400 leading-none"></div>
-                    <div class="text-[9px] text-slate-500 mt-1" data-i18n="summary_shield_desc">期內總利息獲政府資助額度</div>
                 </div>
-            </div>
 
-            <div class="p-3.5 bg-emerald-950/20 border border-emerald-900/50 rounded-2xl relative overflow-hidden group shrink-0">
-                <div class="text-emerald-500/80 text-[10px] font-bold uppercase tracking-wider mb-0.5" data-i18n="summary_stratA_title">策略 A 最終淨利潤</div>
-                <div class="text-[11px] font-medium text-emerald-400 mb-1" data-i18n="summary_stratA_sub">槓桿單筆投資</div>
-                <div id="out-stratA" class="text-2xl font-black text-emerald-400 drop-shadow-[0_0_10px_rgba(16,185,129,0.3)] leading-none"></div>
-            </div>
-
-            <div class="p-3.5 bg-sky-950/20 border border-sky-900/50 rounded-2xl relative overflow-hidden group shrink-0">
-                <div class="text-sky-500/80 text-[10px] font-bold uppercase tracking-wider mb-0.5" data-i18n="summary_stratB_title">策略 B 最終淨利潤</div>
-                <div class="text-[11px] font-medium text-sky-400 mb-1" data-i18n="summary_stratB_sub">等額現金流定投</div>
-                <div id="out-stratB" class="text-2xl font-black text-sky-400 drop-shadow-[0_0_10px_rgba(14,165,233,0.3)] leading-none"></div>
-            </div>
-
-            <div class="p-4 bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700 rounded-2xl shadow-lg flex-1 flex flex-col justify-between">
-                <div>
-                    <div class="text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-1" data-i18n="summary_gap_title">期末財富增值差距</div>
-                    <div id="out-wealth-gap" class="text-2xl font-black text-white leading-tight mb-2"></div>
+                <div class="p-3.5 sm:p-4 bg-emerald-950/20 border border-emerald-900/50 rounded-2xl relative overflow-hidden group shrink-0">
+                    <div class="text-emerald-500/80 text-[10px] font-bold uppercase tracking-wider mb-0.5" data-i18n="summary_stratA_title">策略 A 最終淨利潤</div>
+                    <div class="text-[11px] sm:text-xs font-medium text-emerald-400 mb-1.5" data-i18n="summary_stratA_sub">槓桿單筆投資</div>
+                    <div id="out-stratA" class="text-2xl sm:text-3xl font-black text-emerald-400 drop-shadow-[0_0_10px_rgba(16,185,129,0.3)] leading-none"></div>
                 </div>
-                <div class="space-y-1.5">
-                    <div class="flex justify-between items-center text-[10px] bg-slate-950/50 px-2 py-1.5 rounded-md">
-                        <span class="text-slate-400" data-i18n="summary_multiplier">利潤放大倍數</span>
-                        <span id="out-multiplier" class="font-bold text-emerald-400"></span>
+
+                <div class="p-3.5 sm:p-4 bg-sky-950/20 border border-sky-900/50 rounded-2xl relative overflow-hidden group shrink-0">
+                    <div class="text-sky-500/80 text-[10px] font-bold uppercase tracking-wider mb-0.5" data-i18n="summary_stratB_title">策略 B 最終淨利潤</div>
+                    <div class="text-[11px] sm:text-xs font-medium text-sky-400 mb-1.5" data-i18n="summary_stratB_sub">等額現金流定投</div>
+                    <div id="out-stratB" class="text-2xl sm:text-3xl font-black text-sky-400 drop-shadow-[0_0_10px_rgba(14,165,233,0.3)] leading-none"></div>
+                </div>
+
+                <div class="p-4 bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700 rounded-2xl shadow-lg flex-1 flex flex-col justify-between sm:col-span-2 lg:col-span-1 min-h-[120px]">
+                    <div>
+                        <div class="text-slate-400 text-[10px] sm:text-xs font-bold uppercase tracking-wider mb-1" data-i18n="summary_gap_title">期末財富增值差距</div>
+                        <div id="out-wealth-gap" class="text-2xl sm:text-3xl font-black text-white leading-tight mb-3"></div>
                     </div>
-                    <div class="flex justify-between items-center text-[10px] bg-slate-950/50 px-2 py-1.5 rounded-md">
-                        <span class="text-slate-400" data-i18n="summary_total_interest">期內總利息開支</span>
-                        <span id="out-total-interest" class="font-bold text-rose-400"></span>
+                    <div class="space-y-1.5">
+                        <div class="flex justify-between items-center text-[10px] sm:text-xs bg-slate-950/50 px-3 py-1.5 rounded-md">
+                            <span class="text-slate-400" data-i18n="summary_multiplier">利潤放大倍數</span>
+                            <span id="out-multiplier" class="font-bold text-emerald-400"></span>
+                        </div>
+                        <div class="flex justify-between items-center text-[10px] sm:text-xs bg-slate-950/50 px-3 py-1.5 rounded-md">
+                            <span class="text-slate-400" data-i18n="summary_total_interest">期內總利息開支</span>
+                            <span id="out-total-interest" class="font-bold text-rose-400"></span>
+                        </div>
                     </div>
                 </div>
             </div>
         </aside>
     </main>
 
-    <!-- 底部：LLQP 監管合規披露 (高度固定，內部滾動) -->
-    <footer class="h-16 border-t border-slate-800 shrink-0 px-6 py-2 flex flex-col bg-slate-950">
-        <div class="flex items-center gap-1.5 mb-1 shrink-0">
+    <!-- 底部：LLQP 監管合規披露 -->
+    <footer class="h-auto lg:h-16 border-t border-slate-800 shrink-0 px-4 sm:px-6 py-4 lg:py-2 flex flex-col bg-slate-950">
+        <div class="flex items-center gap-1.5 mb-2 lg:mb-1 shrink-0">
             <i data-lucide="scale" class="w-3.5 h-3.5 text-slate-500"></i>
             <h4 class="font-bold text-slate-400 text-[10px]" data-i18n="footer_title">法定合規與風險披露聲明 (Legal & Regulatory Disclaimers)</h4>
         </div>
-        <div class="flex-1 overflow-y-auto custom-scrollbar pr-2 text-slate-500 text-[9px] leading-relaxed text-justify space-y-1">
+        <div class="flex-1 overflow-y-visible lg:overflow-y-auto custom-scrollbar lg:pr-2 text-slate-500 text-[9px] sm:text-[10px] leading-relaxed text-justify space-y-2 lg:space-y-1 pb-4 lg:pb-0">
             <p data-i18n="disc_1"><strong>1. 僅供教育與概念演示 (Educational Purposes Only)：</strong>本系統生成之數據及分析均為假設性推演，僅供教育及概念探討用途，並不構成任何保險、投資、稅務或法律建議。</p>
             <p data-i18n="disc_2"><strong>2. 無回報保證 (No Guarantees)：</strong>系統所用之「假設回報」不代表實際投資回報。金融市場具波動性，過往表現不預示未來結果。</p>
             <p data-i18n="disc_3"><strong>3. 借貸投資風險 (Leverage Risk)：</strong>借貸投資涉及極高風險。無論投資價值如何，投資者仍有責任償還本金及利息。利息增加或投資下跌會大幅擴大虧損。</p>
