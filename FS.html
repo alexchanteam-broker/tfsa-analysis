@@ -16,12 +16,12 @@
         body {
             font-family: 'Noto Sans TC', sans-serif;
             -webkit-print-color-adjust: exact;
-            font-size: 16px; /* 增加基礎字體大小 */
+            font-size: 16px; /* 基礎字體大小 */
         }
 
         /* 平板及電腦屏幕優化 */
         .touch-target { min-height: 56px; } /* 增大按鈕高度 */
-        input { font-size: 1.1rem !important; } /* 增大輸入文字 */
+        input { font-size: 1.15rem !important; } /* 增大輸入文字 */
         
         input[type="number"]::-webkit-inner-spin-button,
         input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
@@ -68,7 +68,7 @@
             /* 專業表格線條 */
             .item-row { 
                 border-bottom: 0.5pt solid #eee !important; 
-                padding: 6px 0 !important;
+                padding: 8px 0 !important;
                 display: flex !important;
                 align-items: center !important;
             }
@@ -126,14 +126,15 @@
             <header class="p-10 border-b-8 border-yellow-600 bg-white">
                 <div class="flex flex-col md:flex-row justify-between items-start gap-10">
                     <div class="flex items-center gap-8">
-                        <div class="w-32 h-32 bg-white rounded-full flex items-center justify-center p-1 border-4 border-yellow-500 shadow-xl overflow-hidden">
-                            <img src="logo.png" alt="Alex Chan Logo" class="w-full h-full object-contain" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                        <!-- Logo Container: Optimized to fit circle -->
+                        <div class="w-36 h-36 bg-white rounded-full flex items-center justify-center border-4 border-yellow-500 shadow-xl overflow-hidden">
+                            <img src="logo.png" alt="Alex Chan Logo" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
                             <div class="hidden text-blue-950 font-black text-center text-sm">ALEX<br>CHAN</div>
                         </div>
                         <div class="space-y-1">
-                            <h1 class="text-4xl font-black tracking-tighter text-blue-950 uppercase italic leading-none">Alex Chan</h1>
-                            <p class="text-xs uppercase tracking-[0.4em] font-bold text-yellow-600">Individual Insurance Broker</p>
-                            <div class="mt-4 space-y-1 text-xs font-bold text-slate-500 no-print">
+                            <h1 class="text-5xl font-black tracking-tighter text-blue-950 uppercase italic leading-none">Alex Chan</h1>
+                            <p class="text-sm uppercase tracking-[0.4em] font-bold text-yellow-600">Individual Insurance Broker</p>
+                            <div class="mt-5 space-y-1.5 text-sm font-bold text-slate-500 no-print">
                                 <div class="flex items-center gap-2"><span>📞</span> 778-319-8129</div>
                                 <div class="flex items-center gap-2"><span>✉️</span> alexchanteam@gmail.com</div>
                                 <div class="flex items-center gap-2">
@@ -148,14 +149,14 @@
                         <p id="main-subtitle" class="text-yellow-600 font-bold tracking-widest text-sm uppercase mt-1">財務需求分析與資產匯總</p>
                         
                         <!-- 專業摘要框 -->
-                        <div class="mt-6 inline-block bg-slate-50 p-5 border-2 border-blue-950 rounded-2xl text-left min-w-[280px] summary-box">
+                        <div class="mt-6 inline-block bg-slate-50 p-6 border-2 border-blue-950 rounded-2xl text-left min-w-[300px] summary-box">
                             <div class="flex justify-between gap-6 items-end">
                                 <span id="summary-nw-label" class="text-xs font-black text-slate-400 uppercase tracking-widest">淨資產總額</span>
-                                <span id="summary-nw-val" class="text-2xl font-black text-blue-900 leading-none">$0</span>
+                                <span id="summary-nw-val" class="text-3xl font-black text-blue-900 leading-none">$0</span>
                             </div>
-                            <div class="flex justify-between gap-6 items-end mt-3 pt-3 border-t border-slate-200">
+                            <div class="flex justify-between gap-6 items-end mt-4 pt-4 border-t border-slate-200">
                                 <span id="summary-cf-label" class="text-xs font-black text-slate-400 uppercase tracking-widest">每月盈餘</span>
-                                <span id="summary-cf-val" class="text-2xl font-black text-emerald-700 leading-none">$0</span>
+                                <span id="summary-cf-val" class="text-3xl font-black text-emerald-700 leading-none">$0</span>
                             </div>
                         </div>
                     </div>
@@ -242,10 +243,10 @@
             <!-- Footer -->
             <footer class="bg-slate-900 text-white p-12 text-center print:bg-white print:text-slate-400 print:border-t-2 print:border-slate-100">
                 <div class="mb-4">
-                    <h3 class="text-2xl font-black italic tracking-tighter print:text-slate-800">Alex Chan</h3>
-                    <p class="text-xs text-yellow-500 font-black uppercase tracking-[0.4em] print:text-slate-400">Individual Insurance & Financial Advisor</p>
+                    <h3 class="text-3xl font-black italic tracking-tighter print:text-slate-800">Alex Chan</h3>
+                    <p class="text-sm text-yellow-500 font-black uppercase tracking-[0.4em] print:text-slate-400">Individual Insurance & Financial Advisor</p>
                 </div>
-                <div class="text-[10px] text-slate-500 font-bold uppercase tracking-[0.2em] pt-6 mt-6 border-t border-slate-800 flex justify-center gap-8 print:border-slate-100">
+                <div class="text-xs text-slate-500 font-bold uppercase tracking-[0.2em] pt-6 mt-6 border-t border-slate-800 flex justify-center gap-8 print:border-slate-100">
                     <span>© 2026 Alex Chan</span>
                     <span>Confidential Advisory Document</span>
                     <a href="https://www.facebook.com/share/17Rcb3NiFe/?mibextid=wwXIfr" target="_blank" rel="noreferrer" class="no-print hover:text-yellow-500 underline underline-offset-4 decoration-slate-700">Facebook 專頁</a>
@@ -369,7 +370,7 @@
             document.getElementById('summary-nw-val').innerText = format(nw);
             const cfEl = document.getElementById('summary-cf-val');
             cfEl.innerText = format(cf);
-            cfEl.className = `text-2xl font-black ${cf >= 0 ? 'text-emerald-700' : 'text-rose-600'}`;
+            cfEl.className = `text-3xl font-black ${cf >= 0 ? 'text-emerald-700' : 'text-rose-600'}`;
         }
 
         function render() {
