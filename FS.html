@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alex Chan | 個人財務狀況表</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            -webkit-print-color-adjust: exact;
+        }
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white !important; padding: 0 !important; }
+            .container-box { max-width: 100% !important; margin: 0 !important; box-shadow: none !important; border: none !important; }
+            input { border-bottom: 1px solid #f1f5f9 !important; }
+            @page { margin: 1cm; size: A4; }
+        }
+        /* 平板觸控優化 */
+        .touch-target { min-height: 48px; }
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+        .item-row:hover .delete-btn { opacity: 1; }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-900 min-h-screen p-4 md:p-8">
+
+    <div id="app" class="max-w-5xl mx-auto">
+        <!-- 工具欄 -->
+        <div class="mb-6 flex flex-wrap gap-4 justify-between items-center no-print">
+            <div class="flex gap-2">
+                <button onclick="toggleLang()" class="touch-target flex items-center gap-2 px-6 py-2 bg-white border border-slate-200 rounded-xl shadow-sm hover:shadow-md transition-all font-bold text-blue-950">
+                    <span id="btn-lang-text">Switch to English</span>
+                </button>
+            </div>
+            <button onclick="window.print()" class="touch-target flex items-center gap-2 px-8 py-2 bg-blue-950 text-yellow-500 rounded-xl shadow-lg hover:bg-blue-900 transition-all font-black uppercase tracking-widest">
+                <span id="btn-print-text">打印 PDF 報告</span>
+            </button>
+        </div>
+
+        <!-- 報告容器 -->
+        <div class="container-box bg-white shadow-2xl overflow-hidden border-t-8 border-blue-950">
+            
+            <!-- Header -->
+            <header class="p-8 border-b-8 border-yellow-600 bg-white">
+                <div class="flex flex-col md:flex-row justify-between items-center gap-10">
+                    <div class="flex items-center gap-8">
+                        <div class="w-32 h-32 bg-white rounded-full flex items-center justify-center p-1 border-4 border-yellow-500 shadow-xl overflow-hidden">
+                            <img src="logo.png" alt="Alex Chan Logo" class="w-full h-full object-contain scale-110" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                            <div class="hidden text-blue-950 font-black text-center text-xs">ALEX<br>CHAN</div>
+                        </div>
+                        <div class="space-y-2">
+                            <h1 class="text-4xl font-black tracking-tighter text-blue-950 uppercase italic">Alex Chan</h1>
+                            <p class="text-xs uppercase tracking-[0.4em] font-bold text-yellow-600">Individual Insurance Broker</p>
+                            <div class="mt-4 space-y-1 text-xs font-bold text-slate-600 no-print">
+                                <div>📞 778-319-8129</div>
+                                <div>✉️ alexchanteam@gmail.com</div>
+                                <div>🌐 fb.com/alexchanteam</div>
+                            </div>
+                            <div class="hidden print:block text-[11px] font-bold text-slate-500 pt-2 border-t border-slate-100">
+                                778-319-8129 | alexchanteam@gmail.com
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center md:text-right">
+                        <h2 id="main-title" class="text-4xl font-black uppercase text-blue-950 tracking-tighter">個人財務狀況表</h2>
+                        <p id="main-subtitle" class="text-yellow-600 font-black tracking-widest text-sm uppercase mt-1">財務需求分析與資產匯總</p>
+                    </div>
+                </div>
+            </header>
+
+            <!-- 客戶資料 -->
+            <div class="px-10 py-8 bg-slate-50 flex flex-col md:flex-row gap-12 border-b border-slate-100">
+                <div class="flex-1 space-y-1">
+                    <label id="label-name" class="text-[10px] font-black text-slate-400 uppercase tracking-widest">客戶姓名</label>
+                    <input type="text" id="client-name" placeholder="Name of Applicant" class="w-full bg-transparent border-b-2 border-slate-200 focus:border-blue-950 outline-none py-1 text-2xl font-black transition-all">
+                </div>
+                <div class="flex-1 space-y-1">
+                    <label id="label-date" class="text-[10px] font-black text-slate-400 uppercase tracking-widest">報告日期</label>
+                    <input type="date" id="report-date" class="w-full bg-transparent border-b-2 border-slate-200 focus:border-blue-950 outline-none py-1 text-2xl font-black transition-all">
+                </div>
+            </div>
+
+            <!-- 內容區 -->
+            <div class="p-10 grid grid-cols-1 lg:grid-cols-2 gap-16">
+                
+                <!-- 左側：資產與收入 -->
+                <div class="space-y-12">
+                    <section>
+                        <div class="flex items-center gap-3 border-b-4 border-blue-950 pb-2 mb-6">
+                            <h3 id="section-assets" class="text-2xl font-black text-blue-950 uppercase">資產項目 (ASSETS)</h3>
+                        </div>
+                        <div id="assets-container" class="space-y-8"></div>
+                        <div class="mt-8 p-5 bg-blue-950 text-white rounded-2xl flex justify-between items-center shadow-lg">
+                            <span id="total-assets-label" class="font-black uppercase text-xs tracking-widest">總計 資產項目</span>
+                            <span id="total-assets-value" class="text-2xl font-black text-yellow-500">$0</span>
+                        </div>
+                    </section>
+
+                    <section>
+                        <div class="flex items-center gap-3 border-b-4 border-emerald-800 pb-2 mb-6">
+                            <h3 id="section-inflow" class="text-2xl font-black text-emerald-800 uppercase">每月收入 (INFLOW)</h3>
+                        </div>
+                        <div id="inflow-container" class="space-y-4"></div>
+                        <div class="mt-8 p-5 bg-slate-100 text-slate-900 rounded-2xl flex justify-between items-center shadow-lg">
+                            <span id="total-inflow-label" class="font-black uppercase text-xs tracking-widest">總計 每月收入</span>
+                            <span id="total-inflow-value" class="text-2xl font-black">$0</span>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- 右側：負債與支出 -->
+                <div class="space-y-12">
+                    <section>
+                        <div class="flex items-center gap-3 border-b-4 border-rose-900 pb-2 mb-6">
+                            <h3 id="section-liabilities" class="text-2xl font-black text-rose-900 uppercase">負債項目 (LIABILITIES)</h3>
+                        </div>
+                        <div id="liabilities-container" class="space-y-8"></div>
+                        <div class="mt-8 p-5 bg-rose-900 text-white rounded-2xl flex justify-between items-center shadow-lg">
+                            <span id="total-liabilities-label" class="font-black uppercase text-xs tracking-widest">總計 負債項目</span>
+                            <span id="total-liabilities-value" class="text-2xl font-black text-yellow-500">$0</span>
+                        </div>
+                    </section>
+
+                    <section>
+                        <div class="flex items-center gap-3 border-b-4 border-orange-700 pb-2 mb-6">
+                            <h3 id="section-outflow" class="text-2xl font-black text-orange-700 uppercase">每月支出 (OUTFLOW)</h3>
+                        </div>
+                        <div id="outflow-container" class="space-y-4"></div>
+                        <div class="mt-8 p-5 bg-slate-100 text-slate-900 rounded-2xl flex justify-between items-center shadow-lg">
+                            <span id="total-outflow-label" class="font-black uppercase text-xs tracking-widest">總計 每月支出</span>
+                            <span id="total-outflow-value" class="text-2xl font-black">$0</span>
+                        </div>
+                    </section>
+
+                    <!-- 總結板塊 -->
+                    <div class="bg-blue-950 p-8 rounded-3xl border-b-8 border-yellow-600 shadow-2xl text-white">
+                        <div class="space-y-8">
+                            <div class="flex justify-between items-end border-b border-blue-800 pb-5">
+                                <div>
+                                    <h4 id="label-nw" class="text-xl font-black text-yellow-500 uppercase">個人淨資產總額</h4>
+                                    <p class="text-[10px] text-blue-300 font-bold uppercase opacity-60">Assets - Liabilities</p>
+                                </div>
+                                <span id="val-nw" class="text-5xl font-black">$0</span>
+                            </div>
+                            <div class="flex justify-between items-end">
+                                <div>
+                                    <h4 id="label-cf" class="text-xl font-black text-yellow-500 uppercase">每月盈餘/赤字</h4>
+                                    <p class="text-[10px] text-blue-300 font-bold uppercase opacity-60">Inflow - Outflow</p>
+                                </div>
+                                <span id="val-cf" class="text-5xl font-black">$0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 合規聲明 -->
+            <div class="px-10 py-8 bg-slate-50 border-t border-slate-100">
+                <div class="flex items-start gap-4 p-6 bg-white border border-slate-200 rounded-2xl shadow-sm">
+                    <span class="text-blue-900 text-3xl">🛡️</span>
+                    <div>
+                        <h5 id="disc-title" class="text-sm font-black text-blue-950 uppercase mb-1">專業聲明與合規備註</h5>
+                        <p id="disc-text" class="text-[11px] text-slate-500 leading-relaxed font-medium"></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <footer class="bg-slate-900 text-white p-10 text-center">
+                <h3 class="text-2xl font-black italic mb-2">Alex Chan</h3>
+                <p class="text-xs text-yellow-500 font-black uppercase tracking-[0.3em]">Individual Insurance & Financial Advisor</p>
+                <p class="text-[10px] text-slate-500 font-bold uppercase tracking-[0.2em] pt-6 mt-6 border-t border-slate-800">
+                    © 2026 Alex Chan | 個人品牌授權 • 資料僅供諮詢規劃之用
+                </p>
+            </footer>
+        </div>
+    </div>
+
+    <script>
+        let currentLang = 'zh';
+        const t = {
+            zh: {
+                title: '個人財務狀況表', subtitle: '財務需求分析與資產匯總',
+                name: '客戶姓名', date: '報告日期',
+                assets: '資產項目 (ASSETS)', liabilities: '負債項目 (LIABILITIES)',
+                inflow: '每月收入 (INFLOW)', outflow: '每月支出 (OUTFLOW)',
+                nw: '個人淨資產總額', cf: '每月盈餘/赤字',
+                print: '打印 PDF 報告', add: '增加', total: '總計',
+                discTitle: '專業聲明與合規備註',
+                discText: '本財務狀況表僅供理財分析與保險規劃參考之用。表中數據由客戶提供，未經獨立審計。此文件並非官方銀行對賬單或合約證明。所有資訊將根據加拿大隱私法例嚴格保密。',
+                cat: { cash: '現金及等值物', invest: '投資項目', re: '房地產', loans: '貸款及債務', income: '收入細項', expense: '支出細項' }
+            },
+            en: {
+                title: 'Personal Financial Statement', subtitle: 'Financial Needs Analysis Summary',
+                name: 'Client Name', date: 'As of Date',
+                assets: 'ASSETS', liabilities: 'LIABILITIES',
+                inflow: 'MONTHLY INFLOW', outflow: 'MONTHLY OUTFLOW',
+                nw: 'Total Net Worth', cf: 'Monthly Surplus/Deficit',
+                print: 'Print PDF Report', add: 'Add', total: 'Total',
+                discTitle: 'Professional Disclosures',
+                discText: 'This statement is for financial planning and insurance analysis purposes only. Data is provided by the client and has not been independently audited. This is not an official bank statement or legal contract. All information is kept confidential per Canadian privacy laws.',
+                cat: { cash: 'Cash & Equivalents', invest: 'Investments', re: 'Real Estate', loans: 'Loans & Debt', income: 'Inflow Details', expense: 'Expense Details' }
+            }
+        };
+
+        // 已將 Nick 和 Peggy 的名稱替換為通用項目名稱
+        let data = {
+            cash: [
+                { id: 1, zh: '支票戶口', en: 'Chequing', val: 0 },
+                { id: 2, zh: '儲蓄戶口 #1', en: 'Savings #1', val: 0 },
+                { id: 3, zh: '儲蓄戶口 #2', en: 'Savings #2', val: 0 },
+                { id: 4, zh: '美金儲蓄戶口', en: 'USD Savings', val: 0 }
+            ],
+            invest: [
+                { id: 5, zh: 'TFSA (主申請人)', en: 'TFSA (Applicant)', val: 0 },
+                { id: 6, zh: '非註冊投資 (主申請人)', en: 'Non-Reg (Applicant)', val: 0 },
+                { id: 7, zh: '團體 RRSP (配偶)', en: 'Group RRSP (Spouse)', val: 0 },
+                { id: 8, zh: 'TFSA (配偶)', en: 'TFSA (Spouse)', val: 0 },
+                { id: 9, zh: '共同非註冊投資', en: 'Non-Reg (Joint)', val: 0 }
+            ],
+            re: [
+                { id: 10, zh: '自住物業', en: 'Primary Residence', val: 0 },
+                { id: 11, zh: '投資收租物業', en: 'Rental Property', val: 0 }
+            ],
+            loans: [
+                { id: 12, zh: '按揭貸款', en: 'Mortgage Loans', val: 0 },
+                { id: 13, zh: '汽車貸款', en: 'Auto Loans', val: 0 },
+                { id: 14, zh: '信用卡欠款', en: 'Credit Card Debt', val: 0 },
+                { id: 15, zh: '學生貸款', en: 'Student Loans', val: 0 },
+                { id: 16, zh: '其他貸款', en: 'Other Loans', val: 0 }
+            ],
+            inflow: [
+                { id: 17, zh: '薪資收入 (主申請人)', en: 'Salary (Applicant)', val: 0 },
+                { id: 18, zh: '薪資收入 (配偶)', en: 'Salary (Spouse)', val: 0 },
+                { id: 19, zh: '租金收入', en: 'Rental Income', val: 0 },
+                { id: 20, zh: '投資收益', en: 'Investment Income', val: 0 },
+                { id: 21, zh: '其他收入', en: 'Other Income', val: 0 }
+            ],
+            outflow: [
+                { id: 22, zh: '租金/按揭還款', en: 'Rent/Mortgage', val: 0 },
+                { id: 23, zh: '汽車貸款及保險', en: 'Car Loan & Ins', val: 0 },
+                { id: 24, zh: '日常開支及餐飲', en: 'Groceries/Food', val: 0 },
+                { id: 25, zh: '娛樂支出', en: 'Entertainment', val: 0 },
+                { id: 26, zh: '保險保費支出', en: 'Insurance Premiums', val: 0 },
+                { id: 27, zh: '其他固定支出', en: 'Other Expenses', val: 0 }
+            ]
+        };
+
+        function init() {
+            document.getElementById('report-date').value = new Date().toISOString().split('T')[0];
+            render();
+        }
+
+        function toggleLang() {
+            currentLang = currentLang === 'zh' ? 'en' : 'zh';
+            render();
+        }
+
+        function updateVal(cat, id, val) {
+            const item = data[cat].find(i => i.id === id);
+            if (item) item.val = parseFloat(val) || 0;
+            updateTotals();
+        }
+
+        function updateLabel(cat, id, label) {
+            const item = data[cat].find(i => i.id === id);
+            if (item) item[currentLang] = label;
+        }
+
+        function addItem(cat) {
+            data[cat].push({ id: Date.now(), zh: '新項目', en: 'New Item', val: 0 });
+            render();
+        }
+
+        function removeItem(cat, id) {
+            data[cat] = data[cat].filter(i => i.id !== id);
+            render();
+        }
+
+        function updateTotals() {
+            const sum = (arr) => arr.reduce((a, b) => a + b.val, 0);
+            const tAssets = sum(data.cash) + sum(data.invest) + sum(data.re);
+            const tLiabs = sum(data.loans);
+            const tIn = sum(data.inflow);
+            const tOut = sum(data.outflow);
+
+            document.getElementById('total-assets-value').innerText = '$' + tAssets.toLocaleString();
+            document.getElementById('total-liabilities-value').innerText = '$' + tLiabs.toLocaleString();
+            document.getElementById('total-inflow-value').innerText = '$' + tIn.toLocaleString();
+            document.getElementById('total-outflow-value').innerText = '$' + tOut.toLocaleString();
+            
+            const nw = tAssets - tLiabs;
+            const cf = tIn - tOut;
+            document.getElementById('val-nw').innerText = '$' + nw.toLocaleString();
+            const cfEl = document.getElementById('val-cf');
+            cfEl.innerText = '$' + cf.toLocaleString();
+            cfEl.className = `text-5xl font-black ${cf >= 0 ? 'text-emerald-500' : 'text-rose-500'}`;
+        }
+
+        function render() {
+            const cur = t[currentLang];
+            document.getElementById('btn-lang-text').innerText = currentLang === 'zh' ? 'Switch to English' : '切換為繁體中文';
+            document.getElementById('btn-print-text').innerText = cur.print;
+            document.getElementById('main-title').innerText = cur.title;
+            document.getElementById('main-subtitle').innerText = cur.subtitle;
+            document.getElementById('label-name').innerText = cur.name;
+            document.getElementById('label-date').innerText = cur.date;
+            document.getElementById('section-assets').innerText = cur.assets;
+            document.getElementById('section-liabilities').innerText = cur.liabilities;
+            document.getElementById('section-inflow').innerText = cur.inflow;
+            document.getElementById('section-outflow').innerText = cur.outflow;
+            document.getElementById('total-assets-label').innerText = cur.total + ' ' + cur.assets;
+            document.getElementById('total-liabilities-label').innerText = cur.total + ' ' + cur.liabilities;
+            document.getElementById('total-inflow-label').innerText = cur.total + ' ' + cur.inflow;
+            document.getElementById('total-outflow-label').innerText = cur.total + ' ' + cur.outflow;
+            document.getElementById('label-nw').innerText = cur.nw;
+            document.getElementById('label-cf').innerText = cur.cf;
+            document.getElementById('disc-title').innerText = cur.discTitle;
+            document.getElementById('disc-text').innerText = cur.discText;
+
+            renderBlock('assets-container', [
+                { title: cur.cat.cash, items: data.cash, cat: 'cash' },
+                { title: cur.cat.invest, items: data.invest, cat: 'invest' },
+                { title: cur.cat.re, items: data.re, cat: 're' }
+            ]);
+            renderBlock('liabilities-container', [{ title: cur.cat.loans, items: data.loans, cat: 'loans' }]);
+            renderBlock('inflow-container', [{ title: cur.cat.income, items: data.inflow, cat: 'inflow' }]);
+            renderBlock('outflow-container', [{ title: cur.cat.expense, items: data.outflow, cat: 'outflow' }]);
+            updateTotals();
+        }
+
+        function renderBlock(containerId, sections) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+            sections.forEach(sec => {
+                const secDiv = document.createElement('div');
+                if (sec.title) {
+                    secDiv.innerHTML = `<h4 class="text-[10px] font-black text-slate-400 mb-3 uppercase tracking-[0.2em] flex items-center gap-2"><span class="w-1.5 h-1.5 bg-yellow-500 rounded-full"></span>${sec.title}</h4>`;
+                }
+                const listDiv = document.createElement('div');
+                listDiv.className = 'space-y-4';
+                sec.items.forEach(item => {
+                    const row = document.createElement('div');
+                    row.className = 'item-row group flex items-center gap-4';
+                    row.innerHTML = `
+                        <input type="text" value="${item[currentLang]}" onchange="updateLabel('${sec.cat}', ${item.id}, this.value)" class="flex-1 bg-transparent border-b border-slate-100 text-sm font-bold focus:border-blue-950 outline-none py-1 transition-all">
+                        <div class="flex items-center gap-1 w-32 border-b-2 border-slate-100 group-hover:border-yellow-500 transition-all">
+                            <span class="text-slate-300 font-bold">$</span>
+                            <input type="number" value="${item.val || ''}" placeholder="0" oninput="updateVal('${sec.cat}', ${item.id}, this.value)" class="w-full bg-transparent text-right text-sm font-black text-blue-950 outline-none py-1">
+                        </div>
+                        <button onclick="removeItem('${sec.cat}', ${item.id})" class="no-print delete-btn opacity-0 text-slate-300 hover:text-rose-500 transition-all">✕</button>
+                    `;
+                    listDiv.appendChild(row);
+                });
+                const addBtn = document.createElement('button');
+                addBtn.className = 'no-print flex items-center gap-2 text-[10px] font-black text-blue-950/30 hover:text-blue-950 uppercase tracking-widest mt-4 transition-all';
+                addBtn.innerHTML = `<span>＋</span> ${t[currentLang].add}`;
+                addBtn.onclick = () => addItem(sec.cat);
+                listDiv.appendChild(addBtn);
+                secDiv.appendChild(listDiv);
+                container.appendChild(secDiv);
+            });
+        }
+
+        window.onload = init;
+    </script>
+</body>
+</html>
