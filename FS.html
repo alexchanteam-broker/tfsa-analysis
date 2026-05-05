@@ -13,18 +13,44 @@
             font-family: 'Noto Sans TC', sans-serif;
             -webkit-print-color-adjust: exact;
         }
-        @media print {
-            .no-print { display: none !important; }
-            body { background: white !important; padding: 0 !important; }
-            .container-box { max-width: 100% !important; margin: 0 !important; box-shadow: none !important; border: none !important; }
-            input { border-bottom: 1px solid #f1f5f9 !important; }
-            @page { margin: 1cm; size: A4; }
-        }
+
         /* 平板觸控優化 */
         .touch-target { min-height: 48px; }
         input[type="number"]::-webkit-inner-spin-button,
         input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
         .item-row:hover .delete-btn { opacity: 1; }
+
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white !important; padding: 0 !important; font-size: 10pt; }
+            .container-box { 
+                max-width: 100% !important; 
+                margin: 0 !important; 
+                box-shadow: none !important; 
+                border: none !important; 
+                width: 100% !important;
+            }
+            header { border-bottom: 2px solid #101e3d !important; padding: 20px !important; }
+            input { 
+                border: none !important; 
+                background: transparent !important; 
+                padding: 0 !important;
+                font-weight: bold !important;
+            }
+            .section-card { break-inside: avoid; margin-bottom: 20px; }
+            .summary-card { 
+                background-color: #f8fafc !important; 
+                border: 1px solid #e2e8f0 !important; 
+                -webkit-print-color-adjust: exact;
+            }
+            .bg-blue-950 { background-color: #101e3d !important; color: white !important; -webkit-print-color-adjust: exact; }
+            .text-yellow-500 { color: #ca8a04 !important; -webkit-print-color-adjust: exact; }
+            .border-yellow-600 { border-color: #ca8a04 !important; -webkit-print-color-adjust: exact; }
+            @page { margin: 1.5cm; size: A4; }
+            
+            /* 模擬銀行月結單的橫線 */
+            .item-row { border-bottom: 0.5pt dashed #cbd5e1 !important; padding-bottom: 2px !important; }
+        }
     </style>
 </head>
 <body class="bg-slate-100 text-slate-900 min-h-screen p-4 md:p-8">
@@ -43,139 +69,140 @@
         </div>
 
         <!-- 報告容器 -->
-        <div class="container-box bg-white shadow-2xl overflow-hidden border-t-8 border-blue-950">
+        <div class="container-box bg-white shadow-2xl overflow-hidden border-t-8 border-blue-950 flex flex-col">
             
             <!-- Header -->
             <header class="p-8 border-b-8 border-yellow-600 bg-white">
-                <div class="flex flex-col md:flex-row justify-between items-center gap-10">
-                    <div class="flex items-center gap-8">
-                        <div class="w-32 h-32 bg-white rounded-full flex items-center justify-center p-1 border-4 border-yellow-500 shadow-xl overflow-hidden">
-                            <img src="logo.png" alt="Alex Chan Logo" class="w-full h-full object-contain scale-110" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                <div class="flex flex-col md:flex-row justify-between items-start gap-10">
+                    <div class="flex items-center gap-6">
+                        <div class="w-28 h-28 bg-white rounded-full flex items-center justify-center p-1 border-2 border-slate-100 shadow-sm overflow-hidden">
+                            <img src="logo.png" alt="Alex Chan Logo" class="w-full h-full object-contain" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
                             <div class="hidden text-blue-950 font-black text-center text-xs">ALEX<br>CHAN</div>
                         </div>
-                        <div class="space-y-2">
-                            <h1 class="text-4xl font-black tracking-tighter text-blue-950 uppercase italic">Alex Chan</h1>
-                            <p class="text-xs uppercase tracking-[0.4em] font-bold text-yellow-600">Individual Insurance Broker</p>
-                            <div class="mt-4 space-y-1 text-xs font-bold text-slate-600 no-print">
+                        <div class="space-y-1">
+                            <h1 class="text-3xl font-black tracking-tighter text-blue-950 uppercase italic leading-none">Alex Chan</h1>
+                            <p class="text-[10px] uppercase tracking-[0.3em] font-bold text-yellow-600">Individual Insurance Broker</p>
+                            <div class="mt-3 space-y-0.5 text-[10px] font-bold text-slate-500">
                                 <div>📞 778-319-8129</div>
                                 <div>✉️ alexchanteam@gmail.com</div>
                                 <div>🌐 fb.com/alexchanteam</div>
                             </div>
-                            <div class="hidden print:block text-[11px] font-bold text-slate-500 pt-2 border-t border-slate-100">
-                                778-319-8129 | alexchanteam@gmail.com
-                            </div>
                         </div>
                     </div>
                     <div class="text-center md:text-right">
-                        <h2 id="main-title" class="text-4xl font-black uppercase text-blue-950 tracking-tighter">個人財務狀況表</h2>
-                        <p id="main-subtitle" class="text-yellow-600 font-black tracking-widest text-sm uppercase mt-1">財務需求分析與資產匯總</p>
+                        <h2 id="main-title" class="text-3xl font-black uppercase text-blue-950 tracking-tighter">個人財務狀況表</h2>
+                        <p id="main-subtitle" class="text-yellow-600 font-bold tracking-widest text-xs uppercase mt-1">財務需求分析與資產匯總</p>
+                        <div class="mt-4 inline-block bg-slate-50 p-3 border border-slate-200 rounded-lg text-left text-xs min-w-[200px] summary-card">
+                            <div class="flex justify-between gap-4 font-bold"><span id="summary-nw-label">淨資產:</span> <span id="summary-nw-val" class="text-blue-900">$0</span></div>
+                            <div class="flex justify-between gap-4 font-bold mt-1"><span id="summary-cf-label">月盈餘:</span> <span id="summary-cf-val" class="text-emerald-700">$0</span></div>
+                        </div>
                     </div>
                 </div>
             </header>
 
             <!-- 客戶資料 -->
-            <div class="px-10 py-8 bg-slate-50 flex flex-col md:flex-row gap-12 border-b border-slate-100">
+            <div class="px-10 py-6 bg-slate-50 flex flex-col md:flex-row gap-10 border-b border-slate-100">
                 <div class="flex-1 space-y-1">
-                    <label id="label-name" class="text-[10px] font-black text-slate-400 uppercase tracking-widest">客戶姓名</label>
-                    <input type="text" id="client-name" placeholder="Name of Applicant" class="w-full bg-transparent border-b-2 border-slate-200 focus:border-blue-950 outline-none py-1 text-2xl font-black transition-all">
+                    <label id="label-name" class="text-[9px] font-black text-slate-400 uppercase tracking-widest">客戶姓名</label>
+                    <input type="text" id="client-name" placeholder="Name of Applicant" class="w-full bg-transparent border-b border-slate-200 focus:border-blue-950 outline-none py-1 text-xl font-black transition-all">
                 </div>
                 <div class="flex-1 space-y-1">
-                    <label id="label-date" class="text-[10px] font-black text-slate-400 uppercase tracking-widest">報告日期</label>
-                    <input type="date" id="report-date" class="w-full bg-transparent border-b-2 border-slate-200 focus:border-blue-950 outline-none py-1 text-2xl font-black transition-all">
+                    <label id="label-date" class="text-[9px] font-black text-slate-400 uppercase tracking-widest">報告日期</label>
+                    <input type="date" id="report-date" class="w-full bg-transparent border-b border-slate-200 focus:border-blue-950 outline-none py-1 text-xl font-black transition-all">
                 </div>
             </div>
 
             <!-- 內容區 -->
-            <div class="p-10 grid grid-cols-1 lg:grid-cols-2 gap-16">
+            <div class="p-10 grid grid-cols-1 lg:grid-cols-2 gap-x-12 gap-y-10">
                 
-                <!-- 左側：資產與收入 -->
-                <div class="space-y-12">
-                    <section>
-                        <div class="flex items-center gap-3 border-b-4 border-blue-950 pb-2 mb-6">
-                            <h3 id="section-assets" class="text-2xl font-black text-blue-950 uppercase">資產項目 (ASSETS)</h3>
+                <!-- 左側：資產 -->
+                <div class="space-y-10">
+                    <section class="section-card">
+                        <div class="flex items-center gap-3 border-b-2 border-blue-950 pb-1 mb-4">
+                            <h3 id="section-assets" class="text-lg font-black text-blue-950 uppercase tracking-tight">資產項目 (ASSETS)</h3>
                         </div>
-                        <div id="assets-container" class="space-y-8"></div>
-                        <div class="mt-8 p-5 bg-blue-950 text-white rounded-2xl flex justify-between items-center shadow-lg">
-                            <span id="total-assets-label" class="font-black uppercase text-xs tracking-widest">總計 資產項目</span>
-                            <span id="total-assets-value" class="text-2xl font-black text-yellow-500">$0</span>
+                        <div id="assets-container" class="space-y-6"></div>
+                        <div class="mt-6 p-4 bg-blue-950 text-white rounded-xl flex justify-between items-center print:bg-slate-100 print:text-blue-950 print:border print:border-slate-200">
+                            <span id="total-assets-label" class="font-black uppercase text-[10px] tracking-widest">總計 資產項目</span>
+                            <span id="total-assets-value" class="text-xl font-black text-yellow-500 print:text-blue-950">$0</span>
                         </div>
                     </section>
 
-                    <section>
-                        <div class="flex items-center gap-3 border-b-4 border-emerald-800 pb-2 mb-6">
-                            <h3 id="section-inflow" class="text-2xl font-black text-emerald-800 uppercase">每月收入 (INFLOW)</h3>
+                    <section class="section-card">
+                        <div class="flex items-center gap-3 border-b-2 border-emerald-800 pb-1 mb-4">
+                            <h3 id="section-inflow" class="text-lg font-black text-emerald-800 uppercase tracking-tight">每月收入 (INFLOW)</h3>
                         </div>
-                        <div id="inflow-container" class="space-y-4"></div>
-                        <div class="mt-8 p-5 bg-slate-100 text-slate-900 rounded-2xl flex justify-between items-center shadow-lg">
-                            <span id="total-inflow-label" class="font-black uppercase text-xs tracking-widest">總計 每月收入</span>
-                            <span id="total-inflow-value" class="text-2xl font-black">$0</span>
+                        <div id="inflow-container" class="space-y-3"></div>
+                        <div class="mt-6 p-4 bg-slate-50 border border-slate-200 rounded-xl flex justify-between items-center">
+                            <span id="total-inflow-label" class="font-black uppercase text-[10px] tracking-widest">總計 每月收入</span>
+                            <span id="total-inflow-value" class="text-xl font-black">$0</span>
                         </div>
                     </section>
                 </div>
 
                 <!-- 右側：負債與支出 -->
-                <div class="space-y-12">
-                    <section>
-                        <div class="flex items-center gap-3 border-b-4 border-rose-900 pb-2 mb-6">
-                            <h3 id="section-liabilities" class="text-2xl font-black text-rose-900 uppercase">負債項目 (LIABILITIES)</h3>
+                <div class="space-y-10">
+                    <section class="section-card">
+                        <div class="flex items-center gap-3 border-b-2 border-rose-900 pb-1 mb-4">
+                            <h3 id="section-liabilities" class="text-lg font-black text-rose-900 uppercase tracking-tight">負債項目 (LIABILITIES)</h3>
                         </div>
-                        <div id="liabilities-container" class="space-y-8"></div>
-                        <div class="mt-8 p-5 bg-rose-900 text-white rounded-2xl flex justify-between items-center shadow-lg">
-                            <span id="total-liabilities-label" class="font-black uppercase text-xs tracking-widest">總計 負債項目</span>
-                            <span id="total-liabilities-value" class="text-2xl font-black text-yellow-500">$0</span>
-                        </div>
-                    </section>
-
-                    <section>
-                        <div class="flex items-center gap-3 border-b-4 border-orange-700 pb-2 mb-6">
-                            <h3 id="section-outflow" class="text-2xl font-black text-orange-700 uppercase">每月支出 (OUTFLOW)</h3>
-                        </div>
-                        <div id="outflow-container" class="space-y-4"></div>
-                        <div class="mt-8 p-5 bg-slate-100 text-slate-900 rounded-2xl flex justify-between items-center shadow-lg">
-                            <span id="total-outflow-label" class="font-black uppercase text-xs tracking-widest">總計 每月支出</span>
-                            <span id="total-outflow-value" class="text-2xl font-black">$0</span>
+                        <div id="liabilities-container" class="space-y-6"></div>
+                        <div class="mt-6 p-4 bg-rose-900 text-white rounded-xl flex justify-between items-center print:bg-slate-100 print:text-rose-900 print:border print:border-slate-200">
+                            <span id="total-liabilities-label" class="font-black uppercase text-[10px] tracking-widest">總計 負債項目</span>
+                            <span id="total-liabilities-value" class="text-xl font-black text-yellow-500 print:text-rose-900">$0</span>
                         </div>
                     </section>
 
-                    <!-- 總結板塊 -->
-                    <div class="bg-blue-950 p-8 rounded-3xl border-b-8 border-yellow-600 shadow-2xl text-white">
-                        <div class="space-y-8">
-                            <div class="flex justify-between items-end border-b border-blue-800 pb-5">
-                                <div>
-                                    <h4 id="label-nw" class="text-xl font-black text-yellow-500 uppercase">個人淨資產總額</h4>
-                                    <p class="text-[10px] text-blue-300 font-bold uppercase opacity-60">Assets - Liabilities</p>
-                                </div>
-                                <span id="val-nw" class="text-5xl font-black">$0</span>
+                    <section class="section-card">
+                        <div class="flex items-center gap-3 border-b-2 border-orange-700 pb-1 mb-4">
+                            <h3 id="section-outflow" class="text-lg font-black text-orange-700 uppercase tracking-tight">每月支出 (OUTFLOW)</h3>
+                        </div>
+                        <div id="outflow-container" class="space-y-3"></div>
+                        <div class="mt-6 p-4 bg-slate-50 border border-slate-200 rounded-xl flex justify-between items-center">
+                            <span id="total-outflow-label" class="font-black uppercase text-[10px] tracking-widest">總計 每月支出</span>
+                            <span id="total-outflow-value" class="text-xl font-black">$0</span>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- 總結板塊 (僅在屏幕顯示或作為最後摘要) -->
+                <div class="lg:col-span-2 bg-slate-50 p-8 rounded-3xl border-2 border-slate-200 print:bg-white print:border-slate-300 no-print">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                        <div class="flex justify-between items-end border-b border-slate-200 pb-4">
+                            <div>
+                                <h4 id="label-nw" class="text-lg font-black text-blue-900 uppercase">個人淨資產總額</h4>
+                                <p class="text-[9px] text-slate-400 font-bold uppercase">Total Assets - Total Liabilities</p>
                             </div>
-                            <div class="flex justify-between items-end">
-                                <div>
-                                    <h4 id="label-cf" class="text-xl font-black text-yellow-500 uppercase">每月盈餘/赤字</h4>
-                                    <p class="text-[10px] text-blue-300 font-bold uppercase opacity-60">Inflow - Outflow</p>
-                                </div>
-                                <span id="val-cf" class="text-5xl font-black">$0</span>
+                            <span id="val-nw" class="text-4xl font-black">$0</span>
+                        </div>
+                        <div class="flex justify-between items-end border-b border-slate-200 pb-4">
+                            <div>
+                                <h4 id="label-cf" class="text-lg font-black text-emerald-800 uppercase">每月盈餘/赤字</h4>
+                                <p class="text-[9px] text-slate-400 font-bold uppercase">Total Inflow - Total Outflow</p>
                             </div>
+                            <span id="val-cf" class="text-4xl font-black">$0</span>
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- 合規聲明 -->
-            <div class="px-10 py-8 bg-slate-50 border-t border-slate-100">
-                <div class="flex items-start gap-4 p-6 bg-white border border-slate-200 rounded-2xl shadow-sm">
-                    <span class="text-blue-900 text-3xl">🛡️</span>
+            <div class="px-10 py-6 bg-slate-50 border-t border-slate-100 mt-auto">
+                <div class="flex items-start gap-4 p-5 bg-white border border-slate-200 rounded-xl shadow-sm">
+                    <span class="text-blue-900 text-2xl">🛡️</span>
                     <div>
-                        <h5 id="disc-title" class="text-sm font-black text-blue-950 uppercase mb-1">專業聲明與合規備註</h5>
-                        <p id="disc-text" class="text-[11px] text-slate-500 leading-relaxed font-medium"></p>
+                        <h5 id="disc-title" class="text-[10px] font-black text-blue-950 uppercase mb-0.5">專業聲明與合規備註</h5>
+                        <p id="disc-text" class="text-[9px] text-slate-500 leading-snug font-medium"></p>
                     </div>
                 </div>
             </div>
 
             <!-- Footer -->
-            <footer class="bg-slate-900 text-white p-10 text-center">
-                <h3 class="text-2xl font-black italic mb-2">Alex Chan</h3>
-                <p class="text-xs text-yellow-500 font-black uppercase tracking-[0.3em]">Individual Insurance & Financial Advisor</p>
-                <p class="text-[10px] text-slate-500 font-bold uppercase tracking-[0.2em] pt-6 mt-6 border-t border-slate-800">
-                    © 2026 Alex Chan | 個人品牌授權 • 資料僅供諮詢規劃之用
+            <footer class="bg-slate-900 text-white p-8 text-center print:bg-white print:text-slate-400 print:border-t print:border-slate-200">
+                <h3 class="text-xl font-black italic mb-1 print:text-slate-600">Alex Chan</h3>
+                <p class="text-[9px] text-yellow-500 font-black uppercase tracking-[0.2em] print:text-slate-400">Individual Insurance & Financial Advisor</p>
+                <p class="text-[8px] text-slate-500 font-bold uppercase tracking-[0.1em] pt-4 mt-4 border-t border-slate-800 print:border-slate-100">
+                    © 2026 Alex Chan | 資料僅供諮詢規劃之用 | CONFIDENTIAL
                 </p>
             </footer>
         </div>
@@ -208,12 +235,10 @@
             }
         };
 
-        // 已將 Nick 和 Peggy 的名稱替換為通用項目名稱
         let data = {
             cash: [
                 { id: 1, zh: '支票戶口', en: 'Chequing', val: 0 },
                 { id: 2, zh: '儲蓄戶口 #1', en: 'Savings #1', val: 0 },
-                { id: 3, zh: '儲蓄戶口 #2', en: 'Savings #2', val: 0 },
                 { id: 4, zh: '美金儲蓄戶口', en: 'USD Savings', val: 0 }
             ],
             invest: [
@@ -231,23 +256,19 @@
                 { id: 12, zh: '按揭貸款', en: 'Mortgage Loans', val: 0 },
                 { id: 13, zh: '汽車貸款', en: 'Auto Loans', val: 0 },
                 { id: 14, zh: '信用卡欠款', en: 'Credit Card Debt', val: 0 },
-                { id: 15, zh: '學生貸款', en: 'Student Loans', val: 0 },
                 { id: 16, zh: '其他貸款', en: 'Other Loans', val: 0 }
             ],
             inflow: [
                 { id: 17, zh: '薪資收入 (主申請人)', en: 'Salary (Applicant)', val: 0 },
                 { id: 18, zh: '薪資收入 (配偶)', en: 'Salary (Spouse)', val: 0 },
                 { id: 19, zh: '租金收入', en: 'Rental Income', val: 0 },
-                { id: 20, zh: '投資收益', en: 'Investment Income', val: 0 },
                 { id: 21, zh: '其他收入', en: 'Other Income', val: 0 }
             ],
             outflow: [
                 { id: 22, zh: '租金/按揭還款', en: 'Rent/Mortgage', val: 0 },
                 { id: 23, zh: '汽車貸款及保險', en: 'Car Loan & Ins', val: 0 },
                 { id: 24, zh: '日常開支及餐飲', en: 'Groceries/Food', val: 0 },
-                { id: 25, zh: '娛樂支出', en: 'Entertainment', val: 0 },
-                { id: 26, zh: '保險保費支出', en: 'Insurance Premiums', val: 0 },
-                { id: 27, zh: '其他固定支出', en: 'Other Expenses', val: 0 }
+                { id: 26, zh: '保險保費支出', en: 'Insurance Premiums', val: 0 }
             ]
         };
 
@@ -297,9 +318,12 @@
             const nw = tAssets - tLiabs;
             const cf = tIn - tOut;
             document.getElementById('val-nw').innerText = '$' + nw.toLocaleString();
+            document.getElementById('summary-nw-val').innerText = '$' + nw.toLocaleString();
             const cfEl = document.getElementById('val-cf');
             cfEl.innerText = '$' + cf.toLocaleString();
-            cfEl.className = `text-5xl font-black ${cf >= 0 ? 'text-emerald-500' : 'text-rose-500'}`;
+            cfEl.className = `text-4xl font-black ${cf >= 0 ? 'text-emerald-700' : 'text-rose-600'}`;
+            document.getElementById('summary-cf-val').innerText = '$' + cf.toLocaleString();
+            document.getElementById('summary-cf-val').className = cf >= 0 ? 'text-emerald-700' : 'text-rose-600';
         }
 
         function render() {
@@ -320,6 +344,8 @@
             document.getElementById('total-outflow-label').innerText = cur.total + ' ' + cur.outflow;
             document.getElementById('label-nw').innerText = cur.nw;
             document.getElementById('label-cf').innerText = cur.cf;
+            document.getElementById('summary-nw-label').innerText = currentLang === 'zh' ? '淨資產:' : 'Net Worth:';
+            document.getElementById('summary-cf-label').innerText = currentLang === 'zh' ? '月盈餘:' : 'Mo. Surplus:';
             document.getElementById('disc-title').innerText = cur.discTitle;
             document.getElementById('disc-text').innerText = cur.discText;
 
@@ -339,27 +365,28 @@
             container.innerHTML = '';
             sections.forEach(sec => {
                 const secDiv = document.createElement('div');
+                secDiv.className = 'mb-4 last:mb-0';
                 if (sec.title) {
-                    secDiv.innerHTML = `<h4 class="text-[10px] font-black text-slate-400 mb-3 uppercase tracking-[0.2em] flex items-center gap-2"><span class="w-1.5 h-1.5 bg-yellow-500 rounded-full"></span>${sec.title}</h4>`;
+                    secDiv.innerHTML = `<h4 class="text-[8px] font-black text-slate-400 mb-2 uppercase tracking-[0.1em] flex items-center gap-1.5"><span class="w-1 h-1 bg-yellow-500 rounded-full"></span>${sec.title}</h4>`;
                 }
                 const listDiv = document.createElement('div');
-                listDiv.className = 'space-y-4';
+                listDiv.className = 'space-y-2.5';
                 sec.items.forEach(item => {
                     const row = document.createElement('div');
-                    row.className = 'item-row group flex items-center gap-4';
+                    row.className = 'item-row group flex items-center gap-3 transition-all';
                     row.innerHTML = `
-                        <input type="text" value="${item[currentLang]}" onchange="updateLabel('${sec.cat}', ${item.id}, this.value)" class="flex-1 bg-transparent border-b border-slate-100 text-sm font-bold focus:border-blue-950 outline-none py-1 transition-all">
-                        <div class="flex items-center gap-1 w-32 border-b-2 border-slate-100 group-hover:border-yellow-500 transition-all">
-                            <span class="text-slate-300 font-bold">$</span>
-                            <input type="number" value="${item.val || ''}" placeholder="0" oninput="updateVal('${sec.cat}', ${item.id}, this.value)" class="w-full bg-transparent text-right text-sm font-black text-blue-950 outline-none py-1">
+                        <input type="text" value="${item[currentLang]}" onchange="updateLabel('${sec.cat}', ${item.id}, this.value)" class="flex-1 bg-transparent text-[11px] font-bold focus:border-blue-950 outline-none py-0.5">
+                        <div class="flex items-center gap-1 w-28 border-b border-slate-100 group-hover:border-yellow-500 transition-all">
+                            <span class="text-slate-300 font-bold text-[10px]">$</span>
+                            <input type="number" value="${item.val || ''}" placeholder="0" oninput="updateVal('${sec.cat}', ${item.id}, this.value)" class="w-full bg-transparent text-right text-[11px] font-black text-blue-950 outline-none py-0.5">
                         </div>
-                        <button onclick="removeItem('${sec.cat}', ${item.id})" class="no-print delete-btn opacity-0 text-slate-300 hover:text-rose-500 transition-all">✕</button>
+                        <button onclick="removeItem('${sec.cat}', ${item.id})" class="no-print delete-btn opacity-0 text-slate-300 hover:text-rose-500 transition-all text-xs">✕</button>
                     `;
                     listDiv.appendChild(row);
                 });
                 const addBtn = document.createElement('button');
-                addBtn.className = 'no-print flex items-center gap-2 text-[10px] font-black text-blue-950/30 hover:text-blue-950 uppercase tracking-widest mt-4 transition-all';
-                addBtn.innerHTML = `<span>＋</span> ${t[currentLang].add}`;
+                addBtn.className = 'no-print flex items-center gap-1.5 text-[9px] font-black text-blue-950/30 hover:text-blue-900 uppercase tracking-widest mt-2 transition-all';
+                addBtn.innerHTML = `<span class="bg-slate-100 p-0.5 rounded-full">＋</span> ${t[currentLang].add}`;
                 addBtn.onclick = () => addItem(sec.cat);
                 listDiv.appendChild(addBtn);
                 secDiv.appendChild(listDiv);
