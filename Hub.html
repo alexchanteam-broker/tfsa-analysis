@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advisor Strategy Suite</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+
+        .tool-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .tool-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+</head>
+<body class="min-h-screen pb-12">
+
+    <!-- Navigation -->
+    <nav class="glass-nav sticky top-0 z-50 px-6 py-3">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-4">
+                <!-- Primary Brand Logo -->
+                <div class="flex items-center border-r border-slate-200 pr-4">
+                    <img src="logo.png" alt="Brand Logo" class="h-10 w-auto object-contain" onerror="this.style.display='none'; document.getElementById('logo-fallback').classList.remove('hidden')">
+                    <div id="logo-fallback" class="bg-slate-900 p-2 rounded-lg hidden">
+                        <i class="fas fa-chart-line text-white text-xl"></i>
+                    </div>
+                </div>
+                <h1 class="text-xl font-bold gradient-text tracking-tight">Client Strategy Suite</h1>
+            </div>
+            <div class="hidden md:flex items-center space-x-6 text-sm font-medium text-slate-600">
+                <span id="current-date"></span>
+                <div class="h-4 w-px bg-slate-300"></div>
+                <span class="flex items-center text-emerald-600">
+                    <span class="w-2 h-2 bg-emerald-500 rounded-full mr-2 animate-pulse"></span>
+                    Secure Session
+                </span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header Section -->
+    <header class="max-w-7xl mx-auto px-6 pt-12 pb-8">
+        <div class="max-w-2xl">
+            <h2 class="text-3xl font-bold text-slate-900 mb-2">Welcome back.</h2>
+            <p class="text-slate-500 leading-relaxed">
+                Select a strategic tool below to begin your consultation. Your brand-verified tools are ready.
+            </p>
+        </div>
+    </header>
+
+    <!-- Main Tool Grid -->
+    <main class="max-w-7xl mx-auto px-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            
+            <!-- Financial Statement (FS.html) -->
+            <a href="FS.html" class="tool-card group bg-white p-6 rounded-2xl border border-slate-200 flex flex-col h-full">
+                <div class="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center mb-6 group-hover:bg-blue-600 transition-colors">
+                    <i class="fas fa-file-invoice-dollar text-blue-600 text-xl group-hover:text-white"></i>
+                </div>
+                <h3 class="text-lg font-bold text-slate-900 mb-2">Financial Statement</h3>
+                <p class="text-slate-500 text-sm mb-6 flex-grow">Complete net worth and cash flow profile analysis.</p>
+                <span class="text-blue-600 font-semibold text-sm flex items-center">
+                    Launch Tool <i class="fas fa-arrow-right ml-2 transition-transform group-hover:translate-x-1"></i>
+                </span>
+            </a>
+
+            <!-- TFSA/RRSP Analysis (index.html) -->
+            <a href="index.html" class="tool-card group bg-white p-6 rounded-2xl border border-slate-200 flex flex-col h-full">
+                <div class="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center mb-6 group-hover:bg-emerald-600 transition-colors">
+                    <i class="fas fa-scale-balanced text-emerald-600 text-xl group-hover:text-white"></i>
+                </div>
+                <h3 class="text-lg font-bold text-slate-900 mb-2">Investment Analysis</h3>
+                <p class="text-slate-500 text-sm mb-6 flex-grow">Strategic TFSA vs. RRSP comparison and tax projection.</p>
+                <span class="text-emerald-600 font-semibold text-sm flex items-center">
+                    Launch Tool <i class="fas fa-arrow-right ml-2 transition-transform group-hover:translate-x-1"></i>
+                </span>
+            </a>
+
+            <!-- Loan to Invest (LTI.html) -->
+            <a href="LTI.html" class="tool-card group bg-white p-6 rounded-2xl border border-slate-200 flex flex-col h-full">
+                <div class="w-12 h-12 bg-purple-50 rounded-xl flex items-center justify-center mb-6 group-hover:bg-purple-600 transition-colors">
+                    <i class="fas fa-hand-holding-dollar text-purple-600 text-xl group-hover:text-white"></i>
+                </div>
+                <h3 class="text-lg font-bold text-slate-900 mb-2">Loan to Invest (LTI)</h3>
+                <p class="text-slate-500 text-sm mb-6 flex-grow">Evaluate leveraging strategies and borrowing efficiency.</p>
+                <span class="text-purple-600 font-semibold text-sm flex items-center">
+                    Launch Tool <i class="fas fa-arrow-right ml-2 transition-transform group-hover:translate-x-1"></i>
+                </span>
+            </a>
+
+            <!-- RRSP Calculator (rrsp-calculator.html) -->
+            <a href="rrsp-calculator.html" class="tool-card group bg-white p-6 rounded-2xl border border-slate-200 flex flex-col h-full">
+                <div class="w-12 h-12 bg-orange-50 rounded-xl flex items-center justify-center mb-6 group-hover:bg-orange-600 transition-colors">
+                    <i class="fas fa-calculator text-orange-600 text-xl group-hover:text-white"></i>
+                </div>
+                <h3 class="text-lg font-bold text-slate-900 mb-2">RRSP Planner</h3>
+                <p class="text-slate-500 text-sm mb-6 flex-grow">Tax refund modeling and long-term savings projections.</p>
+                <span class="text-orange-600 font-semibold text-sm flex items-center">
+                    Launch Tool <i class="fas fa-arrow-right ml-2 transition-transform group-hover:translate-x-1"></i>
+                </span>
+            </a>
+
+        </div>
+
+        <!-- Meeting Notes / Quick References -->
+        <div class="mt-12 grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="lg:col-span-2 bg-white rounded-2xl border border-slate-200 p-6">
+                <h3 class="font-bold text-slate-900 mb-4 flex items-center">
+                    <i class="fas fa-pen-to-square mr-2 text-slate-400"></i>
+                    Session Scratchpad
+                </h3>
+                <textarea id="notes" class="w-full h-40 p-4 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none text-slate-700 resize-none" placeholder="Capture key client objectives or questions during the meeting..."></textarea>
+                <div class="mt-3 flex justify-end">
+                    <button onclick="clearNotes()" class="text-xs text-slate-400 hover:text-red-500 transition-colors">Clear Scratchpad</button>
+                </div>
+            </div>
+
+            <div class="bg-slate-900 rounded-2xl p-6 text-white flex flex-col justify-between">
+                <div>
+                    <h3 class="font-bold mb-4 flex items-center">
+                        <i class="fas fa-lightbulb mr-2 text-yellow-400"></i>
+                        Advisor Quick Tip
+                    </h3>
+                    <div id="tip-container" class="text-slate-300 text-sm leading-relaxed italic h-24">
+                        "Always confirm the client's marginal tax rate before running the RRSP vs TFSA analysis."
+                    </div>
+                </div>
+                <button onclick="newTip()" class="mt-4 text-xs bg-white/10 hover:bg-white/20 px-3 py-2 rounded-lg transition-colors w-full">
+                    Next Insight
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <footer class="max-w-7xl mx-auto px-6 mt-12 pt-8 border-t border-slate-200">
+        <div class="flex flex-col md:flex-row justify-between items-center space-y-6 md:space-y-0">
+            <div class="flex flex-col items-center md:items-start space-y-2">
+                <img src="logo.png" alt="Footer Brand" class="h-6 w-auto grayscale opacity-50 mb-2">
+                <p class="text-slate-400 text-[10px] uppercase tracking-widest font-semibold">Verified Advisor Strategy Dashboard</p>
+            </div>
+            <div class="flex space-x-8 text-slate-400 text-sm">
+                <a href="#" class="hover:text-slate-600 transition-colors">Client Confidentiality</a>
+                <a href="#" class="hover:text-slate-600 transition-colors">Compliance</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Update date
+        const dateEl = document.getElementById('current-date');
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        dateEl.innerText = new Date().toLocaleDateString('en-US', options);
+
+        // Simple Note Persistence
+        const notesArea = document.getElementById('notes');
+        notesArea.value = localStorage.getItem('advisor_notes') || '';
+        notesArea.addEventListener('input', (e) => {
+            localStorage.setItem('advisor_notes', e.target.value);
+        });
+
+        function clearNotes() {
+            if(confirm('Are you sure you want to clear your meeting notes?')) {
+                notesArea.value = '';
+                localStorage.removeItem('advisor_notes');
+            }
+        }
+
+        // Quick Tips
+        const tips = [
+            "Always confirm the client's marginal tax rate before running the RRSP vs TFSA analysis.",
+            "Ask about upcoming large purchases (homes, cars) when discussing TFSA liquidity.",
+            "For LTI strategies, remind clients that interest deductibility only applies to non-registered accounts.",
+            "Review beneficiaries on all accounts at least once a year during the FS update.",
+            "Use the RRSP calculator to show the power of re-investing the tax refund.",
+            "Ensure the client understands that leverage increases both potential gains and potential losses."
+        ];
+        
+        function newTip() {
+            const container = document.getElementById('tip-container');
+            const randomTip = tips[Math.floor(Math.random() * tips.length)];
+            container.style.opacity = 0;
+            setTimeout(() => {
+                container.innerText = `"${randomTip}"`;
+                container.style.opacity = 1;
+            }, 200);
+        }
+    </script>
+</body>
+</html>
