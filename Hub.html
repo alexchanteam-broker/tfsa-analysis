@@ -209,7 +209,8 @@
     </main>
 
     <script>
-        const apiKey = ""; // Swapped at runtime
+        // API Key variable - DO NOT fill manually. The environment swaps this at runtime.
+        const apiKey = ""; 
 
         const diagConsole = document.getElementById('diag-console');
         function log(m, e = false) {
@@ -246,13 +247,15 @@
 
         function closeModal() { modal.classList.add('hidden'); }
 
+        /**
+         * Standardized Communication Engine
+         */
         async function callGemini(pt) {
-            const model = "gemini-2.5-flash-preview-09-2025";
-            // Use standard concatenation to help the proxy identification
-            const url = "https://generativelanguage.googleapis.com/v1beta/models/" + model + ":generateContent?key=" + apiKey;
+            // Precise URL structure required for proxy detection
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
             
-            log("Contacting intelligence core...");
-            const sp = "You are an elite advisor assistant. Synthesize notes into a professional report: EXECUTIVE SUMMARY, FINANCIAL PROFILE, RECOMMENDATIONS, ACTION ITEMS. Bold numbers. Tone: Authoritative, technical.";
+            log("Opening channel to core intelligence...");
+            const sp = "You are an elite financial advisor assistant. Synthesize notes into a professional report: EXECUTIVE SUMMARY, FINANCIAL PROFILE, RECOMMENDATIONS, ACTION ITEMS. Bold numbers. Tone: Authoritative, technical.";
             
             const payload = {
                 contents: [{ parts: [{ text: pt }] }],
@@ -262,27 +265,29 @@
             const delays = [1000, 2000, 4000, 8000, 16000];
             for (let i = 0; i < 6; i++) {
                 try {
-                    log("Attempt " + (i+1) + "...");
+                    log(`Transmission attempt ${i+1}...`);
                     const res = await fetch(url, {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify(payload)
                     });
 
-                    const data = await res.json();
                     if (res.ok) {
+                        const data = await res.json();
                         const txt = data.candidates?.[0]?.content?.parts?.[0]?.text;
-                        if (!txt) throw new Error("Empty payload.");
-                        log("Success.");
+                        if (!txt) throw new Error("Null data stream received.");
+                        log("Sync complete.");
                         return txt;
                     }
 
-                    const msg = data.error?.message || "Status " + res.status;
-                    log("Error: " + msg, true);
+                    const errorData = await res.json().catch(() => ({}));
+                    const msg = errorData.error?.message || `Status ${res.status}`;
+                    log(`Auth/API Error: ${msg}`, true);
+                    
                     if (i === 5) throw new Error(msg);
                     await new Promise(r => setTimeout(r, delays[i]));
                 } catch (e) {
-                    log("Connection Failure: " + e.message, true);
+                    log(`Link failure: ${e.message}`, true);
                     if (i === 5) throw e;
                     await new Promise(r => setTimeout(r, delays[i]));
                 }
@@ -291,12 +296,12 @@
 
         async function generateAIReport() {
             const raw = document.getElementById('notes').value.trim();
-            if (!raw) { showNotif("Workbench is empty.", true); return; }
+            if (!raw) { showNotif("Input raw session data first.", true); return; }
 
             const btn = document.getElementById('ai-btn');
             const btnText = document.getElementById('ai-btn-text');
             btn.disabled = true;
-            btnText.innerHTML = `<div class="loader-spin mr-4"></div> SYNCING CORE...`;
+            btnText.innerHTML = `<div class="loader-spin mr-4"></div> SYNCHRONIZING...`;
 
             try {
                 const report = await callGemini(raw);
@@ -312,11 +317,11 @@
                     if (!h.startsWith('<h') && !h.startsWith('<p')) h = '<p>' + h + '</p>';
                     content.innerHTML = h;
                     modal.classList.remove('hidden');
-                    showNotif("Synthesis Complete.");
+                    showNotif("Synthesis Successful.");
                 }
             } catch (err) {
                 toggleLogs();
-                showNotif("Authorization Failed: " + err.message, true);
+                showNotif("Link Unauthorized: Contact System Admin.", true);
             } finally {
                 btn.disabled = false;
                 btnText.innerHTML = `<i class="fas fa-brain mr-4"></i> Synthesize Strategy`;
@@ -333,15 +338,15 @@
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
             };
             showNotif("Compiling PDF...");
-            html2pdf().set(opt).from(el).save().then(() => showNotif("PDF Exported."));
+            html2pdf().set(opt).from(el).save().then(() => showNotif("Export Complete."));
         }
 
         function sendProfessionalEmail() {
             const rt = content.innerText;
             const sub = "Strategic Advisory Session Analysis - Confidential";
-            const body = `Dear Client,\n\nI have synthesized our strategy session. Please review the summary below and attach the PDF report.\n\n--- SUMMARY ---\n\n${rt}`;
+            const body = `Dear Client,\n\nI have synthesized our strategic session. Please review the summary below and find the formal PDF report attached.\n\n--- SUMMARY ---\n\n${rt}`;
             window.location.href = `mailto:?subject=${encodeURIComponent(sub)}&body=${encodeURIComponent(body)}`;
-            showNotif("Email Client Prompted.");
+            showNotif("Email Dispatch Triggered.");
         }
 
         let clearStage = 0;
@@ -361,8 +366,8 @@
                 b.innerText = "Purge Session";
                 b.classList.remove('text-red-500');
                 clearStage = 0;
-                showNotif("Workbench Cleared.");
-                log("Session purged.");
+                showNotif("Workbench Purged.");
+                log("Session purged from memory.");
             }
         }
 
