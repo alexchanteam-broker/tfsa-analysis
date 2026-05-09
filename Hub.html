@@ -66,17 +66,6 @@
             background: white;
         }
 
-        /* Standardized report styling */
-        .report-section-title {
-            color: #0f172a;
-            font-weight: 700;
-            font-size: 1.25rem;
-            margin-top: 1.5rem;
-            margin-bottom: 0.75rem;
-            border-bottom: 2px solid #f1f5f9;
-            padding-bottom: 0.25rem;
-        }
-        
         .report-content p {
             margin-bottom: 1rem;
             line-height: 1.6;
@@ -282,7 +271,8 @@
     </footer>
 
     <script>
-        const apiKey = ""; // Provided by environment at runtime
+        // API key will be injected by the environment
+        const apiKey = ""; 
 
         // Update dates
         const dateEl = document.getElementById('current-date');
@@ -304,23 +294,23 @@
             notification.classList.remove('opacity-0', '-translate-y-4', 'pointer-events-none');
             setTimeout(() => {
                 notification.classList.add('opacity-0', '-translate-y-4', 'pointer-events-none');
-            }, 3500);
+            }, 4500);
         }
 
         function closeModal() { reportModal.classList.add('hidden'); }
         function openModal() { reportModal.classList.remove('hidden'); }
 
-        // RESET ON RELOAD: Ensure data is cleared every time the page is opened/reloaded
-        window.addEventListener('load', () => {
+        // Session Reset: Clear notes on page reload as requested
+        window.onload = function() {
             notesArea.value = '';
             localStorage.removeItem('advisor_notes');
-            console.log("Session reset complete.");
-        });
+            console.log("Advisor workspace reset for new session.");
+        };
 
-        // AI Generation Logic with Exponential Backoff
+        // Refined AI Generation Logic
         async function callGemini(promptText) {
             const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
-            const systemPrompt = "You are a senior financial advisor's AI assistant. Take raw meeting notes and convert them into a professional, polished client report. Use sections: EXECUTIVE SUMMARY, FINANCIAL STATUS, RECOMMENDATIONS, and ACTION ITEMS. Maintain a formal, advisory tone. Format clearly with headers and bold text.";
+            const systemPrompt = "You are a professional financial advisor's AI assistant. Convert raw meeting notes into a formal client report with clear sections: EXECUTIVE SUMMARY, FINANCIAL STATUS, RECOMMENDATIONS, and ACTION ITEMS. Use bold text for key terms and headers for clarity.";
             
             const payload = {
                 contents: [{ parts: [{ text: promptText }] }],
@@ -340,20 +330,18 @@
                     if (response.ok) {
                         const result = await response.json();
                         const text = result.candidates?.[0]?.content?.parts?.[0]?.text;
-                        if (!text) throw new Error("AI returned empty content.");
+                        if (!text) throw new Error("Empty response received from service.");
                         return text;
                     }
 
-                    // Handling "unregistered caller" often relates to API key availability or environment injection issues
-                    if (response.status === 403 || response.status === 401) {
-                        console.error("Authorization Error:", response.status);
+                    const errorData = await response.json().catch(() => ({}));
+                    const errorMsg = errorData.error?.message || `Error ${response.status}`;
+                    
+                    if (errorMsg.toLowerCase().includes("unregistered") || response.status === 403) {
+                        console.error("Authorization issue detected. Retrying...");
                     }
 
-                    if (i === 5) {
-                        const errorData = await response.json().catch(() => ({}));
-                        throw new Error(errorData.error?.message || `API Error (${response.status})`);
-                    }
-                    
+                    if (i === 5) throw new Error(errorMsg);
                     await new Promise(r => setTimeout(r, retryDelays[i] || 16000));
                 } catch (e) {
                     if (i === 5) throw e;
@@ -365,19 +353,19 @@
         async function generateAIReport() {
             const rawNotes = notesArea.value.trim();
             if (!rawNotes) {
-                showNotification("Please enter some notes first!");
+                showNotification("Please enter some notes in the scratchpad first.");
                 return;
             }
 
             const btn = document.getElementById('ai-btn');
             const btnText = document.getElementById('ai-btn-text');
             btn.disabled = true;
-            btnText.innerHTML = `<div class="flex items-center"><div class="spinner mr-2"></div> Processing...</div>`;
+            btnText.innerHTML = `<div class="flex items-center"><div class="spinner mr-2"></div> Connecting AI...</div>`;
 
             try {
                 const report = await callGemini(rawNotes);
                 if (report) {
-                    // Refined Markdown-to-HTML parser using standard Tailwind classes
+                    // Refined Markdown parsing for the preview
                     let htmlContent = report
                         .replace(/^# (.*$)/gm, '<h2 class="text-2xl font-bold text-slate-900 mt-6 mb-4 pb-2 border-b-2 border-slate-100">$1</h2>')
                         .replace(/^## (.*$)/gm, '<h3 class="text-xl font-bold text-slate-900 mt-5 mb-3">$1</h3>')
@@ -386,18 +374,17 @@
                         .replace(/\n/g, '<br>')
                         .replace(/(<br>){2,}/g, '</p><p class="mb-4 text-slate-700 leading-relaxed">');
                     
-                    // Wrap with a paragraph if not already
                     if (!htmlContent.startsWith('<h') && !htmlContent.startsWith('<p')) {
                         htmlContent = '<p class="mb-4 text-slate-700 leading-relaxed">' + htmlContent + '</p>';
                     }
                     
                     reportContent.innerHTML = htmlContent;
                     openModal();
-                    showNotification("AI Report Generated!");
+                    showNotification("Professional Report Generated Successfully.");
                 }
             } catch (err) {
-                console.error("AI Error:", err);
-                showNotification("Could not connect to AI. Please verify the environment settings.");
+                console.error("Generation Failed:", err);
+                showNotification("AI Request Error: " + err.message + ". Please verify connection and try again.");
             } finally {
                 btn.disabled = false;
                 btnText.innerText = "Generate AI Report";
@@ -414,46 +401,46 @@
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
             };
             
-            showNotification("Generating PDF...");
+            showNotification("Preparing PDF document...");
             html2pdf().set(opt).from(element).save().then(() => {
-                showNotification("PDF Downloaded!");
+                showNotification("PDF Downloaded to your device.");
             });
         }
 
         function sendProfessionalEmail() {
             const rawText = reportContent.innerText;
-            const subject = "Strategy Advisory Summary - " + new Date().toLocaleDateString();
-            const body = `Generated Strategy Summary:\n\n${rawText}\n\n(Note: Please attach the downloaded PDF to this email before sending to the client.)`;
+            const subject = "Strategic Advisory Session Summary - " + new Date().toLocaleDateString();
+            const body = `Hello,\n\nI have organized our session notes into a professional strategy summary. Please find the summary below and the formal PDF report attached to this email (please attach the downloaded file).\n\n--- SUMMARY ---\n\n${rawText}`;
             window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-            showNotification("Opening email. Attach the PDF now!");
+            showNotification("Email client opened. Remember to attach the report.");
         }
 
         function sendEmail() {
             const content = notesArea.value.trim();
-            if (!content) { showNotification("Scratchpad is empty!"); return; }
-            const subject = "Session Notes - " + new Date().toLocaleDateString();
+            if (!content) { showNotification("The scratchpad is empty."); return; }
+            const subject = "Advisor Session Notes - " + new Date().toLocaleDateString();
             window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(content)}`;
-            showNotification("Opening email client...");
+            showNotification("Email client opened.");
         }
 
         let clearStage = 0;
         function clearNotes() {
             const btn = document.getElementById('clear-btn');
             if (clearStage === 0) {
-                btn.innerText = "Confirm Clear?";
+                btn.innerText = "Click to confirm";
                 btn.classList.add('text-red-500', 'font-bold');
                 clearStage = 1;
                 setTimeout(() => {
                     btn.innerText = "Clear Scratchpad";
                     btn.classList.remove('text-red-500', 'font-bold');
                     clearStage = 0;
-                }, 3000);
+                }, 4000);
             } else {
                 notesArea.value = '';
                 btn.innerText = "Clear Scratchpad";
                 btn.classList.remove('text-red-500', 'font-bold');
                 clearStage = 0;
-                showNotification("Scratchpad cleared");
+                showNotification("Workspace cleared.");
             }
         }
 
