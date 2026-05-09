@@ -38,6 +38,26 @@
         #notification {
             transition: transform 0.3s ease, opacity 0.3s ease;
         }
+
+        /* Loading Spinner */
+        .spinner {
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 3px solid white;
+            width: 18px;
+            height: 18px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .modal-overlay {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(4px);
+        }
     </style>
 </head>
 <body class="min-h-screen pb-12">
@@ -47,11 +67,35 @@
         <span id="notification-text"></span>
     </div>
 
+    <!-- Report Preview Modal -->
+    <div id="report-modal" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4">
+        <div class="modal-overlay absolute inset-0" onclick="closeModal()"></div>
+        <div class="bg-white w-full max-w-3xl max-h-[90vh] rounded-3xl shadow-2xl relative z-10 flex flex-col overflow-hidden">
+            <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+                <div class="flex items-center space-x-3">
+                    <img src="logo.png" alt="Logo" class="h-8 w-auto" onerror="this.style.display='none'">
+                    <h3 class="font-bold text-slate-900">Professional Client Report</h3>
+                </div>
+                <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            <div class="p-8 overflow-y-auto flex-grow bg-white" id="report-content-preview">
+                <!-- AI Content Goes Here -->
+            </div>
+            <div class="p-6 border-t border-slate-100 flex justify-end space-x-3 bg-slate-50">
+                <button onclick="closeModal()" class="px-6 py-2 text-slate-600 font-medium hover:bg-slate-200 rounded-xl transition-colors">Close</button>
+                <button onclick="sendProfessionalEmail()" class="px-6 py-2 bg-blue-600 text-white font-medium rounded-xl hover:bg-blue-700 shadow-lg flex items-center">
+                    <i class="fas fa-paper-plane mr-2"></i> Send to Email
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Navigation -->
     <nav class="glass-nav sticky top-0 z-50 px-6 py-3">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
             <div class="flex items-center space-x-4">
-                <!-- Primary Brand Logo -->
                 <div class="flex items-center border-r border-slate-200 pr-4">
                     <img src="logo.png" alt="Brand Logo" class="h-10 w-auto object-contain" onerror="this.style.display='none'; document.getElementById('logo-fallback').classList.remove('hidden')">
                     <div id="logo-fallback" class="bg-slate-900 p-2 rounded-lg hidden">
@@ -84,8 +128,6 @@
     <!-- Main Tool Grid -->
     <main class="max-w-7xl mx-auto px-6">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            
-            <!-- Financial Statement (FS.html) -->
             <a href="FS.html" class="tool-card group bg-white p-6 rounded-2xl border border-slate-200 flex flex-col h-full">
                 <div class="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center mb-6 group-hover:bg-blue-600 transition-colors">
                     <i class="fas fa-file-invoice-dollar text-blue-600 text-xl group-hover:text-white"></i>
@@ -93,11 +135,10 @@
                 <h3 class="text-lg font-bold text-slate-900 mb-2">Financial Statement</h3>
                 <p class="text-slate-500 text-sm mb-6 flex-grow">Complete net worth and cash flow profile analysis.</p>
                 <span class="text-blue-600 font-semibold text-sm flex items-center">
-                    Launch Tool <i class="fas fa-arrow-right ml-2 transition-transform group-hover:translate-x-1"></i>
+                    Launch Tool <i class="fas fa-arrow-right ml-2"></i>
                 </span>
             </a>
 
-            <!-- TFSA/RRSP Analysis (index.html) -->
             <a href="index.html" class="tool-card group bg-white p-6 rounded-2xl border border-slate-200 flex flex-col h-full">
                 <div class="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center mb-6 group-hover:bg-emerald-600 transition-colors">
                     <i class="fas fa-scale-balanced text-emerald-600 text-xl group-hover:text-white"></i>
@@ -105,11 +146,10 @@
                 <h3 class="text-lg font-bold text-slate-900 mb-2">Investment Analysis</h3>
                 <p class="text-slate-500 text-sm mb-6 flex-grow">Strategic TFSA vs. RRSP comparison and tax projection.</p>
                 <span class="text-emerald-600 font-semibold text-sm flex items-center">
-                    Launch Tool <i class="fas fa-arrow-right ml-2 transition-transform group-hover:translate-x-1"></i>
+                    Launch Tool <i class="fas fa-arrow-right ml-2"></i>
                 </span>
             </a>
 
-            <!-- Loan to Invest (LTI.html) -->
             <a href="LTI.html" class="tool-card group bg-white p-6 rounded-2xl border border-slate-200 flex flex-col h-full">
                 <div class="w-12 h-12 bg-purple-50 rounded-xl flex items-center justify-center mb-6 group-hover:bg-purple-600 transition-colors">
                     <i class="fas fa-hand-holding-dollar text-purple-600 text-xl group-hover:text-white"></i>
@@ -117,11 +157,10 @@
                 <h3 class="text-lg font-bold text-slate-900 mb-2">Loan to Invest (LTI)</h3>
                 <p class="text-slate-500 text-sm mb-6 flex-grow">Evaluate leveraging strategies and borrowing efficiency.</p>
                 <span class="text-purple-600 font-semibold text-sm flex items-center">
-                    Launch Tool <i class="fas fa-arrow-right ml-2 transition-transform group-hover:translate-x-1"></i>
+                    Launch Tool <i class="fas fa-arrow-right ml-2"></i>
                 </span>
             </a>
 
-            <!-- RRSP Calculator (rrsp-calculator.html) -->
             <a href="rrsp-calculator.html" class="tool-card group bg-white p-6 rounded-2xl border border-slate-200 flex flex-col h-full">
                 <div class="w-12 h-12 bg-orange-50 rounded-xl flex items-center justify-center mb-6 group-hover:bg-orange-600 transition-colors">
                     <i class="fas fa-calculator text-orange-600 text-xl group-hover:text-white"></i>
@@ -129,27 +168,29 @@
                 <h3 class="text-lg font-bold text-slate-900 mb-2">RRSP Planner</h3>
                 <p class="text-slate-500 text-sm mb-6 flex-grow">Tax refund modeling and long-term savings projections.</p>
                 <span class="text-orange-600 font-semibold text-sm flex items-center">
-                    Launch Tool <i class="fas fa-arrow-right ml-2 transition-transform group-hover:translate-x-1"></i>
+                    Launch Tool <i class="fas fa-arrow-right ml-2"></i>
                 </span>
             </a>
-
         </div>
 
         <!-- Meeting Notes / Quick References -->
         <div class="mt-12 grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div class="lg:col-span-2 bg-white rounded-2xl border border-slate-200 p-6">
-                <div class="flex justify-between items-center mb-4">
+            <div class="lg:col-span-2 bg-white rounded-2xl border border-slate-200 p-6 relative">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-4">
                     <h3 class="font-bold text-slate-900 flex items-center">
                         <i class="fas fa-pen-to-square mr-2 text-slate-400"></i>
                         Session Scratchpad
                     </h3>
-                    <div class="flex space-x-3">
-                        <button onclick="sendEmail()" class="text-xs bg-blue-600 text-white px-3 py-1.5 rounded-lg hover:bg-blue-700 transition-all flex items-center shadow-sm">
-                            <i class="fas fa-envelope mr-2"></i> Email Notes
+                    <div class="flex space-x-2">
+                        <button id="ai-btn" onclick="generateAIReport()" class="text-xs bg-slate-900 text-white px-4 py-2 rounded-lg hover:bg-slate-800 transition-all flex items-center shadow-lg">
+                            <i class="fas fa-wand-magic-sparkles mr-2"></i> <span id="ai-btn-text">Generate AI Report</span>
+                        </button>
+                        <button onclick="sendEmail()" class="text-xs bg-white border border-slate-200 text-slate-600 px-4 py-2 rounded-lg hover:bg-slate-50 transition-all flex items-center">
+                            <i class="fas fa-envelope mr-2"></i> Quick Email
                         </button>
                     </div>
                 </div>
-                <textarea id="notes" class="w-full h-40 p-4 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none text-slate-700 resize-none" placeholder="Capture key client objectives or questions during the meeting..."></textarea>
+                <textarea id="notes" class="w-full h-48 p-4 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none text-slate-700 resize-none transition-all" placeholder="Jot down raw notes here... e.g. 'Client wants to retire at 60, has $200k in TFSA, interested in loan for non-reg investing.'"></textarea>
                 <div class="mt-3 flex justify-end">
                     <button onclick="clearNotes()" id="clear-btn" class="text-xs text-slate-400 hover:text-red-500 transition-colors">Clear Scratchpad</button>
                 </div>
@@ -179,87 +220,150 @@
                 <p class="text-slate-400 text-[10px] uppercase tracking-widest font-semibold">Verified Advisor Strategy Dashboard</p>
             </div>
             <div class="flex space-x-8 text-slate-400 text-sm">
-                <a href="#" class="hover:text-slate-600 transition-colors">Client Confidentiality</a>
-                <a href="#" class="hover:text-slate-600 transition-colors">Compliance</a>
+                <a href="#" class="hover:text-slate-600">Confidentiality</a>
+                <a href="#" class="hover:text-slate-600">Compliance</a>
             </div>
         </div>
     </footer>
 
     <script>
+        const apiKey = ""; // Environment handles this
+        let generatedReport = "";
+
         // Update date
         const dateEl = document.getElementById('current-date');
         const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
         dateEl.innerText = new Date().toLocaleDateString('en-US', options);
 
-        // UI Components
+        // UI Elements
         const notesArea = document.getElementById('notes');
         const notification = document.getElementById('notification');
         const notificationText = document.getElementById('notification-text');
+        const reportModal = document.getElementById('report-modal');
+        const reportContent = document.getElementById('report-content-preview');
 
         function showNotification(text) {
             notificationText.innerText = text;
             notification.classList.remove('opacity-0', '-translate-y-4', 'pointer-events-none');
             setTimeout(() => {
                 notification.classList.add('opacity-0', '-translate-y-4', 'pointer-events-none');
-            }, 2500);
+            }, 3000);
         }
 
-        // Simple Note Persistence
+        function openModal() { reportModal.classList.remove('hidden'); }
+        function closeModal() { reportModal.classList.add('hidden'); }
+
+        // Local Persistence
         notesArea.value = localStorage.getItem('advisor_notes') || '';
         notesArea.addEventListener('input', (e) => {
             localStorage.setItem('advisor_notes', e.target.value);
         });
 
-        // Email Feature
-        function sendEmail() {
-            const content = notesArea.value.trim();
-            if (!content) {
-                showNotification("Scratchpad is empty!");
+        // AI Generation Logic
+        async function callGemini(prompt) {
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+            const systemPrompt = "You are a senior financial advisor's AI assistant. Take raw meeting notes and convert them into a professional, polished client report. Use sections: EXECUTIVE SUMMARY, FINANCIAL STATUS, RECOMMENDATIONS, and ACTION ITEMS. Maintain a formal, advisory tone. Format clearly for readability.";
+            
+            let retries = 0;
+            const maxRetries = 5;
+            
+            while (retries <= maxRetries) {
+                try {
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            contents: [{ parts: [{ text: prompt }] }],
+                            systemInstruction: { parts: [{ text: systemPrompt }] }
+                        })
+                    });
+                    const data = await response.json();
+                    return data.candidates?.[0]?.content?.parts?.[0]?.text;
+                } catch (error) {
+                    if (retries === maxRetries) throw error;
+                    await new Promise(resolve => setTimeout(resolve, Math.pow(2, retries) * 1000));
+                    retries++;
+                }
+            }
+        }
+
+        async function generateAIReport() {
+            const rawNotes = notesArea.value.trim();
+            if (!rawNotes) {
+                showNotification("Please enter some notes first!");
                 return;
             }
 
-            const subject = "Meeting Summary - " + new Date().toLocaleDateString();
-            const body = content;
-            
-            // Constructing mailto link
-            const mailtoLink = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-            
-            // Open user's default email client
-            window.location.href = mailtoLink;
+            const btn = document.getElementById('ai-btn');
+            const btnText = document.getElementById('ai-btn-text');
+            btn.disabled = true;
+            btnText.innerHTML = `<div class="flex items-center"><div class="spinner mr-2"></div> Processing...</div>`;
+
+            try {
+                const report = await callGemini(rawNotes);
+                if (report) {
+                    generatedReport = report;
+                    // Basic Markdown to HTML conversion for preview
+                    reportContent.innerHTML = report
+                        .replace(/\n/g, '<br>')
+                        .replace(/#{1,6}\s?(.*?)<br>/g, '<h4 class="font-bold text-lg text-slate-900 mt-4 mb-2">$1</h4>')
+                        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                    openModal();
+                    showNotification("AI Report Generated!");
+                }
+            } catch (err) {
+                showNotification("Error generating report. Please try again.");
+            } finally {
+                btn.disabled = false;
+                btnText.innerText = "Generate AI Report";
+            }
+        }
+
+        function sendProfessionalEmail() {
+            if (!generatedReport) return;
+            const subject = "Strategy Summary - " + new Date().toLocaleDateString();
+            const body = `PROFESSIONAL ADVISORY SUMMARY\nGenerated on: ${new Date().toLocaleString()}\n\n${generatedReport.replace(/<br>/g, '\n')}`;
+            window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
             showNotification("Opening email client...");
         }
 
-        // Improved Clear Notes (Double tap to confirm)
+        function sendEmail() {
+            const content = notesArea.value.trim();
+            if (!content) { showNotification("Scratchpad is empty!"); return; }
+            const subject = "Quick Meeting Notes - " + new Date().toLocaleDateString();
+            window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(content)}`;
+            showNotification("Opening email client...");
+        }
+
         let clearStage = 0;
         function clearNotes() {
             const btn = document.getElementById('clear-btn');
             if (clearStage === 0) {
-                btn.innerText = "Click again to confirm clear";
-                btn.classList.add('text-red-500', 'font-semibold');
+                btn.innerText = "Confirm Clear?";
+                btn.classList.add('text-red-500', 'font-bold');
                 clearStage = 1;
                 setTimeout(() => {
                     btn.innerText = "Clear Scratchpad";
-                    btn.classList.remove('text-red-500', 'font-semibold');
+                    btn.classList.remove('text-red-500', 'font-bold');
                     clearStage = 0;
                 }, 3000);
             } else {
                 notesArea.value = '';
                 localStorage.removeItem('advisor_notes');
                 btn.innerText = "Clear Scratchpad";
-                btn.classList.remove('text-red-500', 'font-semibold');
+                btn.classList.remove('text-red-500', 'font-bold');
                 clearStage = 0;
                 showNotification("Scratchpad cleared");
             }
         }
 
-        // Quick Tips
         const tips = [
             "Always confirm the client's marginal tax rate before running the RRSP vs TFSA analysis.",
-            "Ask about upcoming large purchases (homes, cars) when discussing TFSA liquidity.",
-            "For LTI strategies, remind clients that interest deductibility only applies to non-registered accounts.",
-            "Review beneficiaries on all accounts at least once a year during the FS update.",
+            "Ask about upcoming large purchases when discussing TFSA liquidity.",
+            "For LTI strategies, interest deductibility only applies to non-registered accounts.",
+            "Review beneficiaries on all accounts at least once a year.",
             "Use the RRSP calculator to show the power of re-investing the tax refund.",
-            "Ensure the client understands that leverage increases both potential gains and potential losses."
+            "Ensure the client understands that leverage increases both potential gains and losses."
         ];
         
         function newTip() {
