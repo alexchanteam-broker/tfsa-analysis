@@ -258,14 +258,14 @@
                 <p class="text-slate-400 text-[10px] uppercase tracking-widest font-semibold">Verified Advisor Strategy Dashboard</p>
             </div>
             <div class="flex space-x-8 text-slate-400 text-sm">
-                <a href="#" class="hover:text-slate-600">Confidentiality</a>
-                <a href="#" class="hover:text-slate-600">Compliance</a>
+                <a href="#" class="hover:text-slate-600 transition-colors">Confidentiality</a>
+                <a href="#" class="hover:text-slate-600 transition-colors">Compliance</a>
             </div>
         </div>
     </footer>
 
     <script>
-        const apiKey = ""; // Swapped at runtime by execution environment
+        const apiKey = ""; // Provided by environment at runtime
 
         // Update dates
         const dateEl = document.getElementById('current-date');
@@ -293,17 +293,16 @@
         function closeModal() { reportModal.classList.add('hidden'); }
         function openModal() { reportModal.classList.remove('hidden'); }
 
-        // RESET ON RELOAD: Ensure data is cleared every time the page is opened/reloaded
+        // Session Reset on Reload
         window.addEventListener('load', () => {
             notesArea.value = '';
             localStorage.removeItem('advisor_notes');
-            console.log("Session reset complete.");
         });
 
-        // AI Generation Logic with Exponential Backoff
+        // AI Generation Logic
         async function callGemini(promptText) {
             const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
-            const systemPrompt = "You are a senior financial advisor's assistant. Convert raw meeting notes into a professional report with sections: EXECUTIVE SUMMARY, FINANCIAL STATUS, RECOMMENDATIONS, and ACTION ITEMS. Use bold text and headers for structure.";
+            const systemPrompt = "You are a senior financial advisor's AI assistant. Take raw meeting notes and convert them into a professional, polished client report. Use sections: EXECUTIVE SUMMARY, FINANCIAL STATUS, RECOMMENDATIONS, and ACTION ITEMS. Maintain a formal, advisory tone. Format clearly with headers and bold text.";
             
             const payload = {
                 contents: [{ parts: [{ text: promptText }] }],
@@ -312,7 +311,7 @@
 
             const retryDelays = [1000, 2000, 4000, 8000, 16000];
             
-            for (let i = 0; i <= 5; i++) {
+            for (let i = 0; i < 5; i++) {
                 try {
                     const response = await fetch(url, {
                         method: "POST",
@@ -323,21 +322,20 @@
                     if (response.ok) {
                         const result = await response.json();
                         const text = result.candidates?.[0]?.content?.parts?.[0]?.text;
-                        if (!text) throw new Error("API returned an empty content part.");
+                        if (!text) throw new Error("AI returned empty content.");
                         return text;
                     }
 
-                    // Handling "unregistered caller" or unauthorized often relates to API key availability
                     const errorData = await response.json().catch(() => ({}));
-                    const errorMsg = errorData.error?.message || `Status ${response.status}`;
-                    
-                    if (i === 5) throw new Error(errorMsg);
-                    
-                    // Exponential backoff
-                    await new Promise(r => setTimeout(r, retryDelays[i] || 16000));
+                    if (errorData.error?.message?.includes("unregistered") || response.status === 403) {
+                        // Critical error, but we'll try to let the system handle it through retries or environment check
+                        console.error("Auth error:", errorData.error?.message);
+                    }
+
+                    await new Promise(r => setTimeout(r, retryDelays[i]));
                 } catch (e) {
-                    if (i === 5) throw e;
-                    await new Promise(r => setTimeout(r, retryDelays[i] || 16000));
+                    if (i === 4) throw e;
+                    await new Promise(r => setTimeout(r, retryDelays[i]));
                 }
             }
         }
@@ -357,7 +355,7 @@
             try {
                 const report = await callGemini(rawNotes);
                 if (report) {
-                    // Simple Markdown to HTML parser
+                    // Simple Markdown-to-HTML parser
                     let htmlContent = report
                         .replace(/^# (.*$)/gm, '<h2 class="text-2xl font-bold text-slate-900 mt-6 mb-4">$1</h2>')
                         .replace(/^## (.*$)/gm, '<h3 class="text-xl font-bold text-slate-900 mt-5 mb-3">$1</h3>')
@@ -371,7 +369,7 @@
                 }
             } catch (err) {
                 console.error("AI Error:", err);
-                showNotification("Could not connect to AI. Please verify network and try again.");
+                showNotification("AI connection error. Please verify the environment settings.");
             } finally {
                 btn.disabled = false;
                 btnText.innerText = "Generate AI Report";
@@ -397,15 +395,15 @@
         function sendProfessionalEmail() {
             const rawText = reportContent.innerText;
             const subject = "Strategy Advisory Summary - " + new Date().toLocaleDateString();
-            const body = `Generated Strategy Summary:\n\n${rawText}\n\n(Note: Please attach the downloaded PDF to this email before sending to the client.)`;
+            const body = `Generated Strategy Summary:\n\n${rawText}\n\n(Please attach the downloaded PDF before sending.)`;
             window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-            showNotification("Opening email. Attach the PDF now!");
+            showNotification("Opening email client...");
         }
 
         function sendEmail() {
             const content = notesArea.value.trim();
             if (!content) { showNotification("Scratchpad is empty!"); return; }
-            const subject = "Session Notes - " + new Date().toLocaleDateString();
+            const subject = "Quick Session Notes - " + new Date().toLocaleDateString();
             window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(content)}`;
             showNotification("Opening email client...");
         }
