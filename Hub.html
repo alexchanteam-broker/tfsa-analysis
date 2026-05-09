@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Advisor Strategy Suite</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
@@ -39,7 +40,6 @@
             transition: transform 0.3s ease, opacity 0.3s ease;
         }
 
-        /* Loading Spinner */
         .spinner {
             border: 3px solid rgba(255, 255, 255, 0.3);
             border-radius: 50%;
@@ -58,12 +58,20 @@
             background: rgba(15, 23, 42, 0.6);
             backdrop-filter: blur(4px);
         }
+
+        /* PDF Specific Styling for the capture area */
+        #pdf-export-container {
+            font-family: 'Inter', sans-serif;
+            color: #1e293b;
+            padding: 40px;
+            background: white;
+        }
     </style>
 </head>
 <body class="min-h-screen pb-12">
 
     <!-- Notification Message -->
-    <div id="notification" class="fixed top-6 left-1/2 -translate-x-1/2 z-[100] bg-slate-900 text-white px-6 py-3 rounded-full shadow-2xl opacity-0 pointer-events-none transform -translate-y-4">
+    <div id="notification" class="fixed top-6 left-1/2 -translate-x-1/2 z-[110] bg-slate-900 text-white px-6 py-3 rounded-full shadow-2xl opacity-0 pointer-events-none transform -translate-y-4">
         <span id="notification-text"></span>
     </div>
 
@@ -76,18 +84,50 @@
                     <img src="logo.png" alt="Logo" class="h-8 w-auto" onerror="this.style.display='none'">
                     <h3 class="font-bold text-slate-900">Professional Client Report</h3>
                 </div>
-                <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600">
-                    <i class="fas fa-times text-xl"></i>
-                </button>
+                <div class="flex space-x-2">
+                    <button onclick="downloadPDF()" class="p-2 text-slate-500 hover:text-blue-600 transition-colors" title="Download PDF">
+                        <i class="fas fa-file-pdf text-xl"></i>
+                    </button>
+                    <button onclick="closeModal()" class="p-2 text-slate-400 hover:text-slate-600">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
             </div>
-            <div class="p-8 overflow-y-auto flex-grow bg-white" id="report-content-preview">
-                <!-- AI Content Goes Here -->
+            
+            <div class="p-0 overflow-y-auto flex-grow bg-white">
+                <!-- Wrapper for PDF Export -->
+                <div id="pdf-export-container">
+                    <div class="flex justify-between items-start mb-8 border-b pb-6">
+                        <div>
+                            <img src="logo.png" alt="Logo" class="h-12 w-auto mb-2" onerror="this.style.display='none'">
+                            <p class="text-xs text-slate-400 uppercase tracking-widest font-bold">Strategic Analysis Report</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-sm font-bold text-slate-900" id="pdf-date"></p>
+                            <p class="text-xs text-slate-500">Wealth Strategy Session</p>
+                        </div>
+                    </div>
+                    <div id="report-content-preview" class="prose prose-slate max-w-none">
+                        <!-- AI Content Goes Here -->
+                    </div>
+                    <div class="mt-12 pt-6 border-t border-slate-100 text-[10px] text-slate-400 text-center">
+                        This report is for informational purposes only. Please consult with your advisor for specific implementation steps.
+                    </div>
+                </div>
             </div>
-            <div class="p-6 border-t border-slate-100 flex justify-end space-x-3 bg-slate-50">
-                <button onclick="closeModal()" class="px-6 py-2 text-slate-600 font-medium hover:bg-slate-200 rounded-xl transition-colors">Close</button>
-                <button onclick="sendProfessionalEmail()" class="px-6 py-2 bg-blue-600 text-white font-medium rounded-xl hover:bg-blue-700 shadow-lg flex items-center">
-                    <i class="fas fa-paper-plane mr-2"></i> Send to Email
-                </button>
+
+            <div class="p-6 border-t border-slate-100 flex flex-col sm:flex-row justify-between items-center bg-slate-50 gap-4">
+                <p class="text-xs text-slate-500 italic text-center sm:text-left">
+                    Step 1: Download PDF <i class="fas fa-arrow-right mx-1"></i> Step 2: Send Email & Attach
+                </p>
+                <div class="flex space-x-3 w-full sm:w-auto">
+                    <button onclick="downloadPDF()" class="flex-1 sm:flex-none px-6 py-2 bg-white border border-slate-200 text-slate-700 font-medium rounded-xl hover:bg-slate-50 shadow-sm flex items-center justify-center">
+                        <i class="fas fa-download mr-2"></i> Download PDF
+                    </button>
+                    <button onclick="sendProfessionalEmail()" class="flex-1 sm:flex-none px-6 py-2 bg-blue-600 text-white font-medium rounded-xl hover:bg-blue-700 shadow-lg flex items-center justify-center">
+                        <i class="fas fa-envelope mr-2"></i> Send Email
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -232,8 +272,11 @@
 
         // Update date
         const dateEl = document.getElementById('current-date');
+        const pdfDateEl = document.getElementById('pdf-date');
         const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-        dateEl.innerText = new Date().toLocaleDateString('en-US', options);
+        const dateStr = new Date().toLocaleDateString('en-US', options);
+        dateEl.innerText = dateStr;
+        pdfDateEl.innerText = dateStr;
 
         // UI Elements
         const notesArea = document.getElementById('notes');
@@ -262,7 +305,7 @@
         // AI Generation Logic
         async function callGemini(prompt) {
             const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
-            const systemPrompt = "You are a senior financial advisor's AI assistant. Take raw meeting notes and convert them into a professional, polished client report. Use sections: EXECUTIVE SUMMARY, FINANCIAL STATUS, RECOMMENDATIONS, and ACTION ITEMS. Maintain a formal, advisory tone. Format clearly for readability with headers and bold text.";
+            const systemPrompt = "You are a senior financial advisor's AI assistant. Take raw meeting notes and convert them into a professional, polished client report. Use sections: EXECUTIVE SUMMARY, FINANCIAL STATUS, RECOMMENDATIONS, and ACTION ITEMS. Maintain a formal, advisory tone. Format clearly with headers and bold text.";
             
             let retries = 0;
             const maxRetries = 5;
@@ -285,9 +328,7 @@
 
                     const data = await response.json();
                     const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
-                    
                     if (!text) throw new Error("No report generated by the AI.");
-                    
                     return text;
                 } catch (error) {
                     if (retries === maxRetries) throw error;
@@ -325,30 +366,43 @@
                     reportContent.innerHTML = htmlContent;
                     openModal();
                     showNotification("AI Report Generated!");
-                } else {
-                    showNotification("The AI returned an empty response. Try adding more detail.");
                 }
             } catch (err) {
-                console.error("AI Report Generation Error:", err);
-                showNotification(err.message || "Error generating report. Please try again.");
+                showNotification(err.message || "Error generating report.");
             } finally {
                 btn.disabled = false;
                 btnText.innerText = "Generate AI Report";
             }
         }
 
+        function downloadPDF() {
+            const element = document.getElementById('pdf-export-container');
+            const opt = {
+                margin: 10,
+                filename: `Client_Report_${new Date().toISOString().slice(0,10)}.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+            
+            showNotification("Generating PDF...");
+            html2pdf().set(opt).from(element).save().then(() => {
+                showNotification("PDF Downloaded! Please attach it to your email.");
+            });
+        }
+
         function sendProfessionalEmail() {
             if (!generatedReport) return;
-            const subject = "Advisor Meeting Summary - " + new Date().toLocaleDateString();
-            const body = `PROFESSIONAL ADVISORY SUMMARY\nGenerated: ${new Date().toLocaleString()}\n\n${generatedReport}`;
+            const subject = "Strategy Summary & Attached Report - " + new Date().toLocaleDateString();
+            const body = `Please find the professionally organized strategy summary below. I have also attached a PDF copy for your records (please download from dashboard and attach).\n\n--- SUMMARY ---\n\n${generatedReport.replace(/<br>/g, '\n')}`;
             window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-            showNotification("Opening email client...");
+            showNotification("Opening email client. Remember to attach the PDF!");
         }
 
         function sendEmail() {
             const content = notesArea.value.trim();
             if (!content) { showNotification("Scratchpad is empty!"); return; }
-            const subject = "Quick Meeting Notes - " + new Date().toLocaleDateString();
+            const subject = "Meeting Notes - " + new Date().toLocaleDateString();
             window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(content)}`;
             showNotification("Opening email client...");
         }
