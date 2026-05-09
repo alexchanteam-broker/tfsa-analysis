@@ -65,6 +65,23 @@
             padding: 40px;
             background: white;
         }
+
+        /* Standardized report styling */
+        .report-section-title {
+            color: #0f172a;
+            font-weight: 700;
+            font-size: 1.25rem;
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+            border-bottom: 2px solid #f1f5f9;
+            padding-bottom: 0.25rem;
+        }
+        
+        .report-content p {
+            margin-bottom: 1rem;
+            line-height: 1.6;
+            color: #334155;
+        }
     </style>
 </head>
 <body class="min-h-screen pb-12">
@@ -105,7 +122,7 @@
                             <p class="text-xs text-slate-500">Wealth Strategy Session</p>
                         </div>
                     </div>
-                    <div id="report-content-preview" class="prose prose-slate max-w-none">
+                    <div id="report-content-preview" class="report-content max-w-none">
                         <!-- AI Content -->
                     </div>
                     <div class="mt-12 pt-6 border-t border-slate-100 text-[10px] text-slate-400 text-center">
@@ -293,13 +310,14 @@
         function closeModal() { reportModal.classList.add('hidden'); }
         function openModal() { reportModal.classList.remove('hidden'); }
 
-        // Session Reset on Reload
+        // RESET ON RELOAD: Ensure data is cleared every time the page is opened/reloaded
         window.addEventListener('load', () => {
             notesArea.value = '';
             localStorage.removeItem('advisor_notes');
+            console.log("Session reset complete.");
         });
 
-        // AI Generation Logic
+        // AI Generation Logic with Exponential Backoff
         async function callGemini(promptText) {
             const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
             const systemPrompt = "You are a senior financial advisor's AI assistant. Take raw meeting notes and convert them into a professional, polished client report. Use sections: EXECUTIVE SUMMARY, FINANCIAL STATUS, RECOMMENDATIONS, and ACTION ITEMS. Maintain a formal, advisory tone. Format clearly with headers and bold text.";
@@ -311,7 +329,7 @@
 
             const retryDelays = [1000, 2000, 4000, 8000, 16000];
             
-            for (let i = 0; i < 5; i++) {
+            for (let i = 0; i <= 5; i++) {
                 try {
                     const response = await fetch(url, {
                         method: "POST",
@@ -326,16 +344,20 @@
                         return text;
                     }
 
-                    const errorData = await response.json().catch(() => ({}));
-                    if (errorData.error?.message?.includes("unregistered") || response.status === 403) {
-                        // Critical error, but we'll try to let the system handle it through retries or environment check
-                        console.error("Auth error:", errorData.error?.message);
+                    // Handling "unregistered caller" often relates to API key availability or environment injection issues
+                    if (response.status === 403 || response.status === 401) {
+                        console.error("Authorization Error:", response.status);
                     }
 
-                    await new Promise(r => setTimeout(r, retryDelays[i]));
+                    if (i === 5) {
+                        const errorData = await response.json().catch(() => ({}));
+                        throw new Error(errorData.error?.message || `API Error (${response.status})`);
+                    }
+                    
+                    await new Promise(r => setTimeout(r, retryDelays[i] || 16000));
                 } catch (e) {
-                    if (i === 4) throw e;
-                    await new Promise(r => setTimeout(r, retryDelays[i]));
+                    if (i === 5) throw e;
+                    await new Promise(r => setTimeout(r, retryDelays[i] || 16000));
                 }
             }
         }
@@ -355,13 +377,19 @@
             try {
                 const report = await callGemini(rawNotes);
                 if (report) {
-                    // Simple Markdown-to-HTML parser
+                    // Refined Markdown-to-HTML parser using standard Tailwind classes
                     let htmlContent = report
-                        .replace(/^# (.*$)/gm, '<h2 class="text-2xl font-bold text-slate-900 mt-6 mb-4">$1</h2>')
+                        .replace(/^# (.*$)/gm, '<h2 class="text-2xl font-bold text-slate-900 mt-6 mb-4 pb-2 border-b-2 border-slate-100">$1</h2>')
                         .replace(/^## (.*$)/gm, '<h3 class="text-xl font-bold text-slate-900 mt-5 mb-3">$1</h3>')
                         .replace(/^### (.*$)/gm, '<h4 class="text-lg font-bold text-slate-800 mt-4 mb-2">$1</h4>')
                         .replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold text-slate-900">$1</strong>')
-                        .replace(/\n/g, '<br>');
+                        .replace(/\n/g, '<br>')
+                        .replace(/(<br>){2,}/g, '</p><p class="mb-4 text-slate-700 leading-relaxed">');
+                    
+                    // Wrap with a paragraph if not already
+                    if (!htmlContent.startsWith('<h') && !htmlContent.startsWith('<p')) {
+                        htmlContent = '<p class="mb-4 text-slate-700 leading-relaxed">' + htmlContent + '</p>';
+                    }
                     
                     reportContent.innerHTML = htmlContent;
                     openModal();
@@ -369,7 +397,7 @@
                 }
             } catch (err) {
                 console.error("AI Error:", err);
-                showNotification("AI connection error. Please verify the environment settings.");
+                showNotification("Could not connect to AI. Please verify the environment settings.");
             } finally {
                 btn.disabled = false;
                 btnText.innerText = "Generate AI Report";
@@ -395,15 +423,15 @@
         function sendProfessionalEmail() {
             const rawText = reportContent.innerText;
             const subject = "Strategy Advisory Summary - " + new Date().toLocaleDateString();
-            const body = `Generated Strategy Summary:\n\n${rawText}\n\n(Please attach the downloaded PDF before sending.)`;
+            const body = `Generated Strategy Summary:\n\n${rawText}\n\n(Note: Please attach the downloaded PDF to this email before sending to the client.)`;
             window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-            showNotification("Opening email client...");
+            showNotification("Opening email. Attach the PDF now!");
         }
 
         function sendEmail() {
             const content = notesArea.value.trim();
             if (!content) { showNotification("Scratchpad is empty!"); return; }
-            const subject = "Quick Session Notes - " + new Date().toLocaleDateString();
+            const subject = "Session Notes - " + new Date().toLocaleDateString();
             window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(content)}`;
             showNotification("Opening email client...");
         }
