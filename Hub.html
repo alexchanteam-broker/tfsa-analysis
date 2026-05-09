@@ -3,331 +3,365 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Executive Wealth Suite</title>
+    <title>Elite Advisor Terminal</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Inter:wght@300;400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
         
         :root {
-            --gold: #d4af37;
-            --gold-dark: #aa841e;
-            --slate-950: #020617;
-            --slate-900: #0f172a;
+            --gold-primary: #c5a059;
+            --gold-secondary: #9a7b4f;
+            --obsidian: #0a0a0a;
+            --slate-depth: #121212;
         }
 
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--slate-950);
-            color: #f8fafc;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--obsidian);
+            color: #e2e8f0;
+            overflow-x: hidden;
         }
 
         .brand-font { font-family: 'Cinzel', serif; }
 
-        .gold-gradient {
-            background: linear-gradient(135deg, #f5e0a3 0%, #d4af37 50%, #aa841e 100%);
+        .champagne-gradient {
+            background: linear-gradient(135deg, #f3e5ab 0%, #c5a059 50%, #9a7b4f 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
-        .gold-border {
-            border: 1px solid rgba(212, 175, 55, 0.2);
+        .premium-border {
+            border: 1px solid rgba(197, 160, 89, 0.15);
         }
 
-        .gold-button {
-            background: linear-gradient(135deg, #d4af37 0%, #aa841e 100%);
-            transition: all 0.3s ease;
+        .action-button {
+            background: linear-gradient(135deg, #c5a059 0%, #9a7b4f 100%);
+            box-shadow: 0 10px 20px -10px rgba(197, 160, 89, 0.4);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .gold-button:hover {
+        .action-button:hover {
+            transform: translateY(-2px);
             filter: brightness(1.1);
-            transform: translateY(-1px);
-            box-shadow: 0 4px 20px rgba(212, 175, 55, 0.3);
+            box-shadow: 0 15px 30px -10px rgba(197, 160, 89, 0.6);
         }
 
-        .glass-card {
-            background: rgba(15, 23, 42, 0.6);
-            backdrop-filter: blur(12px);
+        .glass-panel {
+            background: rgba(18, 18, 18, 0.7);
+            backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         .tool-card {
-            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            transition: all 0.5s cubic-bezier(0.2, 1, 0.3, 1);
+            background: linear-gradient(145deg, rgba(30, 30, 30, 0.4) 0%, rgba(10, 10, 10, 0.4) 100%);
         }
 
         .tool-card:hover {
-            background: rgba(30, 41, 59, 0.5);
-            border-color: rgba(212, 175, 55, 0.4);
-            transform: translateY(-5px);
+            transform: translateY(-8px) scale(1.02);
+            border-color: rgba(197, 160, 89, 0.3);
+            background: linear-gradient(145deg, rgba(40, 40, 40, 0.6) 0%, rgba(20, 20, 20, 0.6) 100%);
         }
 
-        .spinner {
-            border: 2px solid rgba(255, 255, 255, 0.1);
-            border-top: 2px solid var(--gold);
+        .loader-spin {
+            border: 2px solid rgba(197, 160, 89, 0.1);
+            border-top: 2px solid var(--gold-primary);
             border-radius: 50%;
-            width: 16px;
-            height: 16px;
-            animation: spin 1s linear infinite;
+            width: 18px;
+            height: 18px;
+            animation: spin 0.8s linear infinite;
         }
 
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
         #pdf-export-container {
-            background: white;
-            color: #1e293b;
-            padding: 60px;
-            font-family: 'Inter', sans-serif;
+            background: #ffffff;
+            color: #0f172a;
+            padding: 80px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
         }
 
-        .report-body h2 { font-size: 1.75rem; font-weight: 700; color: #0f172a; margin-top: 2.5rem; border-bottom: 2px solid #f1f5f9; padding-bottom: 0.5rem; margin-bottom: 1rem; }
-        .report-body h3 { font-size: 1.25rem; font-weight: 600; color: #334155; margin-top: 1.5rem; margin-bottom: 0.75rem; }
-        .report-body p { line-height: 1.7; margin-bottom: 1.25rem; color: #475569; }
-        .report-body strong { color: #0f172a; font-weight: 600; }
+        .report-typography h2 { font-size: 1.75rem; font-weight: 800; color: #000000; margin: 2rem 0 1rem 0; border-bottom: 3px solid #f1f5f9; padding-bottom: 0.5rem; }
+        .report-typography h3 { font-size: 1.25rem; font-weight: 700; color: #334155; margin: 1.5rem 0 0.75rem 0; }
+        .report-typography p { line-height: 1.8; margin-bottom: 1.5rem; color: #475569; font-size: 1.05rem; }
+        .report-typography strong { color: #000000; font-weight: 700; }
     </style>
 </head>
-<body class="min-h-screen">
+<body class="min-h-screen selection:bg-gold-primary/30">
 
-    <!-- Global Notification -->
-    <div id="notification" class="fixed top-6 left-1/2 -translate-x-1/2 z-[200] px-6 py-3 rounded-full glass-card border-white/10 opacity-0 pointer-events-none transition-all duration-500 shadow-2xl">
-        <span id="notification-text" class="text-sm font-medium"></span>
+    <!-- HUD Notification System -->
+    <div id="notification" class="fixed top-8 left-1/2 -translate-x-1/2 z-[200] px-8 py-4 rounded-2xl glass-panel border-gold-primary/20 opacity-0 pointer-events-none transition-all duration-700 shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
+        <div class="flex items-center space-x-4">
+            <div id="notif-indicator" class="w-2 h-2 rounded-full bg-gold-primary animate-pulse"></div>
+            <span id="notification-text" class="text-sm font-semibold tracking-wide"></span>
+        </div>
     </div>
 
-    <!-- Executive Report Modal -->
-    <div id="report-modal" class="fixed inset-0 z-[150] hidden flex items-center justify-center p-4">
-        <div class="absolute inset-0 bg-slate-950/90 backdrop-blur-sm" onclick="closeModal()"></div>
-        <div class="glass-card w-full max-w-5xl max-h-[92vh] rounded-[2rem] shadow-2xl relative z-10 flex flex-col overflow-hidden gold-border">
-            <div class="p-6 border-b border-white/10 flex justify-between items-center bg-slate-900/50">
-                <div class="flex items-center space-x-4">
-                    <img src="logo.png" alt="Logo" class="h-10 w-auto" onerror="this.style.display='none'">
-                    <h3 class="text-xl font-bold tracking-tight gold-gradient brand-font">Strategy Synthesis</h3>
+    <!-- Strategy Reveal Modal -->
+    <div id="report-modal" class="fixed inset-0 z-[150] hidden flex items-center justify-center p-6">
+        <div class="absolute inset-0 bg-black/90 backdrop-blur-md" onclick="closeModal()"></div>
+        <div class="glass-panel w-full max-w-5xl max-h-[92vh] rounded-[3rem] shadow-2xl relative z-10 flex flex-col overflow-hidden premium-border">
+            <div class="p-8 border-b border-white/5 flex justify-between items-center bg-black/20">
+                <div class="flex items-center space-x-5">
+                    <img src="logo.png" alt="Logo" class="h-12 w-auto" onerror="this.style.display='none'">
+                    <div>
+                        <h3 class="text-2xl font-black tracking-tighter champagne-gradient brand-font">Portfolio Synthesis</h3>
+                        <p class="text-[10px] uppercase tracking-[0.4em] text-slate-500 font-bold">Strategic Wealth Insights</p>
+                    </div>
                 </div>
-                <div class="flex items-center space-x-3">
-                    <button onclick="downloadPDF()" class="w-10 h-10 flex items-center justify-center rounded-full bg-white/5 hover:bg-gold/20 text-gold transition-colors">
-                        <i class="fas fa-file-pdf"></i>
+                <div class="flex items-center space-x-4">
+                    <button onclick="downloadPDF()" class="w-12 h-12 flex items-center justify-center rounded-2xl bg-white/5 hover:bg-gold-primary/20 text-gold-primary transition-all">
+                        <i class="fas fa-file-pdf text-xl"></i>
                     </button>
-                    <button onclick="closeModal()" class="w-10 h-10 flex items-center justify-center rounded-full bg-white/5 hover:bg-red-500/20 text-slate-400 hover:text-red-400 transition-colors">
-                        <i class="fas fa-times"></i>
+                    <button onclick="closeModal()" class="w-12 h-12 flex items-center justify-center rounded-2xl bg-white/5 hover:bg-red-500/20 text-slate-400 hover:text-red-400 transition-all">
+                        <i class="fas fa-times text-xl"></i>
                     </button>
                 </div>
             </div>
             
-            <div class="p-0 overflow-y-auto flex-grow bg-slate-50/5">
+            <div class="p-0 overflow-y-auto flex-grow bg-slate-900/10">
                 <div id="pdf-export-container">
-                    <div class="flex justify-between items-start mb-12 border-b-4 border-slate-900 pb-8">
-                        <div>
-                            <img src="logo.png" alt="Logo" class="h-14 w-auto mb-4" onerror="this.style.display='none'">
-                            <h1 class="text-3xl font-bold text-slate-900 tracking-tight mb-1">Executive Advisory Summary</h1>
-                            <p class="text-xs uppercase tracking-[0.3em] font-black text-gold-dark">Privileged Client Documentation</p>
+                    <div class="flex justify-between items-end mb-16 border-b-8 border-black pb-10">
+                        <div class="space-y-4">
+                            <img src="logo.png" alt="Logo" class="h-16 w-auto" onerror="this.style.display='none'">
+                            <h1 class="text-4xl font-black text-black tracking-tighter leading-none">Wealth Strategy<br>Analysis</h1>
                         </div>
                         <div class="text-right">
-                            <p class="text-sm font-bold text-slate-900 mb-1" id="pdf-date"></p>
-                            <p class="text-xs text-slate-500">Wealth Strategy Group</p>
-                            <p class="text-[10px] text-slate-400 mt-2">ID: SESSION-${Math.floor(Math.random()*10000)}</p>
+                            <p class="text-sm font-black text-black mb-1 uppercase tracking-widest" id="pdf-date"></p>
+                            <p class="text-xs text-slate-500 font-medium">Session Intelligence Report</p>
+                            <div class="mt-4 pt-4 border-t border-slate-100">
+                                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Verified by AI Core</p>
+                            </div>
                         </div>
                     </div>
-                    <div id="report-content-preview" class="report-body">
-                        <!-- AI Content -->
+                    <div id="report-content-preview" class="report-typography">
+                        <!-- AI content will be injected here -->
                     </div>
-                    <div class="mt-16 pt-8 border-t border-slate-100 text-[10px] text-slate-400 leading-relaxed italic">
-                        Disclaimer: This document is for strategic planning purposes only and does not constitute formal legal or tax advice. Past performance is not indicative of future results.
+                    <div class="mt-20 pt-10 border-t-2 border-slate-100 text-[11px] text-slate-400 leading-relaxed font-medium">
+                        <span class="text-slate-600 font-bold uppercase tracking-widest block mb-2 underline">Confidentiality Notice</span>
+                        This communication contains information which is confidential and may also be privileged. It is for the exclusive use of the intended recipient(s). If you are not the intended recipient(s), please note that any distribution, copying, or use of this communication or the information in it is strictly prohibited.
                     </div>
                 </div>
             </div>
 
-            <div class="p-6 border-t border-white/10 bg-slate-950 flex flex-col sm:flex-row justify-between items-center gap-6">
-                <div class="flex items-center text-[10px] font-bold uppercase tracking-widest text-slate-500">
-                    <i class="fas fa-lock mr-2 text-gold"></i>
-                    End-to-End Encrypted Session
+            <div class="p-8 border-t border-white/5 bg-black flex flex-col sm:flex-row justify-between items-center gap-6">
+                <div class="flex items-center space-x-4">
+                    <div class="flex -space-x-2">
+                        <div class="w-8 h-8 rounded-full bg-gold-primary/20 border border-gold-primary/40 flex items-center justify-center text-[10px] font-bold">AI</div>
+                        <div class="w-8 h-8 rounded-full bg-slate-800 border border-white/10 flex items-center justify-center text-[10px] font-bold text-slate-400">FS</div>
+                    </div>
+                    <p class="text-[11px] font-bold uppercase tracking-[0.2em] text-slate-500">Security: Tier 4 Encrypted Delivery</p>
                 </div>
-                <div class="flex space-x-3 w-full sm:w-auto">
-                    <button onclick="downloadPDF()" class="flex-1 sm:flex-none px-6 py-3 rounded-xl border border-white/10 hover:bg-white/5 text-white font-bold text-xs transition-all flex items-center justify-center uppercase tracking-widest">
-                        <i class="fas fa-download mr-2"></i> Export PDF
+                <div class="flex space-x-4 w-full sm:w-auto">
+                    <button onclick="downloadPDF()" class="flex-1 sm:flex-none px-10 py-4 rounded-2xl border border-white/10 hover:bg-white/5 text-white font-black text-xs uppercase tracking-[0.2em] transition-all">
+                        <i class="fas fa-download mr-3"></i> Save PDF
                     </button>
-                    <button onclick="sendProfessionalEmail()" class="flex-1 sm:flex-none px-8 py-3 rounded-xl gold-button text-slate-950 font-black text-xs transition-all flex items-center justify-center uppercase tracking-widest">
-                        <i class="fas fa-paper-plane mr-2"></i> Dispatch Email
+                    <button onclick="sendProfessionalEmail()" class="flex-1 sm:flex-none px-12 py-4 rounded-2xl action-button text-black font-black text-xs uppercase tracking-[0.2em] transition-all">
+                        <i class="fas fa-paper-plane mr-3"></i> Dispatch Email
                     </button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Header / Navigation -->
-    <header class="sticky top-0 z-50 border-b border-white/5 bg-slate-950/80 backdrop-blur-xl px-8 py-4">
-        <div class="max-w-7xl mx-auto flex justify-between items-center">
-            <div class="flex items-center space-x-6">
-                <div class="relative">
-                    <div class="absolute -inset-1 gold-button rounded-lg blur-md opacity-20"></div>
-                    <div class="relative bg-slate-900 px-3 py-2 rounded-lg border border-white/10 flex items-center">
-                        <img src="logo.png" alt="Logo" class="h-8 w-auto object-contain" onerror="this.style.display='none'; document.getElementById('fallback-icon').classList.remove('hidden')">
-                        <i id="fallback-icon" class="fas fa-gem text-gold text-xl hidden"></i>
+    <!-- Main Navigation Terminal -->
+    <header class="sticky top-0 z-50 border-b border-white/5 bg-black/60 backdrop-blur-2xl px-10 py-6">
+        <div class="max-w-[1600px] mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-8">
+                <div class="relative group">
+                    <div class="absolute -inset-2 bg-gold-primary/30 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition duration-700"></div>
+                    <div class="relative bg-slate-900/80 p-3 rounded-2xl border border-gold-primary/20 flex items-center">
+                        <img src="logo.png" alt="Logo" class="h-10 w-auto object-contain" onerror="this.style.display='none'; document.getElementById('fallback-icon').classList.remove('hidden')">
+                        <i id="fallback-icon" class="fas fa-shield-halved text-gold-primary text-2xl hidden"></i>
                     </div>
                 </div>
                 <div>
-                    <h1 class="brand-font text-2xl gold-gradient tracking-widest leading-none mb-1">Executive Suite</h1>
-                    <p class="text-[9px] uppercase tracking-[0.4em] text-slate-500 font-black">Advisor Analytics Hub</p>
+                    <h1 class="brand-font text-3xl champagne-gradient tracking-tighter leading-none mb-1">Executive Suite</h1>
+                    <div class="flex items-center space-x-3">
+                        <span class="text-[10px] uppercase tracking-[0.5em] text-slate-500 font-black">Strategic Hub</span>
+                        <span class="w-1 h-1 bg-gold-primary/40 rounded-full"></span>
+                        <span id="nav-date" class="text-[10px] uppercase tracking-[0.2em] text-gold-primary font-bold"></span>
+                    </div>
                 </div>
             </div>
-            <div class="hidden lg:flex items-center space-x-10 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
-                <div class="flex items-center space-x-2">
-                    <span class="w-1.5 h-1.5 rounded-full bg-gold animate-pulse"></span>
-                    <span id="nav-date"></span>
+            
+            <div class="hidden xl:flex items-center space-x-12">
+                <div class="flex flex-col items-end">
+                    <span class="text-[9px] uppercase tracking-widest text-slate-500 font-bold mb-1">Session Protocol</span>
+                    <div class="flex items-center space-x-3 text-gold-primary">
+                        <span class="text-xs font-black tracking-widest">GEMINI CORE 2.5</span>
+                        <div class="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_10px_#10b981]"></div>
+                    </div>
                 </div>
-                <div class="h-4 w-px bg-white/10"></div>
-                <div class="flex items-center space-x-3 text-gold">
-                    <i class="fas fa-microchip"></i>
-                    <span>Gemini Core Active</span>
-                </div>
+                <div class="h-10 w-px bg-white/5"></div>
+                <a href="mailto:catholicalex@gmail.com" class="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 hover:text-gold-primary transition-colors">
+                    Support Access
+                </a>
             </div>
         </div>
     </header>
 
-    <main class="max-w-7xl mx-auto px-8 pt-12 pb-24">
-        <!-- Tools Console -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
-            <a href="FS.html" class="tool-card glass-card p-8 rounded-3xl group">
-                <div class="w-14 h-14 rounded-2xl bg-slate-900 border border-white/5 flex items-center justify-center mb-6 transition-all group-hover:border-gold/30">
-                    <i class="fas fa-file-invoice-dollar text-2xl text-slate-400 group-hover:text-gold transition-colors"></i>
+    <main class="max-w-[1600px] mx-auto px-10 pt-16 pb-32">
+        <!-- Dashboard Modules -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-20">
+            <a href="FS.html" class="tool-card glass-panel p-10 rounded-[2.5rem] group border-transparent">
+                <div class="w-16 h-16 rounded-3xl bg-slate-900 border border-white/5 flex items-center justify-center mb-8 transition-all group-hover:border-gold-primary/30 group-hover:bg-slate-800">
+                    <i class="fas fa-vault text-3xl text-slate-500 group-hover:text-gold-primary transition-colors"></i>
                 </div>
-                <h3 class="text-lg font-bold mb-2 group-hover:text-gold transition-colors">Net Worth Analysis</h3>
-                <p class="text-slate-500 text-sm leading-relaxed mb-6">Deep dive into client cash flow and global asset structures.</p>
-                <div class="text-[10px] font-black uppercase tracking-widest text-slate-600 group-hover:text-slate-300 flex items-center">
-                    Initiate Audit <i class="fas fa-chevron-right ml-2 group-hover:translate-x-1 transition-transform"></i>
-                </div>
-            </a>
-
-            <a href="index.html" class="tool-card glass-card p-8 rounded-3xl group">
-                <div class="w-14 h-14 rounded-2xl bg-slate-900 border border-white/5 flex items-center justify-center mb-6 transition-all group-hover:border-gold/30">
-                    <i class="fas fa-chart-line text-2xl text-slate-400 group-hover:text-gold transition-colors"></i>
-                </div>
-                <h3 class="text-lg font-bold mb-2 group-hover:text-gold transition-colors">Tax Alpha Projection</h3>
-                <p class="text-slate-500 text-sm leading-relaxed mb-6">Compare registration strategies for optimized yield.</p>
-                <div class="text-[10px] font-black uppercase tracking-widest text-slate-600 group-hover:text-slate-300 flex items-center">
-                    View Matrix <i class="fas fa-chevron-right ml-2 group-hover:translate-x-1 transition-transform"></i>
+                <h3 class="text-xl font-bold mb-3 group-hover:text-gold-primary transition-colors tracking-tight">Financial Audit</h3>
+                <p class="text-slate-500 text-sm leading-relaxed mb-8 font-medium">Aggregated net worth modeling and global cash flow auditing.</p>
+                <div class="text-[10px] font-black uppercase tracking-[0.3em] text-slate-600 group-hover:text-gold-primary flex items-center transition-all">
+                    Initialize <i class="fas fa-arrow-right ml-3 group-hover:translate-x-2 transition-transform"></i>
                 </div>
             </a>
 
-            <a href="LTI.html" class="tool-card glass-card p-8 rounded-3xl group">
-                <div class="w-14 h-14 rounded-2xl bg-slate-900 border border-white/5 flex items-center justify-center mb-6 transition-all group-hover:border-gold/30">
-                    <i class="fas fa-balance-scale text-2xl text-slate-400 group-hover:text-gold transition-colors"></i>
+            <a href="index.html" class="tool-card glass-panel p-10 rounded-[2.5rem] group border-transparent">
+                <div class="w-16 h-16 rounded-3xl bg-slate-900 border border-white/5 flex items-center justify-center mb-8 transition-all group-hover:border-gold-primary/30 group-hover:bg-slate-800">
+                    <i class="fas fa-chart-line-up text-3xl text-slate-500 group-hover:text-gold-primary transition-colors"></i>
                 </div>
-                <h3 class="text-lg font-bold mb-2 group-hover:text-gold transition-colors">Leverage Optimizer</h3>
-                <p class="text-slate-500 text-sm leading-relaxed mb-6">Evaluate borrowing costs vs potential portfolio ROI.</p>
-                <div class="text-[10px] font-black uppercase tracking-widest text-slate-600 group-hover:text-slate-300 flex items-center">
-                    Assess Risk <i class="fas fa-chevron-right ml-2 group-hover:translate-x-1 transition-transform"></i>
+                <h3 class="text-xl font-bold mb-3 group-hover:text-gold-primary transition-colors tracking-tight">Yield Matrix</h3>
+                <p class="text-slate-500 text-sm leading-relaxed mb-8 font-medium">Registration alpha comparison for TFSA and RRSP structures.</p>
+                <div class="text-[10px] font-black uppercase tracking-[0.3em] text-slate-600 group-hover:text-gold-primary flex items-center transition-all">
+                    Project Alpha <i class="fas fa-arrow-right ml-3 group-hover:translate-x-2 transition-transform"></i>
                 </div>
             </a>
 
-            <a href="rrsp-calculator.html" class="tool-card glass-card p-8 rounded-3xl group">
-                <div class="w-14 h-14 rounded-2xl bg-slate-900 border border-white/5 flex items-center justify-center mb-6 transition-all group-hover:border-gold/30">
-                    <i class="fas fa-calculator text-2xl text-slate-400 group-hover:text-gold transition-colors"></i>
+            <a href="LTI.html" class="tool-card glass-panel p-10 rounded-[2.5rem] group border-transparent">
+                <div class="w-16 h-16 rounded-3xl bg-slate-900 border border-white/5 flex items-center justify-center mb-8 transition-all group-hover:border-gold-primary/30 group-hover:bg-slate-800">
+                    <i class="fas fa-scale-balanced text-3xl text-slate-500 group-hover:text-gold-primary transition-colors"></i>
                 </div>
-                <h3 class="text-lg font-bold mb-2 group-hover:text-gold transition-colors">Estate Planner</h3>
-                <p class="text-slate-500 text-sm leading-relaxed mb-6">Model tax refunds and long-term retirement targets.</p>
-                <div class="text-[10px] font-black uppercase tracking-widest text-slate-600 group-hover:text-slate-300 flex items-center">
-                    Launch Model <i class="fas fa-chevron-right ml-2 group-hover:translate-x-1 transition-transform"></i>
+                <h3 class="text-xl font-bold mb-3 group-hover:text-gold-primary transition-colors tracking-tight">Leverage Lab</h3>
+                <p class="text-slate-500 text-sm leading-relaxed mb-8 font-medium">Arbitrage modeling for borrowing costs vs asset appreciation.</p>
+                <div class="text-[10px] font-black uppercase tracking-[0.3em] text-slate-600 group-hover:text-gold-primary flex items-center transition-all">
+                    Model Risk <i class="fas fa-arrow-right ml-3 group-hover:translate-x-2 transition-transform"></i>
+                </div>
+            </a>
+
+            <a href="rrsp-calculator.html" class="tool-card glass-panel p-10 rounded-[2.5rem] group border-transparent">
+                <div class="w-16 h-16 rounded-3xl bg-slate-900 border border-white/5 flex items-center justify-center mb-8 transition-all group-hover:border-gold-primary/30 group-hover:bg-slate-800">
+                    <i class="fas fa-hourglass-half text-3xl text-slate-500 group-hover:text-gold-primary transition-colors"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-3 group-hover:text-gold-primary transition-colors tracking-tight">Horizon Planner</h3>
+                <p class="text-slate-500 text-sm leading-relaxed mb-8 font-medium">Terminal wealth projections and tax-efficient drawdown logic.</p>
+                <div class="text-[10px] font-black uppercase tracking-[0.3em] text-slate-600 group-hover:text-gold-primary flex items-center transition-all">
+                    Run Simulation <i class="fas fa-arrow-right ml-3 group-hover:translate-x-2 transition-transform"></i>
                 </div>
             </a>
         </div>
 
-        <!-- Strategy Workspace -->
-        <div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
-            <div class="xl:col-span-2 glass-card rounded-[2.5rem] p-10 gold-border shadow-2xl">
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-6">
+        <!-- Strategy Workbench -->
+        <div class="grid grid-cols-1 xl:grid-cols-3 gap-10">
+            <div class="xl:col-span-2 glass-panel rounded-[3.5rem] p-12 premium-border shadow-[0_40px_100px_rgba(0,0,0,0.6)]">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-8">
                     <div>
-                        <h2 class="text-2xl font-bold tracking-tight mb-1">Session Intelligence</h2>
-                        <p class="text-slate-500 text-sm">Capture raw client notes for AI-powered synthesis.</p>
+                        <h2 class="text-3xl font-black tracking-tighter mb-2">Session Workbench</h2>
+                        <p class="text-slate-500 text-sm font-medium">Synthesize disparate client inputs into unified strategy.</p>
                     </div>
-                    <button id="ai-btn" onclick="generateAIReport()" class="w-full md:w-auto gold-button text-slate-950 px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-lg flex items-center justify-center">
+                    <button id="ai-btn" onclick="generateAIReport()" class="w-full md:w-auto action-button text-black px-12 py-5 rounded-2xl font-black text-xs uppercase tracking-[0.3em] shadow-2xl flex items-center justify-center">
                         <span id="ai-btn-text" class="flex items-center">
-                            <i class="fas fa-magic mr-3"></i> Synthesize Strategy
+                            <i class="fas fa-brain mr-4 text-lg"></i> Synthesize Strategy
                         </span>
                     </button>
                 </div>
 
                 <textarea id="notes" 
-                    class="w-full h-80 bg-slate-900/30 border border-white/5 rounded-3xl p-8 focus:ring-2 focus:ring-gold/30 focus:border-gold/30 outline-none text-slate-200 placeholder:text-slate-700 transition-all text-lg leading-relaxed resize-none"
-                    placeholder="Enter meeting observations... e.g. 'Client interested in aggressive leverage strategy. Current net worth $2.1M. Risk tolerance: Moderate-High.'"></textarea>
+                    class="w-full h-96 bg-slate-900/40 border border-white/5 rounded-[2rem] p-10 focus:ring-4 focus:ring-gold-primary/20 focus:border-gold-primary/30 outline-none text-slate-100 placeholder:text-slate-800 transition-all text-xl font-light leading-relaxed resize-none"
+                    placeholder="Document client objectives, current asset location, risk constraints, and time horizons for AI-powered synthesis..."></textarea>
 
-                <div class="mt-8 flex justify-between items-center">
-                    <div class="flex items-center space-x-3 text-[10px] font-black uppercase tracking-widest text-slate-600">
-                        <span class="w-1.5 h-1.5 rounded-full bg-slate-700"></span>
-                        <span>Auto-Clear: Session Reset Enabled</span>
+                <div class="mt-10 flex justify-between items-center">
+                    <div class="flex items-center space-x-4">
+                        <div class="flex items-center space-x-2">
+                            <div class="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_#10b981]"></div>
+                            <span class="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500">Live Workspace</span>
+                        </div>
+                        <span class="h-4 w-px bg-white/5"></span>
+                        <span class="text-[10px] font-black uppercase tracking-[0.3em] text-slate-600">Auto-Reset Enabled</span>
                     </div>
-                    <button onclick="clearNotes()" id="clear-btn" class="text-[10px] font-black text-slate-500 hover:text-red-400 transition-colors uppercase tracking-[0.2em]">
-                        Purge Workspace
+                    <button onclick="clearNotes()" id="clear-btn" class="text-[10px] font-black text-slate-600 hover:text-red-500 transition-colors uppercase tracking-[0.3em]">
+                        Purge Session
                     </button>
                 </div>
             </div>
 
-            <div class="space-y-8">
-                <div class="glass-card rounded-[2.5rem] p-10 flex flex-col justify-between">
+            <div class="space-y-10">
+                <div class="glass-panel rounded-[3.5rem] p-12 flex flex-col justify-between border-emerald-500/10">
                     <div>
-                        <h3 class="text-[10px] font-black uppercase tracking-[0.3em] text-gold mb-8 flex items-center">
-                            <i class="fas fa-shield-alt mr-3"></i> Compliance Tip
-                        </h3>
-                        <div id="tip-container" class="text-slate-300 leading-relaxed italic text-lg font-light">
-                            "Ensure leverage discussions include a thorough sensitivity analysis for interest rate hikes."
+                        <div class="flex items-center justify-between mb-10">
+                            <h3 class="text-[10px] font-black uppercase tracking-[0.4em] text-gold-primary">Compliance Protocol</h3>
+                            <i class="fas fa-fingerprint text-gold-primary opacity-40"></i>
+                        </div>
+                        <div id="tip-container" class="text-slate-200 leading-relaxed italic text-xl font-light">
+                            "Leverage interest is strictly deductible when borrowing to purchase income-producing non-registered assets."
                         </div>
                     </div>
-                    <button onclick="newTip()" class="mt-8 text-[9px] font-black text-slate-600 hover:text-white transition-colors uppercase tracking-[0.3em] self-start">
+                    <button onclick="newTip()" class="mt-12 text-[10px] font-black text-slate-600 hover:text-gold-primary transition-colors uppercase tracking-[0.4em] self-start">
                         Next Directive <i class="fas fa-arrow-right ml-2"></i>
                     </button>
                 </div>
 
-                <div class="bg-slate-900 rounded-[2.5rem] p-10 border border-white/5 relative overflow-hidden">
-                    <div class="absolute top-0 right-0 w-32 h-32 bg-gold/10 blur-[60px] rounded-full -mr-16 -mt-16"></div>
-                    <h4 class="font-bold text-white mb-3">Advisor Network</h4>
-                    <p class="text-slate-400 text-sm mb-8 leading-relaxed">System diagnostics or peer review support available via corporate channel.</p>
-                    <a href="mailto:catholicalex@gmail.com" class="block w-full text-center py-4 rounded-2xl bg-white/5 hover:bg-white/10 text-white font-bold text-[10px] uppercase tracking-[0.2em] transition-all">
-                        Contact Support
-                    </a>
+                <div class="bg-slate-900/50 rounded-[3.5rem] p-12 border border-white/5 relative overflow-hidden group">
+                    <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-gold-primary/10 blur-[80px] rounded-full group-hover:bg-gold-primary/20 transition-all"></div>
+                    <div class="relative z-10">
+                        <h4 class="font-black text-white text-lg tracking-tighter mb-4">Elite Diagnostics</h4>
+                        <p class="text-slate-500 text-sm mb-10 leading-relaxed font-medium">Real-time terminal support and peer audit reviews available via secure line.</p>
+                        <a href="mailto:catholicalex@gmail.com" class="block w-full text-center py-5 rounded-2xl bg-white/5 hover:bg-white/10 text-white font-black text-[10px] uppercase tracking-[0.4em] transition-all border border-white/5">
+                            Secure Channel
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
     </main>
 
     <script>
-        const apiKey = ""; // Provided by Canvas environment
+        // API Key placeholder - environment will inject the actual key
+        const apiKey = ""; 
 
-        // Initial Reset
+        // Initial setup and reset
         window.addEventListener('load', () => {
             const notes = document.getElementById('notes');
             notes.value = '';
             localStorage.removeItem('advisor_notes');
-            console.log("Advisor session reset.");
             
-            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-            const dateStr = new Date().toLocaleDateString('en-US', options);
+            const options = { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' };
+            const dateStr = new Date().toLocaleDateString('en-US', options).toUpperCase();
             document.getElementById('nav-date').innerText = dateStr;
             document.getElementById('pdf-date').innerText = dateStr;
         });
 
-        const notification = document.getElementById('notification');
-        const notificationText = document.getElementById('notification-text');
-        const reportModal = document.getElementById('report-modal');
-        const reportContent = document.getElementById('report-content-preview');
+        const notif = document.getElementById('notification');
+        const notifText = document.getElementById('notification-text');
+        const notifInd = document.getElementById('notif-indicator');
+        const modal = document.getElementById('report-modal');
+        const content = document.getElementById('report-content-preview');
 
         function showNotification(text, error = false) {
-            notificationText.innerText = text;
-            notificationText.className = error ? 'text-red-400 text-sm font-medium' : 'text-gold text-sm font-medium';
-            notification.classList.replace('opacity-0', 'opacity-100');
-            notification.classList.replace('pointer-events-none', 'pointer-events-auto');
+            notifText.innerText = text;
+            notifInd.className = error ? 'w-2 h-2 rounded-full bg-red-500' : 'w-2 h-2 rounded-full bg-gold-primary';
+            notif.classList.replace('opacity-0', 'opacity-100');
+            notif.classList.replace('translate-y-[-20px]', 'translate-y-0');
+            notif.classList.replace('pointer-events-none', 'pointer-events-auto');
             setTimeout(() => {
-                notification.classList.replace('opacity-100', 'opacity-0');
-                notification.classList.replace('pointer-events-auto', 'pointer-events-none');
-            }, 5000);
+                notif.classList.replace('opacity-100', 'opacity-0');
+                notif.classList.replace('translate-y-0', 'translate-y-[-20px]');
+                notif.classList.replace('pointer-events-auto', 'pointer-events-none');
+            }, 6000);
         }
 
-        function closeModal() { reportModal.classList.add('hidden'); }
-        function openModal() { reportModal.classList.remove('hidden'); }
+        function closeModal() { modal.classList.add('hidden'); }
+        function openModal() { modal.classList.remove('hidden'); }
 
-        // Core AI Communication Engine
+        /**
+         * Core Communication Engine with the Gemini 2.5 Flash Model
+         */
         async function callGemini(promptText) {
-            // Mandated endpoint for Gemini 2.5 Flash
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+            // Mandated Model Name
+            const modelName = "gemini-2.5-flash-preview-09-2025";
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
             
-            const systemPrompt = "You are a senior financial advisor's high-performance AI assistant. Synthesize raw notes into an elite-tier client report. Structure: EXECUTIVE SUMMARY, DETAILED FINANCIAL PROFILE, STRATEGIC RECOMMENDATIONS, and CRITICAL ACTION ITEMS. Use bold text for metrics. Professional tone only.";
+            const systemPrompt = "You are an elite financial advisor assistant. Synthesize raw notes into a high-stakes, professional report. Sections: EXECUTIVE SUMMARY, FINANCIAL PROFILE, RECOMMENDATIONS, and CRITICAL ACTION ITEMS. Bold all numbers. Tone: Authoritative, elite, technical.";
             
             const payload = {
                 contents: [{ parts: [{ text: promptText }] }],
@@ -344,19 +378,24 @@
                         body: JSON.stringify(payload)
                     });
 
+                    const data = await response.json();
+
                     if (response.ok) {
-                        const result = await response.json();
-                        const content = result.candidates?.[0]?.content?.parts?.[0]?.text;
-                        if (!content) throw new Error("Null response payload.");
-                        return content;
+                        const resultText = data.candidates?.[0]?.content?.parts?.[0]?.text;
+                        if (!resultText) throw new Error("Empty analysis payload.");
+                        return resultText;
                     }
 
-                    const errorData = await response.json().catch(() => ({}));
-                    const msg = errorData.error?.message || `Error ${response.status}`;
+                    // Handling "unregistered caller" or other errors
+                    const errorMsg = data.error?.message || `Pipeline error ${response.status}`;
                     
-                    if (i === 5) throw new Error(msg);
-                    
-                    // Exponential backoff
+                    if (errorMsg.includes("API key not valid") || errorMsg.includes("unregistered")) {
+                        console.error("Auth Exception:", errorMsg);
+                        // If it's the last retry, pass it to the user
+                        if (i === 5) throw new Error("Connection Authorization Failed. Please check Canvas environment settings.");
+                    }
+
+                    if (i === 5) throw new Error(errorMsg);
                     await new Promise(r => setTimeout(r, retryDelays[i]));
                 } catch (e) {
                     if (i === 5) throw e;
@@ -368,23 +407,23 @@
         async function generateAIReport() {
             const raw = document.getElementById('notes').value.trim();
             if (!raw) {
-                showNotification("Input session notes for synthesis.");
+                showNotification("Workbench is empty. Provide session data for synthesis.");
                 return;
             }
 
             const btn = document.getElementById('ai-btn');
             const btnText = document.getElementById('ai-btn-text');
             btn.disabled = true;
-            btnText.innerHTML = `<div class="spinner mr-3"></div> Processing Intelligence...`;
+            btnText.innerHTML = `<div class="loader-spin mr-4"></div> SYNCING INTELLIGENCE...`;
 
             try {
                 const report = await callGemini(raw);
                 if (report) {
-                    // Refined Content Parsing
+                    // Refined parsing logic for clean typography
                     let html = report
-                        .replace(/^# (.*$)/gm, '<h2 class="text-3xl font-bold">$1</h2>')
-                        .replace(/^## (.*$)/gm, '<h2 class="text-2xl font-bold">$1</h2>')
-                        .replace(/^### (.*$)/gm, '<h3 class="text-xl font-semibold">$1</h3>')
+                        .replace(/^# (.*$)/gm, '<h2>$1</h2>')
+                        .replace(/^## (.*$)/gm, '<h2>$1</h2>')
+                        .replace(/^### (.*$)/gm, '<h3>$1</h3>')
                         .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
                         .replace(/\n/g, '<br>')
                         .replace(/(<br>){2,}/g, '</p><p>');
@@ -393,71 +432,71 @@
                         html = '<p>' + html + '</p>';
                     }
                     
-                    reportContent.innerHTML = html;
+                    content.innerHTML = html;
                     openModal();
-                    showNotification("Strategy Synthesis Complete.");
+                    showNotification("Analysis Synthesis Successful.");
                 }
             } catch (err) {
-                console.error("AI Suite Error:", err);
-                showNotification("AI Pipeline Error: " + err.message, true);
+                console.error("AI Error:", err);
+                showNotification(err.message, true);
             } finally {
                 btn.disabled = false;
-                btnText.innerHTML = `<i class="fas fa-magic mr-3"></i> Synthesize Strategy`;
+                btnText.innerHTML = `<i class="fas fa-brain mr-4 text-lg"></i> Synthesize Strategy`;
             }
         }
 
         function downloadPDF() {
             const element = document.getElementById('pdf-export-container');
             const opt = {
-                margin: 15,
-                filename: `Client_Strategy_Report_${new Date().toISOString().split('T')[0]}.pdf`,
+                margin: 10,
+                filename: `Elite_Report_${new Date().toISOString().split('T')[0]}.pdf`,
                 image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 3, useCORS: true },
+                html2canvas: { scale: 3, useCORS: true, letterRendering: true },
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
             };
             
-            showNotification("Finalizing PDF Export...");
+            showNotification("Compiling high-resolution document...");
             html2pdf().set(opt).from(element).save().then(() => {
-                showNotification("PDF Export Successful.");
+                showNotification("PDF Exported.");
             });
         }
 
         function sendProfessionalEmail() {
-            const content = reportContent.innerText;
-            const subject = "Strategic Advisory Synthesis - Confidential";
-            const body = `Dear Client,\n\nI have synthesized our strategy session into a professional summary. Please review the key points below and find the formal PDF report attached to this correspondence.\n\n--- EXECUTIVE SUMMARY ---\n\n${content}\n\n(Important: Please manually attach the downloaded PDF file to this email.)`;
+            const rawText = content.innerText;
+            const subject = "Strategic Advisory - Session Analysis - CONFIDENTIAL";
+            const body = `Dear Client,\n\nI have synthesized our strategic session into the following advisory summary. A formal PDF document has also been prepared for your records.\n\n--- EXECUTIVE SUMMARY ---\n\n${rawText}\n\n(Important: Please ensure you manually attach the exported PDF file to this email.)`;
             window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-            showNotification("Email Draft Dispatched.");
+            showNotification("Email Client Prompted.");
         }
 
         let clearStage = 0;
         function clearNotes() {
             const btn = document.getElementById('clear-btn');
             if (clearStage === 0) {
-                btn.innerText = "Confirm Purge";
-                btn.classList.add('text-red-400');
+                btn.innerText = "VERIFY PURGE";
+                btn.classList.add('text-red-500');
                 clearStage = 1;
                 setTimeout(() => {
-                    btn.innerText = "Purge Workspace";
-                    btn.classList.remove('text-red-400');
+                    btn.innerText = "Purge Session";
+                    btn.classList.remove('text-red-500');
                     clearStage = 0;
                 }, 4000);
             } else {
                 document.getElementById('notes').value = '';
-                btn.innerText = "Purge Workspace";
-                btn.classList.remove('text-red-400');
+                btn.innerText = "Purge Session";
+                btn.classList.remove('text-red-500');
                 clearStage = 0;
-                showNotification("Workspace Purged.");
+                showNotification("Workbench Cleared.");
             }
         }
 
         const tips = [
-            "Leverage interest is only deductible when the loan is used to generate non-registered investment income.",
-            "Always verify OAS clawback thresholds when planning significant RRIF withdrawals.",
-            "Spousal RRSPs remain a powerful tool for income splitting in high-net-worth households.",
-            "TFSA contribution room is lost if a withdrawal is made and then re-contributed in the same year.",
-            "Consider life insurance as a tax-efficient wealth transfer vehicle for corporate surplus.",
-            "RRSP contributions reduce current marginal tax but create future fully taxable income."
+            "Leverage interest is only deductible when borrowing to purchase income-producing non-registered assets.",
+            "Always verify OAS clawback thresholds ($86,912 for 2023) when planning high-net-worth RRIF drawdowns.",
+            "Spousal RRSPs provide powerful income-splitting benefits for households with high-income disparities.",
+            "TFSA contribution room is calculated as [Current Limit + Unused Room + Previous Year Withdrawals].",
+            "Consider a Corporate Class fund structure to optimize tax efficiency for non-registered corporate surplus.",
+            "The capital gains inclusion rate remains a critical variable in LTI sensitivity modeling."
         ];
         
         function newTip() {
