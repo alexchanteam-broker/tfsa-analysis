@@ -87,6 +87,17 @@
         .report-typography h3 { font-size: 1.25rem; font-weight: 700; color: #334155; margin: 1.5rem 0 0.75rem 0; }
         .report-typography p { line-height: 1.8; margin-bottom: 1.5rem; color: #475569; font-size: 1.05rem; }
         .report-typography strong { color: #000000; font-weight: 700; }
+
+        /* Diagnostic Console Styling */
+        #diagnostic-console {
+            background: #000;
+            color: #0f0;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 10px;
+            border: 1px solid #333;
+            max-height: 150px;
+            overflow-y: auto;
+        }
     </style>
 </head>
 <body class="min-h-screen selection:bg-gold-primary/30">
@@ -95,7 +106,10 @@
     <div id="notification" class="fixed top-8 left-1/2 -translate-x-1/2 z-[200] px-8 py-4 rounded-2xl glass-panel border-gold-primary/20 opacity-0 pointer-events-none transition-all duration-700 shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
         <div class="flex items-center space-x-4">
             <div id="notif-indicator" class="w-2 h-2 rounded-full bg-gold-primary animate-pulse"></div>
-            <span id="notification-text" class="text-sm font-semibold tracking-wide"></span>
+            <div class="flex flex-col">
+                <span id="notification-text" class="text-sm font-semibold tracking-wide"></span>
+                <span id="notification-details" class="text-[10px] text-slate-500 hidden mt-1"></span>
+            </div>
         </div>
     </div>
 
@@ -168,7 +182,7 @@
 
     <!-- Main Navigation Terminal -->
     <header class="sticky top-0 z-50 border-b border-white/5 bg-black/60 backdrop-blur-2xl px-10 py-6">
-        <div class="max-w-[1600px] mx-auto flex justify-between items-center">
+        <div class="max-[1600px] mx-auto flex justify-between items-center w-full">
             <div class="flex items-center space-x-8">
                 <div class="relative group">
                     <div class="absolute -inset-2 bg-gold-primary/30 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition duration-700"></div>
@@ -196,6 +210,9 @@
                     </div>
                 </div>
                 <div class="h-10 w-px bg-white/5"></div>
+                <button onclick="toggleDiagnostics()" class="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 hover:text-gold-primary transition-colors">
+                    Diagnostics
+                </button>
                 <a href="mailto:catholicalex@gmail.com" class="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 hover:text-gold-primary transition-colors">
                     Support Access
                 </a>
@@ -204,6 +221,19 @@
     </header>
 
     <main class="max-w-[1600px] mx-auto px-10 pt-16 pb-32">
+        <!-- Diagnostic Output (Hidden by default) -->
+        <div id="diagnostic-container" class="mb-8 hidden">
+            <div class="glass-panel rounded-xl p-4 border-red-500/20">
+                <div class="flex justify-between items-center mb-2">
+                    <h4 class="text-[10px] font-black uppercase tracking-widest text-red-400">System Logs</h4>
+                    <button onclick="clearLogs()" class="text-[8px] text-slate-500 hover:text-white uppercase">Clear Logs</button>
+                </div>
+                <div id="diagnostic-console" class="p-2 rounded-lg">
+                    [SYSTEM READY] - Waiting for action...
+                </div>
+            </div>
+        </div>
+
         <!-- Dashboard Modules -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-20">
             <a href="FS.html" class="tool-card glass-panel p-10 rounded-[2.5rem] group border-transparent">
@@ -319,11 +349,33 @@
         // API Key placeholder - environment will inject the actual key
         const apiKey = ""; 
 
+        // Diagnostic Utils
+        const diagContainer = document.getElementById('diagnostic-container');
+        const diagConsole = document.getElementById('diagnostic-console');
+
+        function toggleDiagnostics() {
+            diagContainer.classList.toggle('hidden');
+        }
+
+        function log(msg, isError = false) {
+            const timestamp = new Date().toLocaleTimeString();
+            const color = isError ? '#f87171' : '#4ade80';
+            const entry = `<div style="color: ${color}">[${timestamp}] ${msg}</div>`;
+            diagConsole.innerHTML += entry;
+            diagConsole.scrollTop = diagConsole.scrollHeight;
+            console.log(`[SYS-LOG] ${msg}`);
+        }
+
+        function clearLogs() {
+            diagConsole.innerHTML = '[SYSTEM READY]';
+        }
+
         // Initial setup and reset
         window.addEventListener('load', () => {
             const notes = document.getElementById('notes');
             notes.value = '';
             localStorage.removeItem('advisor_notes');
+            log("Advisor session initialized and reset.");
             
             const options = { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' };
             const dateStr = new Date().toLocaleDateString('en-US', options).toUpperCase();
@@ -333,21 +385,31 @@
 
         const notif = document.getElementById('notification');
         const notifText = document.getElementById('notification-text');
+        const notifDetails = document.getElementById('notification-details');
         const notifInd = document.getElementById('notif-indicator');
         const modal = document.getElementById('report-modal');
         const content = document.getElementById('report-content-preview');
 
-        function showNotification(text, error = false) {
+        function showNotification(text, error = false, details = null) {
             notifText.innerText = text;
             notifInd.className = error ? 'w-2 h-2 rounded-full bg-red-500' : 'w-2 h-2 rounded-full bg-gold-primary';
+            
+            if (details) {
+                notifDetails.innerText = details;
+                notifDetails.classList.remove('hidden');
+            } else {
+                notifDetails.classList.add('hidden');
+            }
+
             notif.classList.replace('opacity-0', 'opacity-100');
             notif.classList.replace('translate-y-[-20px]', 'translate-y-0');
             notif.classList.replace('pointer-events-none', 'pointer-events-auto');
+            
             setTimeout(() => {
                 notif.classList.replace('opacity-100', 'opacity-0');
                 notif.classList.replace('translate-y-0', 'translate-y-[-20px]');
                 notif.classList.replace('pointer-events-auto', 'pointer-events-none');
-            }, 6000);
+            }, 8000);
         }
 
         function closeModal() { modal.classList.add('hidden'); }
@@ -357,9 +419,10 @@
          * Core Communication Engine with the Gemini 2.5 Flash Model
          */
         async function callGemini(promptText) {
-            // Mandated Model Name
             const modelName = "gemini-2.5-flash-preview-09-2025";
             const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
+            
+            log(`Initiating API call to: ${modelName}`);
             
             const systemPrompt = "You are an elite financial advisor assistant. Synthesize raw notes into a high-stakes, professional report. Sections: EXECUTIVE SUMMARY, FINANCIAL PROFILE, RECOMMENDATIONS, and CRITICAL ACTION ITEMS. Bold all numbers. Tone: Authoritative, elite, technical.";
             
@@ -372,32 +435,40 @@
             
             for (let i = 0; i < 6; i++) {
                 try {
+                    log(`Attempt ${i+1}...`);
                     const response = await fetch(url, {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify(payload)
                     });
 
+                    log(`Response Status: ${response.status}`);
                     const data = await response.json();
 
                     if (response.ok) {
                         const resultText = data.candidates?.[0]?.content?.parts?.[0]?.text;
-                        if (!resultText) throw new Error("Empty analysis payload.");
+                        if (!resultText) {
+                            log("Error: Response received but text content was empty.", true);
+                            throw new Error("Empty analysis payload.");
+                        }
+                        log("Success: Content generated successfully.");
                         return resultText;
                     }
 
-                    // Handling "unregistered caller" or other errors
+                    // Log detailed error from server
                     const errorMsg = data.error?.message || `Pipeline error ${response.status}`;
+                    log(`API Error: ${errorMsg}`, true);
                     
-                    if (errorMsg.includes("API key not valid") || errorMsg.includes("unregistered")) {
-                        console.error("Auth Exception:", errorMsg);
-                        // If it's the last retry, pass it to the user
-                        if (i === 5) throw new Error("Connection Authorization Failed. Please check Canvas environment settings.");
+                    if (errorMsg.includes("unregistered")) {
+                        log("CRITICAL: Environment authorization failure (Unregistered Caller). Checking settings...", true);
+                        if (i === 5) throw new Error("Environment Authorization Failure: 'unregistered caller'. This usually indicates the API endpoint is rejecting the request without a valid key.");
                     }
 
                     if (i === 5) throw new Error(errorMsg);
+                    log(`Retrying in ${retryDelays[i]/1000}s...`);
                     await new Promise(r => setTimeout(r, retryDelays[i]));
                 } catch (e) {
+                    log(`Catch Error: ${e.message}`, true);
                     if (i === 5) throw e;
                     await new Promise(r => setTimeout(r, retryDelays[i]));
                 }
@@ -407,19 +478,18 @@
         async function generateAIReport() {
             const raw = document.getElementById('notes').value.trim();
             if (!raw) {
-                showNotification("Workbench is empty. Provide session data for synthesis.");
+                showNotification("Workbench is empty. Provide data first.");
                 return;
             }
 
             const btn = document.getElementById('ai-btn');
             const btnText = document.getElementById('ai-btn-text');
             btn.disabled = true;
-            btnText.innerHTML = `<div class="loader-spin mr-4"></div> SYNCING INTELLIGENCE...`;
+            btnText.innerHTML = `<div class="loader-spin mr-4"></div> ANALYZING...`;
 
             try {
                 const report = await callGemini(raw);
                 if (report) {
-                    // Refined parsing logic for clean typography
                     let html = report
                         .replace(/^# (.*$)/gm, '<h2>$1</h2>')
                         .replace(/^## (.*$)/gm, '<h2>$1</h2>')
@@ -434,11 +504,14 @@
                     
                     content.innerHTML = html;
                     openModal();
-                    showNotification("Analysis Synthesis Successful.");
+                    showNotification("Synthesis Complete.");
+                    log("Report generated and displayed.");
                 }
             } catch (err) {
-                console.error("AI Error:", err);
-                showNotification(err.message, true);
+                log(`Final Failure: ${err.message}`, true);
+                // Reveal the diagnostic console if a fatal error occurs
+                diagContainer.classList.remove('hidden');
+                showNotification("Operation Failed", true, err.message);
             } finally {
                 btn.disabled = false;
                 btnText.innerHTML = `<i class="fas fa-brain mr-4 text-lg"></i> Synthesize Strategy`;
@@ -449,9 +522,9 @@
             const element = document.getElementById('pdf-export-container');
             const opt = {
                 margin: 10,
-                filename: `Elite_Report_${new Date().toISOString().split('T')[0]}.pdf`,
+                filename: `Report_${new Date().toISOString().split('T')[0]}.pdf`,
                 image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 3, useCORS: true, letterRendering: true },
+                html2canvas: { scale: 3, useCORS: true },
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
             };
             
@@ -463,10 +536,10 @@
 
         function sendProfessionalEmail() {
             const rawText = content.innerText;
-            const subject = "Strategic Advisory - Session Analysis - CONFIDENTIAL";
-            const body = `Dear Client,\n\nI have synthesized our strategic session into the following advisory summary. A formal PDF document has also been prepared for your records.\n\n--- EXECUTIVE SUMMARY ---\n\n${rawText}\n\n(Important: Please ensure you manually attach the exported PDF file to this email.)`;
+            const subject = "Strategic Advisory - Session Analysis";
+            const body = `Advisory Summary:\n\n${rawText}\n\n(Note: Attach PDF before sending.)`;
             window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-            showNotification("Email Client Prompted.");
+            showNotification("Email client triggered.");
         }
 
         let clearStage = 0;
@@ -487,16 +560,17 @@
                 btn.classList.remove('text-red-500');
                 clearStage = 0;
                 showNotification("Workbench Cleared.");
+                log("Session purged.");
             }
         }
 
         const tips = [
-            "Leverage interest is only deductible when borrowing to purchase income-producing non-registered assets.",
-            "Always verify OAS clawback thresholds ($86,912 for 2023) when planning high-net-worth RRIF drawdowns.",
-            "Spousal RRSPs provide powerful income-splitting benefits for households with high-income disparities.",
-            "TFSA contribution room is calculated as [Current Limit + Unused Room + Previous Year Withdrawals].",
-            "Consider a Corporate Class fund structure to optimize tax efficiency for non-registered corporate surplus.",
-            "The capital gains inclusion rate remains a critical variable in LTI sensitivity modeling."
+            "Leverage interest is only deductible when borrowing to purchase income-producing assets.",
+            "Always verify OAS clawback thresholds for high-net-worth RRIF drawdowns.",
+            "Spousal RRSPs provide powerful income-splitting benefits.",
+            "TFSA contribution room is lost if re-contributed in the same year.",
+            "Consider Corporate Class funds for non-registered corporate surplus.",
+            "Capital gains inclusion rates are critical in LTI sensitivity modeling."
         ];
         
         function newTip() {
