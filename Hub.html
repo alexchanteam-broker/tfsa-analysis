@@ -3,389 +3,415 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Elite Advisor Terminal</title>
+    <title>Advisor Strategy Suite</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
         
-        :root {
-            --gold-primary: #c5a059;
-            --obsidian: #0a0a0a;
-        }
-
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: var(--obsidian);
-            color: #e2e8f0;
-            overflow-x: hidden;
+            background-color: #fcfcfd;
+            color: #1a1c1e;
         }
 
-        .brand-font { font-family: 'Cinzel', serif; }
-
-        .champagne-gradient {
-            background: linear-gradient(135deg, #f3e5ab 0%, #c5a059 50%, #9a7b4f 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .premium-border { border: 1px solid rgba(197, 160, 89, 0.15); }
-
-        .action-button {
-            background: linear-gradient(135deg, #c5a059 0%, #9a7b4f 100%);
-            box-shadow: 0 10px 20px -10px rgba(197, 160, 89, 0.4);
+        .card-shadow {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.04), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .action-button:hover { transform: translateY(-2px); filter: brightness(1.1); }
-
-        .glass-panel {
-            background: rgba(18, 18, 18, 0.7);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
+        .card-shadow:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
         }
 
-        .tool-card {
-            transition: all 0.5s cubic-bezier(0.2, 1, 0.3, 1);
-            background: linear-gradient(145deg, rgba(30, 30, 30, 0.4) 0%, rgba(10, 10, 10, 0.4) 100%);
-        }
-
-        .tool-card:hover { transform: translateY(-8px); border-color: rgba(197, 160, 89, 0.3); }
-
-        .loader-spin {
-            border: 2px solid rgba(197, 160, 89, 0.1);
-            border-top: 2px solid var(--gold-primary);
-            border-radius: 50%; width: 18px; height: 18px;
+        .spinner {
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 2px solid white;
+            width: 18px;
+            height: 18px;
             animation: spin 0.8s linear infinite;
         }
 
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        #pdf-export-container { background: #fff; color: #0f172a; padding: 60px; font-family: 'Plus Jakarta Sans', sans-serif; }
-        .report-typography h2 { font-size: 1.75rem; font-weight: 800; color: #000; margin: 2rem 0 1rem; border-bottom: 2px solid #f1f5f9; padding-bottom: 0.5rem; }
-        .report-typography h3 { font-size: 1.25rem; font-weight: 700; color: #334155; margin: 1.5rem 0 0.75rem; }
-        .report-typography p { line-height: 1.7; margin-bottom: 1.25rem; color: #475569; }
-        .report-typography strong { color: #000; font-weight: 700; }
-        
-        #diag-console { background: #000; color: #0f0; font-family: monospace; font-size: 10px; max-height: 120px; overflow: auto; border: 1px solid #333; }
+        /* PDF Styles */
+        #pdf-container {
+            background: white;
+            color: #1a1c1e;
+            padding: 50px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        .pdf-report h2 { font-size: 22px; font-weight: 800; color: #1a56db; margin-top: 30px; border-bottom: 2px solid #eff6ff; padding-bottom: 8px; margin-bottom: 15px; }
+        .pdf-report h3 { font-size: 18px; font-weight: 700; color: #1e293b; margin-top: 20px; margin-bottom: 10px; }
+        .pdf-report p { line-height: 1.6; margin-bottom: 12px; color: #4b5563; }
+        .pdf-report strong { color: #111827; }
+        .pdf-report ul { list-style-type: disc; margin-left: 20px; margin-bottom: 15px; }
+        .pdf-report li { margin-bottom: 5px; color: #4b5563; }
     </style>
 </head>
 <body class="min-h-screen">
 
-    <!-- Notification -->
-    <div id="notification" class="fixed top-8 left-1/2 -translate-x-1/2 z-[200] px-8 py-4 rounded-2xl glass-panel border-gold-primary/20 opacity-0 pointer-events-none transition-all duration-700">
-        <div class="flex items-center space-x-4">
-            <div id="notif-indicator" class="w-2 h-2 rounded-full bg-gold-primary animate-pulse"></div>
-            <span id="notification-text" class="text-sm font-semibold tracking-wide"></span>
-        </div>
+    <!-- Simple Notification -->
+    <div id="notification" class="fixed top-6 left-1/2 -translate-x-1/2 z-[200] bg-slate-900 text-white px-6 py-3 rounded-2xl shadow-xl opacity-0 transition-all duration-500 pointer-events-none flex items-center gap-3">
+        <i id="notif-icon" class="fas fa-circle-info"></i>
+        <span id="notif-text" class="text-sm font-medium"></span>
     </div>
 
-    <!-- Report Modal -->
-    <div id="report-modal" class="fixed inset-0 z-[150] hidden flex items-center justify-center p-6">
-        <div class="absolute inset-0 bg-black/90 backdrop-blur-md" onclick="closeModal()"></div>
-        <div class="glass-panel w-full max-w-5xl max-h-[92vh] rounded-[3rem] shadow-2xl relative z-10 flex flex-col overflow-hidden premium-border">
-            <div class="p-8 border-b border-white/5 flex justify-between items-center bg-black/20">
-                <div class="flex items-center space-x-5">
-                    <img src="logo.png" alt="Logo" class="h-10 w-auto" onerror="this.style.display='none'">
-                    <h3 class="text-2xl font-black champagne-gradient brand-font">Strategy Synthesis</h3>
+    <!-- Preview Modal -->
+    <div id="report-modal" class="fixed inset-0 z-[150] hidden flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="closeModal()"></div>
+        <div class="bg-white w-full max-w-4xl max-h-[90vh] rounded-3xl shadow-2xl relative z-10 flex flex-col overflow-hidden border border-slate-100">
+            <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+                <div class="flex items-center gap-4">
+                    <img src="logo.png" alt="Logo" class="h-8 w-auto" onerror="this.style.display='none'">
+                    <h3 class="font-bold text-lg text-slate-900">Meeting Summary Preview</h3>
                 </div>
-                <button onclick="closeModal()" class="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-red-500/20 text-slate-400 hover:text-red-400 transition-all">
-                    <i class="fas fa-times text-xl"></i>
+                <button onclick="closeModal()" class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-slate-200 text-slate-400 transition-colors">
+                    <i class="fas fa-times"></i>
                 </button>
             </div>
             
             <div class="p-0 overflow-y-auto flex-grow bg-white">
-                <div id="pdf-export-container">
-                    <div class="flex justify-between items-end mb-12 border-b-4 border-slate-900 pb-8 text-black">
+                <div id="pdf-container">
+                    <div class="flex justify-between items-start mb-10 border-b border-slate-100 pb-8">
                         <div>
-                            <img src="logo.png" alt="Logo" class="h-14 w-auto mb-4" onerror="this.style.display='none'">
-                            <h1 class="text-3xl font-black tracking-tighter">Strategic Analysis</h1>
+                            <img src="logo.png" alt="Logo" class="h-12 w-auto mb-4" onerror="this.style.display='none'">
+                            <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Professional Strategy Summary</h1>
+                            <p class="text-blue-600 font-bold text-xs uppercase tracking-widest mt-1">Confidential Financial Report</p>
                         </div>
                         <div class="text-right">
-                            <p class="text-sm font-black mb-1 uppercase" id="pdf-date"></p>
-                            <p class="text-[10px] text-slate-500 uppercase tracking-widest">Confidential Advisory Doc</p>
+                            <p class="text-sm font-bold text-slate-900" id="pdf-date"></p>
+                            <p class="text-xs text-slate-500 font-medium">Client Consultation Service</p>
                         </div>
                     </div>
-                    <div id="report-content-preview" class="report-typography"></div>
+                    <div id="report-content" class="pdf-report">
+                        <!-- AI content -->
+                    </div>
+                    <div class="mt-20 pt-8 border-t border-slate-100 text-[10px] text-slate-400 italic">
+                        This report was generated based on meeting notes to assist in your financial planning. Please review with your advisor before taking action.
+                    </div>
                 </div>
             </div>
 
-            <div class="p-8 border-t border-white/5 bg-black flex justify-between items-center">
-                <p class="text-[10px] font-bold uppercase tracking-[0.3em] text-slate-500">Security: Encrypted Session</p>
-                <div class="flex space-x-4">
-                    <button onclick="downloadPDF()" class="px-8 py-4 rounded-xl border border-white/10 hover:bg-white/5 text-white font-black text-xs uppercase tracking-[0.2em] transition-all">
-                        <i class="fas fa-download mr-3"></i> Download PDF
+            <div class="p-6 border-t border-slate-100 bg-slate-50 flex flex-col sm:flex-row justify-between items-center gap-4">
+                <p class="text-xs text-slate-500 flex items-center gap-2">
+                    <i class="fas fa-circle-check text-green-500"></i>
+                    Report ready to be shared
+                </p>
+                <div class="flex gap-3 w-full sm:w-auto">
+                    <button onclick="downloadPDF()" class="flex-1 sm:flex-none px-6 py-3 bg-white border border-slate-200 text-slate-700 font-bold text-sm rounded-xl hover:bg-slate-50 transition-all flex items-center justify-center gap-2">
+                        <i class="fas fa-file-pdf text-red-500"></i> Save as PDF
                     </button>
-                    <button onclick="sendProfessionalEmail()" class="px-10 py-4 rounded-xl action-button text-black font-black text-xs uppercase tracking-[0.2em] transition-all">
-                        <i class="fas fa-paper-plane mr-3"></i> Send Email
+                    <button onclick="sendProfessionalEmail()" class="flex-1 sm:flex-none px-8 py-3 bg-blue-600 text-white font-bold text-sm rounded-xl hover:bg-blue-700 shadow-lg shadow-blue-200 transition-all flex items-center justify-center gap-2">
+                        <i class="fas fa-paper-plane"></i> Email to Client
                     </button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Header -->
-    <header class="sticky top-0 z-50 border-b border-white/5 bg-black/60 backdrop-blur-2xl px-10 py-6">
-        <div class="max-w-[1600px] mx-auto flex justify-between items-center">
-            <div class="flex items-center space-x-8">
-                <div class="bg-slate-900 p-3 rounded-2xl border border-gold-primary/20">
-                    <img src="logo.png" alt="Logo" class="h-8 w-auto object-contain" onerror="this.style.display='none'; document.getElementById('fb-icon').classList.remove('hidden')">
-                    <i id="fb-icon" class="fas fa-crown text-gold-primary text-2xl hidden"></i>
+    <!-- Main Navigation -->
+    <nav class="bg-white border-b border-slate-100 px-6 py-4 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-4">
+                <div class="bg-blue-50 p-2 rounded-xl border border-blue-100">
+                    <img src="logo.png" alt="Logo" class="h-8 w-auto object-contain" onerror="this.style.display='none'; document.getElementById('nav-icon').classList.remove('hidden')">
+                    <i id="nav-icon" class="fas fa-briefcase text-blue-600 text-xl hidden"></i>
                 </div>
                 <div>
-                    <h1 class="brand-font text-3xl champagne-gradient tracking-tighter leading-none mb-1">Executive Suite</h1>
-                    <p id="nav-date" class="text-[10px] uppercase tracking-[0.4em] text-gold-primary font-bold"></p>
+                    <h1 class="text-xl font-extrabold text-slate-900 tracking-tight leading-none">Financial Strategy Hub</h1>
+                    <p id="nav-date" class="text-[10px] uppercase tracking-widest text-slate-400 font-bold mt-1"></p>
                 </div>
             </div>
-            <button onclick="toggleLogs()" class="text-[9px] font-black uppercase tracking-[0.4em] text-slate-500 hover:text-white transition-colors">System Diagnostics</button>
-        </div>
-    </header>
-
-    <main class="max-w-[1600px] mx-auto px-10 pt-16 pb-32">
-        <!-- Diagnostic Console -->
-        <div id="diag-container" class="mb-8 hidden glass-panel rounded-2xl p-4 border-red-500/20">
-            <div class="flex justify-between items-center mb-2">
-                <span class="text-[10px] font-black text-red-400 uppercase tracking-widest">Communication Logs</span>
-                <button onclick="diagConsole.innerHTML=''" class="text-[8px] text-slate-600 uppercase">Clear</button>
+            <div class="flex items-center gap-6">
+                <div class="hidden md:flex items-center gap-2 text-xs font-bold text-emerald-600 bg-emerald-50 px-3 py-1.5 rounded-full border border-emerald-100">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                    Secure Session Active
+                </div>
             </div>
-            <div id="diag-console" class="p-3 rounded-xl"></div>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-6 py-12">
+        
+        <!-- Simplified Greeting -->
+        <div class="mb-10">
+            <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight mb-2">Welcome Back.</h2>
+            <p class="text-slate-500 font-medium">Which tool do you need for your client meeting today?</p>
         </div>
 
-        <!-- Dashboard Tools -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-20">
-            <a href="FS.html" class="tool-card glass-panel p-10 rounded-[2.5rem] group border-transparent">
-                <i class="fas fa-vault text-3xl text-slate-500 group-hover:text-gold-primary mb-6"></i>
-                <h3 class="text-xl font-bold mb-3 group-hover:text-gold-primary tracking-tight">Financial Audit</h3>
-                <p class="text-slate-500 text-sm leading-relaxed mb-8">Aggregated net worth and global cash flow auditing.</p>
-                <div class="text-[10px] font-black uppercase tracking-[0.3em] text-slate-600 group-hover:text-gold-primary">Initialize Audit <i class="fas fa-arrow-right ml-2"></i></div>
+        <!-- Colorful Tool Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+            
+            <a href="FS.html" class="card-shadow bg-white p-8 rounded-3xl border border-slate-100 flex flex-col group">
+                <div class="w-14 h-14 bg-blue-500 rounded-2xl flex items-center justify-center mb-6 shadow-lg shadow-blue-100 group-hover:scale-110 transition-transform">
+                    <i class="fas fa-wallet text-white text-2xl"></i>
+                </div>
+                <h3 class="text-lg font-bold text-slate-900 mb-2">Client Net Worth</h3>
+                <p class="text-slate-500 text-sm leading-relaxed flex-grow">Review current assets, debts, and total financial health.</p>
+                <span class="mt-6 text-blue-600 text-xs font-extrabold uppercase tracking-widest flex items-center gap-2">
+                    Open Tool <i class="fas fa-arrow-right transition-transform group-hover:translate-x-1"></i>
+                </span>
             </a>
-            <a href="index.html" class="tool-card glass-panel p-10 rounded-[2.5rem] group border-transparent">
-                <i class="fas fa-chart-line-up text-3xl text-slate-500 group-hover:text-gold-primary mb-6"></i>
-                <h3 class="text-xl font-bold mb-3 group-hover:text-gold-primary tracking-tight">Yield Matrix</h3>
-                <p class="text-slate-500 text-sm leading-relaxed mb-8">Registration alpha comparison for TFSA and RRSP structures.</p>
-                <div class="text-[10px] font-black uppercase tracking-[0.3em] text-slate-600 group-hover:text-gold-primary">Project Alpha <i class="fas fa-arrow-right ml-2"></i></div>
+
+            <a href="index.html" class="card-shadow bg-white p-8 rounded-3xl border border-slate-100 flex flex-col group">
+                <div class="w-14 h-14 bg-emerald-500 rounded-2xl flex items-center justify-center mb-6 shadow-lg shadow-emerald-100 group-hover:scale-110 transition-transform">
+                    <i class="fas fa-chart-pie text-white text-2xl"></i>
+                </div>
+                <h3 class="text-lg font-bold text-slate-900 mb-2">Investment Analysis</h3>
+                <p class="text-slate-500 text-sm leading-relaxed flex-grow">Compare TFSA vs RRSP benefits based on tax brackets.</p>
+                <span class="mt-6 text-emerald-600 text-xs font-extrabold uppercase tracking-widest flex items-center gap-2">
+                    Open Tool <i class="fas fa-arrow-right transition-transform group-hover:translate-x-1"></i>
+                </span>
             </a>
-            <a href="LTI.html" class="tool-card glass-panel p-10 rounded-[2.5rem] group border-transparent">
-                <i class="fas fa-scale-balanced text-3xl text-slate-500 group-hover:text-gold-primary mb-6"></i>
-                <h3 class="text-xl font-bold mb-3 group-hover:text-gold-primary tracking-tight">Leverage Lab</h3>
-                <p class="text-slate-500 text-sm leading-relaxed mb-8">Arbitrage modeling for borrowing costs vs asset growth.</p>
-                <div class="text-[10px] font-black uppercase tracking-[0.3em] text-slate-600 group-hover:text-gold-primary">Model Risk <i class="fas fa-arrow-right ml-2"></i></div>
+
+            <a href="LTI.html" class="card-shadow bg-white p-8 rounded-3xl border border-slate-100 flex flex-col group">
+                <div class="w-14 h-14 bg-indigo-500 rounded-2xl flex items-center justify-center mb-6 shadow-lg shadow-indigo-100 group-hover:scale-110 transition-transform">
+                    <i class="fas fa-hand-holding-dollar text-white text-2xl"></i>
+                </div>
+                <h3 class="text-lg font-bold text-slate-900 mb-2">Loan Strategy</h3>
+                <p class="text-slate-500 text-sm leading-relaxed flex-grow">Calculate the impact of borrowing for investment growth.</p>
+                <span class="mt-6 text-indigo-600 text-xs font-extrabold uppercase tracking-widest flex items-center gap-2">
+                    Open Tool <i class="fas fa-arrow-right transition-transform group-hover:translate-x-1"></i>
+                </span>
             </a>
-            <a href="rrsp-calculator.html" class="tool-card glass-panel p-10 rounded-[2.5rem] group border-transparent">
-                <i class="fas fa-hourglass-half text-3xl text-slate-500 group-hover:text-gold-primary mb-6"></i>
-                <h3 class="text-xl font-bold mb-3 group-hover:text-gold-primary tracking-tight">Horizon Planner</h3>
-                <p class="text-slate-500 text-sm leading-relaxed mb-8">Terminal wealth projections and tax-efficient drawdowns.</p>
-                <div class="text-[10px] font-black uppercase tracking-[0.3em] text-slate-600 group-hover:text-gold-primary">Run Simulation <i class="fas fa-arrow-right ml-2"></i></div>
+
+            <a href="rrsp-calculator.html" class="card-shadow bg-white p-8 rounded-3xl border border-slate-100 flex flex-col group">
+                <div class="w-14 h-14 bg-orange-500 rounded-2xl flex items-center justify-center mb-6 shadow-lg shadow-orange-100 group-hover:scale-110 transition-transform">
+                    <i class="fas fa-calculator text-white text-2xl"></i>
+                </div>
+                <h3 class="text-lg font-bold text-slate-900 mb-2">Retirement Savings</h3>
+                <p class="text-slate-500 text-sm leading-relaxed flex-grow">Project tax refunds and long-term retirement goals.</p>
+                <span class="mt-6 text-orange-600 text-xs font-extrabold uppercase tracking-widest flex items-center gap-2">
+                    Open Tool <i class="fas fa-arrow-right transition-transform group-hover:translate-x-1"></i>
+                </span>
             </a>
+
         </div>
 
-        <!-- Strategy Workbench -->
-        <div class="grid grid-cols-1 xl:grid-cols-3 gap-10">
-            <div class="xl:col-span-2 glass-panel rounded-[3.5rem] p-12 premium-border">
-                <div class="flex justify-between items-center mb-12">
-                    <h2 class="text-3xl font-black tracking-tighter">Session Workbench</h2>
-                    <button id="ai-btn" onclick="generateAIReport()" class="action-button text-black px-12 py-5 rounded-2xl font-black text-xs uppercase tracking-[0.3em] shadow-2xl">
-                        <span id="ai-btn-text"><i class="fas fa-brain mr-4"></i> Synthesize Strategy</span>
+        <!-- Main Workspace -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div class="lg:col-span-2 bg-white rounded-[2rem] p-10 card-shadow border border-slate-100">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-6">
+                    <div>
+                        <h3 class="text-2xl font-extrabold text-slate-900 tracking-tight">Meeting Notes</h3>
+                        <p class="text-slate-400 text-sm font-medium">Jot down client goals or data for a final summary.</p>
+                    </div>
+                    <button id="ai-btn" onclick="generateReport()" class="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-2xl font-bold text-sm shadow-lg shadow-blue-100 transition-all flex items-center justify-center gap-3">
+                        <span id="btn-content" class="flex items-center gap-3">
+                            <i class="fas fa-sparkles"></i> Create Professional Report
+                        </span>
                     </button>
                 </div>
-                <textarea id="notes" 
-                    class="w-full h-96 bg-slate-900/40 border border-white/5 rounded-[2rem] p-10 outline-none text-slate-100 placeholder:text-slate-800 transition-all text-xl font-light resize-none"
-                    placeholder="Document client objectives for AI-powered synthesis..."></textarea>
-                <div class="mt-8 flex justify-between items-center">
-                    <span class="text-[10px] font-black uppercase tracking-[0.3em] text-slate-600 italic">Workspace Auto-Resets on Reload</span>
-                    <button onclick="clearNotes()" id="clear-btn" class="text-[10px] font-black text-slate-600 hover:text-red-500 transition-colors uppercase tracking-[0.3em]">Purge Session</button>
+
+                <textarea id="notes" class="w-full h-80 bg-slate-50/50 border border-slate-200 rounded-2xl p-8 focus:ring-4 focus:ring-blue-100 focus:border-blue-300 outline-none text-slate-700 placeholder:text-slate-300 transition-all text-lg leading-relaxed resize-none" placeholder="E.g. Client John wants to retire at 65. Currently has $200k in TFSA. Wants to explore a $50k loan for non-registered investing..."></textarea>
+                
+                <div class="mt-6 flex justify-between items-center">
+                    <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest flex items-center gap-2">
+                        <i class="fas fa-clock-rotate-left"></i> Resets on reload for privacy
+                    </p>
+                    <button onclick="clearNotes()" id="clear-btn" class="text-xs font-extrabold text-slate-400 hover:text-red-500 transition-colors uppercase tracking-widest">Clear All</button>
                 </div>
             </div>
 
-            <div class="glass-panel rounded-[3.5rem] p-12 flex flex-col justify-between border-emerald-500/10">
-                <div>
-                    <h3 class="text-[10px] font-black uppercase tracking-[0.4em] text-gold-primary mb-10">Compliance Directive</h3>
-                    <div id="tip-container" class="text-slate-200 leading-relaxed italic text-xl font-light">"Leverage interest is strictly deductible when used to purchase income-producing non-registered assets."</div>
+            <!-- Helpful Hints Sidebar -->
+            <div class="space-y-8">
+                <div class="bg-blue-600 rounded-[2rem] p-8 text-white shadow-xl shadow-blue-100 relative overflow-hidden">
+                    <i class="fas fa-lightbulb absolute -right-4 -bottom-4 text-8xl opacity-10"></i>
+                    <h4 class="font-bold text-lg mb-2">Strategy Tip</h4>
+                    <p id="tip-text" class="text-blue-50 text-sm leading-relaxed italic mb-6">"Remind clients that RRSP contributions reduce current taxable income, while TFSA growth is always tax-free."</p>
+                    <button onclick="newTip()" class="text-[10px] font-black uppercase tracking-[0.2em] bg-white/20 hover:bg-white/30 px-4 py-2 rounded-full transition-all">Next Tip</button>
                 </div>
-                <button onclick="newTip()" class="mt-12 text-[10px] font-black text-slate-600 hover:text-gold-primary uppercase tracking-[0.4em] self-start">Next Directive <i class="fas fa-arrow-right ml-2"></i></button>
+
+                <div class="bg-white rounded-[2rem] p-8 card-shadow border border-slate-100">
+                    <h4 class="font-bold text-slate-900 mb-4">Quick Diagnostic</h4>
+                    <div id="diag-status" class="space-y-3">
+                        <div class="flex items-center justify-between text-xs">
+                            <span class="text-slate-500">API Status</span>
+                            <span class="font-bold text-emerald-600">Ready</span>
+                        </div>
+                        <div class="flex items-center justify-between text-xs">
+                            <span class="text-slate-500">Account</span>
+                            <span class="font-bold text-slate-900">catholicalex@gmail.com</span>
+                        </div>
+                        <div class="flex items-center justify-between text-xs border-t border-slate-50 pt-3">
+                            <span class="text-slate-500">Identity Mode</span>
+                            <span class="font-bold text-blue-600 uppercase">Environment Injected</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </main>
 
     <script>
-        // API Key variable - DO NOT fill manually. The environment swaps this at runtime.
+        // CRITICAL: Declare apiKey as an empty string. The environment will inject the real key.
         const apiKey = ""; 
 
-        const diagConsole = document.getElementById('diag-console');
-        function log(m, e = false) {
-            diagConsole.innerHTML += `<div style="color:${e ? '#f87171':'#4ade80'}">[${new Date().toLocaleTimeString()}] ${m}</div>`;
-            diagConsole.scrollTop = diagConsole.scrollHeight;
-            console.log(m);
-        }
-
-        function toggleLogs() { document.getElementById('diag-container').classList.toggle('hidden'); }
-
-        window.onload = () => {
-            const notes = document.getElementById('notes');
-            notes.value = '';
+        // Initial UI resets
+        window.addEventListener('load', () => {
+            document.getElementById('notes').value = '';
             localStorage.removeItem('advisor_notes');
-            const opts = { month: 'short', day: 'numeric', year: 'numeric' };
-            const ds = new Date().toLocaleDateString('en-US', opts).toUpperCase();
+            
+            const options = { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' };
+            const ds = new Date().toLocaleDateString('en-US', options);
             document.getElementById('nav-date').innerText = ds;
             document.getElementById('pdf-date').innerText = ds;
-            log("Workspace reset. Ready for consultation.");
-        };
+        });
 
         const notif = document.getElementById('notification');
-        const notifText = document.getElementById('notification-text');
-        const notifInd = document.getElementById('notif-indicator');
+        const notifText = document.getElementById('notif-text');
         const modal = document.getElementById('report-modal');
-        const content = document.getElementById('report-content-preview');
+        const reportArea = document.getElementById('report-content');
 
-        function showNotif(t, e = false) {
-            notifText.innerText = t;
-            notifInd.className = `w-2 h-2 rounded-full ${e ? 'bg-red-500' : 'bg-gold-primary'} animate-pulse`;
+        function showNotif(msg, isError = false) {
+            notifText.innerText = msg;
             notif.classList.replace('opacity-0', 'opacity-100');
-            setTimeout(() => notif.classList.replace('opacity-100', 'opacity-0'), 6000);
+            notif.classList.replace('bg-slate-900', isError ? 'bg-red-600' : 'bg-slate-900');
+            setTimeout(() => notif.classList.replace('opacity-100', 'opacity-0'), 4000);
         }
 
         function closeModal() { modal.classList.add('hidden'); }
 
         /**
-         * Standardized Communication Engine
+         * AI Connection Logic
          */
-        async function callGemini(pt) {
-            // Precise URL structure required for proxy detection
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+        async function fetchReport(userInput) {
+            const model = "gemini-2.5-flash-preview-09-2025";
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
             
-            log("Opening channel to core intelligence...");
-            const sp = "You are an elite financial advisor assistant. Synthesize notes into a professional report: EXECUTIVE SUMMARY, FINANCIAL PROFILE, RECOMMENDATIONS, ACTION ITEMS. Bold numbers. Tone: Authoritative, technical.";
+            const systemMsg = "You are a professional financial planner's assistant. Take raw notes and create a polished, client-facing summary report. Sections: EXECUTIVE SUMMARY, YOUR FINANCIAL PROFILE, RECOMMENDATIONS, NEXT STEPS. Use friendly but professional language. Use bullet points and bold numbers.";
             
             const payload = {
-                contents: [{ parts: [{ text: pt }] }],
-                systemInstruction: { parts: [{ text: sp }] }
+                contents: [{ parts: [{ text: userInput }] }],
+                systemInstruction: { parts: [{ text: systemMsg }] }
             };
 
             const delays = [1000, 2000, 4000, 8000, 16000];
             for (let i = 0; i < 6; i++) {
                 try {
-                    log(`Transmission attempt ${i+1}...`);
-                    const res = await fetch(url, {
+                    const response = await fetch(url, {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify(payload)
                     });
 
-                    if (res.ok) {
-                        const data = await res.json();
-                        const txt = data.candidates?.[0]?.content?.parts?.[0]?.text;
-                        if (!txt) throw new Error("Null data stream received.");
-                        log("Sync complete.");
-                        return txt;
+                    if (response.ok) {
+                        const data = await response.json();
+                        const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+                        if (!text) throw new Error("The AI returned an empty response.");
+                        return text;
                     }
 
-                    const errorData = await res.json().catch(() => ({}));
-                    const msg = errorData.error?.message || `Status ${res.status}`;
-                    log(`Auth/API Error: ${msg}`, true);
+                    const errData = await response.json().catch(() => ({}));
+                    const msg = errData.error?.message || "Status " + response.status;
                     
                     if (i === 5) throw new Error(msg);
                     await new Promise(r => setTimeout(r, delays[i]));
                 } catch (e) {
-                    log(`Link failure: ${e.message}`, true);
                     if (i === 5) throw e;
                     await new Promise(r => setTimeout(r, delays[i]));
                 }
             }
         }
 
-        async function generateAIReport() {
-            const raw = document.getElementById('notes').value.trim();
-            if (!raw) { showNotif("Input raw session data first.", true); return; }
+        async function generateReport() {
+            const text = document.getElementById('notes').value.trim();
+            if (!text) { showNotif("Please type some notes first.", true); return; }
 
             const btn = document.getElementById('ai-btn');
-            const btnText = document.getElementById('ai-btn-text');
+            const btnContent = document.getElementById('btn-content');
             btn.disabled = true;
-            btnText.innerHTML = `<div class="loader-spin mr-4"></div> SYNCHRONIZING...`;
+            btnContent.innerHTML = `<div class="spinner"></div> Creating Report...`;
 
             try {
-                const report = await callGemini(raw);
-                if (report) {
-                    let h = report
+                const markdown = await fetchReport(text);
+                if (markdown) {
+                    // Cleaner Markdown Parser
+                    let html = markdown
                         .replace(/^# (.*$)/gm, '<h2>$1</h2>')
                         .replace(/^## (.*$)/gm, '<h2>$1</h2>')
                         .replace(/^### (.*$)/gm, '<h3>$1</h3>')
                         .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                        .replace(/\n\s*[-*]\s*(.*)/g, '<li>$1</li>')
+                        .replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>')
                         .replace(/\n/g, '<br>')
                         .replace(/(<br>){2,}/g, '</p><p>');
                     
-                    if (!h.startsWith('<h') && !h.startsWith('<p')) h = '<p>' + h + '</p>';
-                    content.innerHTML = h;
+                    if (!html.startsWith('<h') && !html.startsWith('<p')) html = '<p>' + html + '</p>';
+                    
+                    reportArea.innerHTML = html;
                     modal.classList.remove('hidden');
-                    showNotif("Synthesis Successful.");
+                    showNotif("Report generated successfully!");
                 }
             } catch (err) {
-                toggleLogs();
-                showNotif("Link Unauthorized: Contact System Admin.", true);
+                console.error("AI Error:", err);
+                showNotif("Connection Error: " + err.message, true);
             } finally {
                 btn.disabled = false;
-                btnText.innerHTML = `<i class="fas fa-brain mr-4"></i> Synthesize Strategy`;
+                btnContent.innerHTML = `<i class="fas fa-sparkles"></i> Create Professional Report`;
             }
         }
 
         function downloadPDF() {
-            const el = document.getElementById('pdf-export-container');
+            const el = document.getElementById('pdf-container');
             const opt = {
-                margin: 10,
-                filename: `Strategy_Report.pdf`,
+                margin: 15,
+                filename: `Client_Strategy_Summary.pdf`,
                 image: { type: 'jpeg', quality: 0.98 },
                 html2canvas: { scale: 3, useCORS: true },
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
             };
-            showNotif("Compiling PDF...");
-            html2pdf().set(opt).from(el).save().then(() => showNotif("Export Complete."));
+            showNotif("Preparing your PDF...");
+            html2pdf().set(opt).from(el).save().then(() => showNotif("PDF saved to your computer."));
         }
 
         function sendProfessionalEmail() {
-            const rt = content.innerText;
-            const sub = "Strategic Advisory Session Analysis - Confidential";
-            const body = `Dear Client,\n\nI have synthesized our strategic session. Please review the summary below and find the formal PDF report attached.\n\n--- SUMMARY ---\n\n${rt}`;
+            const sub = "Summary of Our Strategy Session - " + new Date().toLocaleDateString();
+            const body = `Dear Client,\n\nI have summarized the key takeaways from our meeting today. Please review the summary below and the attached PDF report.\n\n--- SUMMARY ---\n\n${reportArea.innerText}\n\n(Note: Please attach the downloaded PDF to this email.)`;
             window.location.href = `mailto:?subject=${encodeURIComponent(sub)}&body=${encodeURIComponent(body)}`;
-            showNotif("Email Dispatch Triggered.");
+            showNotif("Email draft created.");
         }
 
         let clearStage = 0;
         function clearNotes() {
-            const b = document.getElementById('clear-btn');
+            const btn = document.getElementById('clear-btn');
             if (clearStage === 0) {
-                b.innerText = "CONFIRM PURGE";
-                b.classList.add('text-red-500');
+                btn.innerText = "Are you sure?";
+                btn.classList.add('text-red-500');
                 clearStage = 1;
                 setTimeout(() => {
-                    b.innerText = "Purge Session";
-                    b.classList.remove('text-red-500');
+                    btn.innerText = "Clear All";
+                    btn.classList.remove('text-red-500');
                     clearStage = 0;
-                }, 4000);
+                }, 3000);
             } else {
                 document.getElementById('notes').value = '';
-                b.innerText = "Purge Session";
-                b.classList.remove('text-red-500');
+                btn.innerText = "Clear All";
+                btn.classList.remove('text-red-500');
                 clearStage = 0;
-                showNotif("Workbench Purged.");
-                log("Session purged from memory.");
+                showNotif("Workspace cleared.");
             }
         }
 
         const tips = [
-            "Leverage interest is deductible when borrowing to purchase income-producing non-registered assets.",
-            "Verify OAS clawback thresholds for high-net-worth drawdowns.",
-            "Spousal RRSPs provide powerful income-splitting benefits.",
-            "TFSA contribution room is lost if re-contributed in the same year.",
-            "Corporate Class funds optimize tax efficiency for corporate surplus.",
-            "Capital gains inclusion rates are critical in LTI sensitivity modeling."
+            "Remind clients that RRSP contributions reduce current taxable income, while TFSA growth is always tax-free.",
+            "Always check a client's available TFSA room before suggesting a large contribution.",
+            "Interest on investment loans is only deductible in non-registered accounts.",
+            "Withdrawals from TFSA add back to your contribution room the following calendar year.",
+            "Consider a Spousal RRSP to balance future retirement income for couples with different tax brackets.",
+            "The RRSP tax refund is most powerful when re-invested into a TFSA."
         ];
         
         function newTip() {
-            const c = document.getElementById('tip-container');
-            c.style.opacity = 0;
+            const text = document.getElementById('tip-text');
+            text.style.opacity = 0;
             setTimeout(() => {
-                c.innerText = `"${tips[Math.floor(Math.random() * tips.length)]}"`;
-                c.style.opacity = 1;
+                text.innerText = `"${tips[Math.floor(Math.random() * tips.length)]}"`;
+                text.style.opacity = 1;
             }, 300);
         }
     </script>
