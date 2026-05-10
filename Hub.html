@@ -11,19 +11,20 @@
         
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: #f8fafc;
-            color: #1e293b;
+            background-color: #f9fafb;
+            color: #111827;
         }
 
         .tool-card {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            border: 1px solid #e2e8f0;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            background: white;
+            border: 1px solid #f1f5f9;
         }
 
         .tool-card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-6px);
             box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
-            background-color: #ffffff;
+            border-color: #e2e8f0;
         }
 
         .rounded-logo {
@@ -35,6 +36,12 @@
         #notification {
             transition: all 0.5s ease;
         }
+
+        .workbench-panel {
+            background: white;
+            border: 1px solid #f1f5f9;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px -1px rgba(0, 0, 0, 0.01);
+        }
     </style>
 </head>
 <body class="min-h-screen">
@@ -42,7 +49,7 @@
     <!-- Notification Bar -->
     <div id="notification" class="fixed top-6 left-1/2 -translate-x-1/2 z-[200] bg-slate-900 text-white px-6 py-3 rounded-2xl shadow-xl opacity-0 pointer-events-none flex items-center gap-3 border border-white/10">
         <i class="fas fa-check-circle text-emerald-400"></i>
-        <span id="notif-text" class="text-sm font-semibold"></span>
+        <span id="notif-text" class="text-sm font-semibold tracking-tight"></span>
     </div>
 
     <!-- Navigation -->
@@ -56,14 +63,15 @@
                     </div>
                 </div>
                 <div>
-                    <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight leading-none">Alex's Strategy Hub</h1>
-                    <p id="nav-date-display" class="text-[10px] uppercase tracking-widest text-blue-500 font-black mt-1.5"></p>
+                    <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight leading-none">Strategy Dashboard</h1>
+                    <p id="nav-date-display" class="text-[10px] uppercase tracking-widest text-blue-600 font-black mt-1.5"></p>
                 </div>
             </div>
+            
             <div class="flex items-center gap-4">
-                <div class="hidden sm:flex items-center gap-2.5 text-[10px] font-black uppercase tracking-widest text-emerald-600 bg-emerald-50 px-4 py-2 rounded-full border border-emerald-100">
-                    <div class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></div>
-                    System Ready
+                <div class="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-emerald-600 bg-emerald-50 px-4 py-2 rounded-full border border-emerald-100">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                    Live Session
                 </div>
             </div>
         </div>
@@ -71,107 +79,103 @@
 
     <main class="max-w-7xl mx-auto px-8 py-14">
         
-        <div class="mb-12">
-            <h2 class="text-4xl font-extrabold text-slate-900 tracking-tight mb-3 italic">Hello, Alex.</h2>
-            <p class="text-slate-500 text-lg font-medium leading-relaxed">Select a tool to show your client or save your progress below.</p>
+        <div class="mb-14">
+            <h2 class="text-4xl font-extrabold text-slate-900 tracking-tight mb-3">Hello, Alex.</h2>
+            <p class="text-slate-500 text-lg font-medium leading-relaxed">Modern tools for intelligent client consultations.</p>
         </div>
 
-        <!-- Colorful & Easy Tool Cards -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-20">
+        <!-- Professional Tool Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
             
-            <a href="FS.html" class="tool-card p-10 rounded-[2.5rem] flex flex-col group bg-white">
-                <div class="w-16 h-16 bg-blue-600 rounded-3xl flex items-center justify-center mb-8 shadow-2xl shadow-blue-200 group-hover:scale-110 transition-transform">
+            <a href="FS.html" class="tool-card p-10 rounded-[3rem] flex flex-col group">
+                <div class="w-16 h-16 bg-blue-600 rounded-3xl flex items-center justify-center mb-8 shadow-2xl shadow-blue-100 group-hover:scale-110 transition-transform">
                     <i class="fas fa-vault text-white text-3xl"></i>
                 </div>
-                <h3 class="text-xl font-extrabold text-slate-900 mb-3 tracking-tight">Total Wealth Map</h3>
-                <p class="text-slate-500 text-sm leading-relaxed flex-grow font-medium">A clear list of all assets, debts, and total family value.</p>
+                <h3 class="text-xl font-extrabold text-slate-900 mb-3 tracking-tight">Wealth Overview</h3>
+                <p class="text-slate-500 text-sm leading-relaxed flex-grow font-medium">A visual audit of assets, liabilities, and net worth.</p>
                 <div class="mt-8 text-blue-600 text-xs font-black uppercase tracking-widest flex items-center gap-3">
-                    Start Now <i class="fas fa-arrow-right transition-transform group-hover:translate-x-2"></i>
+                    Open Toolkit <i class="fas fa-arrow-right transition-transform group-hover:translate-x-2"></i>
                 </div>
             </a>
 
-            <a href="index.html" class="tool-card p-10 rounded-[2.5rem] flex flex-col group bg-white">
-                <div class="w-16 h-16 bg-emerald-500 rounded-3xl flex items-center justify-center mb-8 shadow-2xl shadow-emerald-200 group-hover:scale-110 transition-transform">
+            <a href="index.html" class="tool-card p-10 rounded-[3rem] flex flex-col group">
+                <div class="w-16 h-16 bg-emerald-500 rounded-3xl flex items-center justify-center mb-8 shadow-2xl shadow-emerald-100 group-hover:scale-110 transition-transform">
                     <i class="fas fa-piggy-bank text-white text-3xl"></i>
                 </div>
-                <h3 class="text-xl font-extrabold text-slate-900 mb-3 tracking-tight">Tax Savings Tool</h3>
-                <p class="text-slate-500 text-sm leading-relaxed flex-grow font-medium">Instantly compare where to save: TFSA or RRSP.</p>
+                <h3 class="text-xl font-extrabold text-slate-900 mb-3 tracking-tight">Tax Efficiency</h3>
+                <p class="text-slate-500 text-sm leading-relaxed flex-grow font-medium">Optimize TFSA and RRSP utilization strategies.</p>
                 <div class="mt-8 text-emerald-600 text-xs font-black uppercase tracking-widest flex items-center gap-3">
-                    Start Now <i class="fas fa-arrow-right transition-transform group-hover:translate-x-2"></i>
+                    Open Toolkit <i class="fas fa-arrow-right transition-transform group-hover:translate-x-2"></i>
                 </div>
             </a>
 
-            <a href="LTI.html" class="tool-card p-10 rounded-[2.5rem] flex flex-col group bg-white">
-                <div class="w-16 h-16 bg-indigo-600 rounded-3xl flex items-center justify-center mb-8 shadow-2xl shadow-indigo-200 group-hover:scale-110 transition-transform">
+            <a href="LTI.html" class="tool-card p-10 rounded-[3rem] flex flex-col group">
+                <div class="w-16 h-16 bg-indigo-600 rounded-3xl flex items-center justify-center mb-8 shadow-2xl shadow-indigo-100 group-hover:scale-110 transition-transform">
                     <i class="fas fa-hand-holding-dollar text-white text-3xl"></i>
                 </div>
-                <h3 class="text-xl font-extrabold text-slate-900 mb-3 tracking-tight">Investment Loan Tool</h3>
-                <p class="text-slate-500 text-sm leading-relaxed flex-grow font-medium">Model the cost of borrowing versus your growth potential.</p>
+                <h3 class="text-xl font-extrabold text-slate-900 mb-3 tracking-tight">Growth Leverage</h3>
+                <p class="text-slate-500 text-sm leading-relaxed flex-grow font-medium">Analyze borrowing costs against portfolio appreciation.</p>
                 <div class="mt-8 text-indigo-600 text-xs font-black uppercase tracking-widest flex items-center gap-3">
-                    Start Now <i class="fas fa-arrow-right transition-transform group-hover:translate-x-2"></i>
+                    Open Toolkit <i class="fas fa-arrow-right transition-transform group-hover:translate-x-2"></i>
                 </div>
             </a>
 
-            <a href="rrsp-calculator.html" class="tool-card p-10 rounded-[2.5rem] flex flex-col group bg-white">
-                <div class="w-16 h-16 bg-orange-500 rounded-3xl flex items-center justify-center mb-8 shadow-2xl shadow-orange-200 group-hover:scale-110 transition-transform">
+            <a href="rrsp-calculator.html" class="tool-card p-10 rounded-[3rem] flex flex-col group">
+                <div class="w-16 h-16 bg-orange-500 rounded-3xl flex items-center justify-center mb-8 shadow-2xl shadow-orange-100 group-hover:scale-110 transition-transform">
                     <i class="fas fa-calendar-check text-white text-3xl"></i>
                 </div>
-                <h3 class="text-xl font-extrabold text-slate-900 mb-3 tracking-tight">Retirement Goals</h3>
-                <p class="text-slate-500 text-sm leading-relaxed flex-grow font-medium">Plan for the future with tax refunds and income projections.</p>
+                <h3 class="text-xl font-extrabold text-slate-900 mb-3 tracking-tight">Goal Planner</h3>
+                <p class="text-slate-500 text-sm leading-relaxed flex-grow font-medium">Map out retirement income and savings targets.</p>
                 <div class="mt-8 text-orange-600 text-xs font-black uppercase tracking-widest flex items-center gap-3">
-                    Start Now <i class="fas fa-arrow-right transition-transform group-hover:translate-x-2"></i>
+                    Open Toolkit <i class="fas fa-arrow-right transition-transform group-hover:translate-x-2"></i>
                 </div>
             </a>
 
         </div>
 
-        <!-- Meeting Workbench -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
-            <!-- Notes Console -->
-            <div class="lg:col-span-2 bg-white rounded-[3rem] p-10 shadow-sm border border-slate-100">
+        <!-- Integrated Workspace -->
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-10">
+            
+            <!-- Workbench Area (3/4 Width) -->
+            <div class="lg:col-span-3 workbench-panel rounded-[3.5rem] p-12">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-10 gap-8">
                     <div>
-                        <h3 class="text-3xl font-extrabold text-slate-900 tracking-tight">Client Meeting Notes</h3>
-                        <p class="text-slate-400 font-semibold mt-1">Capture key goals to save for your records.</p>
+                        <h3 class="text-3xl font-extrabold text-slate-900 tracking-tight leading-tight">Meeting Workbench</h3>
+                        <p class="text-slate-400 font-semibold mt-1">Document client objectives for future follow-up.</p>
                     </div>
-                    <div class="flex gap-3">
-                        <button onclick="saveToDrive()" class="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-2xl font-bold text-sm shadow-lg shadow-blue-100 transition-all flex items-center justify-center gap-3">
-                            <i class="fas fa-file-arrow-down"></i> Save for Google Drive
+                    <div class="flex gap-4 w-full sm:w-auto">
+                        <button onclick="saveToDrive()" class="flex-1 sm:flex-none bg-slate-900 hover:bg-black text-white px-8 py-5 rounded-[1.5rem] font-bold text-sm shadow-2xl transition-all flex items-center justify-center gap-3">
+                            <i class="fas fa-file-arrow-down text-blue-400"></i> Save Notes for Drive
                         </button>
                     </div>
                 </div>
 
-                <textarea id="meeting-notes" class="w-full h-96 bg-slate-50/50 border-2 border-slate-100 rounded-3xl p-10 focus:ring-8 focus:ring-blue-50 focus:border-blue-500 outline-none text-slate-700 placeholder:text-slate-300 transition-all text-xl font-light resize-none leading-relaxed" placeholder="Type notes here... e.g. Client wants to pay off mortgage early and increase monthly TFSA contributions by $500..."></textarea>
+                <textarea id="meeting-notes" class="w-full h-[500px] bg-slate-50 border-2 border-slate-100 rounded-[2.5rem] p-10 focus:ring-8 focus:ring-blue-50 focus:border-blue-500 outline-none text-slate-700 placeholder:text-slate-300 transition-all text-xl font-light resize-none leading-relaxed" placeholder="Document client discussion here..."></textarea>
                 
                 <div class="mt-10 flex justify-between items-center border-t border-slate-50 pt-8">
                     <div class="flex items-center gap-3 text-[10px] text-slate-400 font-black uppercase tracking-[0.3em]">
                         <i class="fas fa-shield-halved text-blue-500"></i>
-                        Data resets on refresh for client privacy
+                        Session Privacy: Active Reset
                     </div>
-                    <button onclick="clearWorkspace()" id="clear-btn" class="text-xs font-black text-slate-300 hover:text-red-500 transition-colors uppercase tracking-widest">Clear Everything</button>
+                    <button onclick="clearWorkspace()" id="clear-btn" class="text-xs font-black text-slate-300 hover:text-red-500 transition-colors uppercase tracking-widest">Purge Workbench</button>
                 </div>
             </div>
 
-            <!-- Side Sidebar -->
-            <div class="space-y-10">
-                <div class="bg-blue-600 rounded-[3rem] p-10 text-white shadow-2xl shadow-blue-200 relative overflow-hidden">
-                    <i class="fas fa-lightbulb absolute -right-6 -bottom-6 text-[10rem] opacity-10 rotate-12"></i>
-                    <div class="relative z-10">
-                        <h4 class="font-extrabold text-xl mb-6 flex items-center gap-3">
-                            <i class="fas fa-crown text-yellow-400"></i> Strategy Tip
-                        </h4>
-                        <p id="tip-display" class="text-blue-50 text-xl leading-relaxed italic font-light mb-12">"Remind clients that RRSP contributions reduce current taxable income, while TFSA growth is always tax-free."</p>
-                        <button onclick="newTip()" class="w-full bg-white/20 hover:bg-white/30 text-white py-5 rounded-2xl font-bold text-xs uppercase tracking-[0.3em] transition-all border border-white/10">Next Tip</button>
-                    </div>
-                </div>
-
-                <div class="bg-white rounded-[3rem] p-10 border border-slate-100 shadow-sm flex flex-col items-center text-center">
-                    <img src="logo.png" alt="Logo" class="h-20 w-20 rounded-logo mb-4 border-2 border-slate-100 p-1" onerror="this.style.display='none'">
-                    <h4 class="font-extrabold text-slate-900 text-lg mb-2">Alex's Hub</h4>
-                    <p class="text-slate-400 text-xs font-bold uppercase tracking-widest mb-6">catholicalex@gmail.com</p>
-                    <div class="w-full h-px bg-slate-50 mb-6"></div>
-                    <div class="flex items-center gap-2 text-[10px] font-black text-emerald-600 uppercase tracking-widest">
-                        <span class="w-2 h-2 bg-emerald-500 rounded-full"></span> Active Session
+            <!-- Intelligent Insights (1/4 Width) -->
+            <div class="space-y-8">
+                <div class="bg-blue-600 rounded-[3rem] p-10 text-white shadow-2xl shadow-blue-200 relative overflow-hidden h-full flex flex-col">
+                    <i class="fas fa-lightbulb absolute -right-8 -bottom-8 text-[12rem] opacity-10 rotate-12"></i>
+                    <div class="relative z-10 flex flex-col h-full">
+                        <div class="mb-8">
+                            <h4 class="font-extrabold text-xl mb-2 flex items-center gap-3">
+                                <i class="fas fa-bolt text-yellow-400"></i> Insight
+                            </h4>
+                            <p class="text-[10px] uppercase tracking-widest text-blue-200 font-bold">Client Protocol</p>
+                        </div>
+                        
+                        <p id="tip-display" class="text-blue-50 text-xl leading-relaxed italic font-light mb-auto">"RRSP contributions reduce current taxable income, while TFSA growth is always tax-free."</p>
+                        
+                        <button onclick="newTip()" class="mt-12 w-full bg-white/20 hover:bg-white/30 text-white py-5 rounded-2xl font-bold text-xs uppercase tracking-[0.3em] transition-all backdrop-blur-md border border-white/10">Next Insight</button>
                     </div>
                 </div>
             </div>
@@ -198,17 +202,16 @@
 
         /**
          * Save to Google Drive Helper
-         * This creates a text file for easy upload to Drive
          */
         function saveToDrive() {
             const content = document.getElementById('meeting-notes').value.trim();
             if (!content) {
-                showNotif("Nothing to save. Please type some notes first.");
+                showNotif("Workspace is empty.");
                 return;
             }
 
             const timestamp = new Date().toISOString().slice(0, 10);
-            const filename = `Client_Notes_${timestamp}.txt`;
+            const filename = `Session_Notes_${timestamp}.txt`;
             
             const element = document.createElement('a');
             element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(content));
@@ -218,13 +221,13 @@
             element.click();
             document.body.removeChild(element);
 
-            showNotif("Notes downloaded. Drag & Drop into Google Drive!");
+            showNotif("Notes downloaded for Drive upload.");
         }
 
         function clearWorkspace() {
             const btn = document.getElementById('clear-btn');
             if (btn.innerText === "PURGE WORKBENCH") {
-                btn.innerText = "SURE?";
+                btn.innerText = "CONFIRM?";
                 btn.classList.add('text-red-500');
                 setTimeout(() => {
                     btn.innerText = "PURGE WORKBENCH";
@@ -234,18 +237,18 @@
                 document.getElementById('meeting-notes').value = '';
                 btn.innerText = "PURGE WORKBENCH";
                 btn.classList.remove('text-red-500');
-                showNotif("Workbench cleared.");
+                showNotif("Workspace cleared.");
             }
         }
 
         const tips = [
-            "Interest on investment loans is deductible when used to purchase income-producing assets.",
-            "TFSA withdrawals are added back to your contribution room the next calendar year.",
+            "Leverage interest is strictly deductible when used to purchase income-producing non-registered assets.",
+            "TFSA withdrawals are added back to your contribution room the following calendar year.",
             "RRSP contributions reduce current taxable income, creating immediate savings.",
             "A Spousal RRSP helps split future retirement income for tax efficiency.",
             "The OAS clawback begins at approximately $86,000 of individual income.",
             "Always verify a client's tax bracket before suggesting TFSA or RRSP.",
-            "An RRSP refund is most effective when re-invested into a TFSA for growth."
+            "An RRSP refund is most effective when re-invested into a TFSA for compounded growth."
         ];
         
         function newTip() {
