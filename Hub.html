@@ -221,10 +221,8 @@
 
     <script>
         // --- 1. CRYPTOGRAPHIC ACCESS GATE CONTROL ---
-        // This is a secure SHA-256 hash of your desired password. 
-        // The password can NOT be guessed simply by looking at this code.
-        // CURRENT TEMP PASSWORD: "Alex" (case-sensitive)
-        const SECURE_HASH = "9a75661b60166687483788be4fbf01f80df8e763806be4448fb8488bc1f1917f";
+        // Corrected web encryption signature for password "Alex"
+        const SECURE_HASH = "ca45642df1f26fb7e21fbfa7038e15486928e469e38d7ebbfbbf1dfd2218080c";
 
         async function verifyGate() {
             const input = document.getElementById('secret-key').value;
