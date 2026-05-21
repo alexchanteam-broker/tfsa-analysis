@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Financial Strategy Hub</title>
+    <title>AKC Financial - Strategy Dashboard Hub</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -11,20 +11,20 @@
         
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: #f9fafb;
-            color: #111827;
+            background-color: #f8fafc;
+            color: #0f172a;
         }
 
         .tool-card {
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             background: white;
-            border: 1px solid #f1f5f9;
+            border: 1px solid #e2e8f0;
         }
 
         .tool-card:hover {
             transform: translateY(-6px);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
-            border-color: #e2e8f0;
+            box-shadow: 0 20px 25px -5px rgba(15, 23, 42, 0.04), 0 10px 10px -5px rgba(15, 23, 42, 0.02);
+            border-color: #cbd5e1;
         }
 
         .rounded-logo {
@@ -34,148 +34,157 @@
         }
 
         #notification {
-            transition: all 0.5s ease;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .workbench-panel {
             background: white;
-            border: 1px solid #f1f5f9;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px -1px rgba(0, 0, 0, 0.01);
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 6px -1px rgba(15, 23, 42, 0.02);
+        }
+
+        #tip-display {
+            transition: opacity 0.25s ease-in-out;
         }
     </style>
 </head>
 <body class="min-h-screen">
 
     <!-- Notification Bar -->
-    <div id="notification" class="fixed top-6 left-1/2 -translate-x-1/2 z-[200] bg-slate-900 text-white px-6 py-3 rounded-2xl shadow-xl opacity-0 pointer-events-none flex items-center gap-3 border border-white/10">
-        <i class="fas fa-check-circle text-emerald-400"></i>
+    <div id="notification" class="fixed top-6 left-1/2 -translate-x-1/2 z-[200] bg-slate-900 text-white px-6 py-3 rounded-2xl shadow-xl opacity-0 pointer-events-none flex items-center gap-3 border border-slate-800">
+        <i id="notif-icon" class="fas fa-check-circle text-emerald-400"></i>
         <span id="notif-text" class="text-sm font-semibold tracking-tight"></span>
     </div>
 
     <!-- Navigation -->
-    <nav class="bg-white border-b border-slate-100 px-8 py-5 sticky top-0 z-50">
+    <nav class="bg-white border-b border-slate-200/80 px-8 py-5 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
-            <div class="flex items-center gap-6">
-                <div class="bg-white border border-slate-100 p-1 rounded-full shadow-sm flex items-center justify-center">
-                    <img src="logo.png" alt="Logo" class="h-12 w-12 rounded-logo" onerror="this.style.display='none'; document.getElementById('nav-fallback').classList.remove('hidden')">
-                    <div id="nav-fallback" class="h-12 w-12 bg-blue-600 rounded-full flex items-center justify-center hidden">
-                        <i class="fas fa-shield-halved text-white text-xl"></i>
+            <div class="flex items-center gap-5">
+                <div class="bg-white border border-slate-200 p-1 rounded-full shadow-sm flex items-center justify-center">
+                    <!-- Gracefully falls back to stylized icon if logo.png isn't present -->
+                    <img src="logo.png" alt="AKC Financial" class="h-12 w-12 rounded-logo" onerror="this.style.display='none'; document.getElementById('nav-fallback').classList.remove('hidden')">
+                    <div id="nav-fallback" class="h-12 w-12 bg-slate-900 rounded-full flex items-center justify-center">
+                        <i class="fas fa-chart-pie text-white text-lg"></i>
                     </div>
                 </div>
                 <div>
-                    <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight leading-none">Strategy Dashboard</h1>
-                    <p id="nav-date-display" class="text-[10px] uppercase tracking-widest text-blue-600 font-black mt-1.5"></p>
+                    <h1 class="text-xl font-extrabold text-slate-900 tracking-tight leading-none">AKC Financial</h1>
+                    <p id="nav-date-display" class="text-[10px] uppercase tracking-widest text-slate-500 font-bold mt-1.5"></p>
                 </div>
             </div>
             
             <div class="flex items-center gap-4">
-                <div class="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-emerald-600 bg-emerald-50 px-4 py-2 rounded-full border border-emerald-100">
+                <div class="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-emerald-700 bg-emerald-50 px-4 py-2 rounded-full border border-emerald-200">
                     <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                    Live Session
+                    Consultation Mode
                 </div>
             </div>
         </div>
     </nav>
 
-    <main class="max-w-7xl mx-auto px-8 py-14">
+    <main class="max-w-7xl mx-auto px-8 py-12">
         
-        <div class="mb-14">
-            <h2 class="text-4xl font-extrabold text-slate-900 tracking-tight mb-3">Hello, Alex.</h2>
-            <p class="text-slate-500 text-lg font-medium leading-relaxed">Modern tools for intelligent client consultations.</p>
+        <div class="mb-10">
+            <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight mb-2">Workspace Hub</h2>
+            <p class="text-slate-500 text-base font-medium">Select a structural engine or log notes for interactive Canadian wealth advisory sessions.</p>
         </div>
 
         <!-- Professional Tool Grid -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
             
-            <a href="FS.html" class="tool-card p-10 rounded-[3rem] flex flex-col group">
-                <div class="w-16 h-16 bg-blue-600 rounded-3xl flex items-center justify-center mb-8 shadow-2xl shadow-blue-100 group-hover:scale-110 transition-transform">
-                    <i class="fas fa-vault text-white text-3xl"></i>
+            <!-- Wealth Overview -->
+            <a href="FS.html" class="tool-card p-8 rounded-[2rem] flex flex-col group">
+                <div class="w-14 h-14 bg-slate-900 rounded-2xl flex items-center justify-center mb-6 shadow-lg shadow-slate-200 group-hover:scale-105 transition-transform">
+                    <i class="fas fa-vault text-white text-2xl"></i>
                 </div>
-                <h3 class="text-xl font-extrabold text-slate-900 mb-3 tracking-tight">Wealth Overview</h3>
-                <p class="text-slate-500 text-sm leading-relaxed flex-grow font-medium">A visual audit of assets, liabilities, and net worth.</p>
-                <div class="mt-8 text-blue-600 text-xs font-black uppercase tracking-widest flex items-center gap-3">
-                    Open Toolkit <i class="fas fa-arrow-right transition-transform group-hover:translate-x-2"></i>
-                </div>
-            </a>
-
-            <a href="index.html" class="tool-card p-10 rounded-[3rem] flex flex-col group">
-                <div class="w-16 h-16 bg-emerald-500 rounded-3xl flex items-center justify-center mb-8 shadow-2xl shadow-emerald-100 group-hover:scale-110 transition-transform">
-                    <i class="fas fa-piggy-bank text-white text-3xl"></i>
-                </div>
-                <h3 class="text-xl font-extrabold text-slate-900 mb-3 tracking-tight">Tax Efficiency</h3>
-                <p class="text-slate-500 text-sm leading-relaxed flex-grow font-medium">Optimize TFSA and RRSP utilization strategies.</p>
-                <div class="mt-8 text-emerald-600 text-xs font-black uppercase tracking-widest flex items-center gap-3">
-                    Open Toolkit <i class="fas fa-arrow-right transition-transform group-hover:translate-x-2"></i>
+                <h3 class="text-lg font-bold text-slate-900 mb-2 tracking-tight">Wealth Overview</h3>
+                <p class="text-slate-500 text-sm leading-relaxed flex-grow font-medium">A visual balance sheet audit mapping client assets, corporate holdings, and total net worth structures.</p>
+                <div class="mt-6 text-slate-900 text-xs font-bold uppercase tracking-widest flex items-center gap-2">
+                    Launch Model <i class="fas fa-arrow-right text-[10px] transition-transform group-hover:translate-x-1.5"></i>
                 </div>
             </a>
 
-            <a href="LTI.html" class="tool-card p-10 rounded-[3rem] flex flex-col group">
-                <div class="w-16 h-16 bg-indigo-600 rounded-3xl flex items-center justify-center mb-8 shadow-2xl shadow-indigo-100 group-hover:scale-110 transition-transform">
-                    <i class="fas fa-hand-holding-dollar text-white text-3xl"></i>
+            <!-- Tax Efficiency -->
+            <a href="index.html" class="tool-card p-8 rounded-[2rem] flex flex-col group">
+                <div class="w-14 h-14 bg-blue-600 rounded-2xl flex items-center justify-center mb-6 shadow-lg shadow-blue-100 group-hover:scale-105 transition-transform">
+                    <i class="fas fa-piggy-bank text-white text-2xl"></i>
                 </div>
-                <h3 class="text-xl font-extrabold text-slate-900 mb-3 tracking-tight">Growth Leverage</h3>
-                <p class="text-slate-500 text-sm leading-relaxed flex-grow font-medium">Analyze borrowing costs against portfolio appreciation.</p>
-                <div class="mt-8 text-indigo-600 text-xs font-black uppercase tracking-widest flex items-center gap-3">
-                    Open Toolkit <i class="fas fa-arrow-right transition-transform group-hover:translate-x-2"></i>
+                <h3 class="text-lg font-bold text-slate-900 mb-2 tracking-tight">Tax Efficiency</h3>
+                <p class="text-slate-500 text-sm leading-relaxed flex-grow font-medium">Maximize cross-border tax shields, structural corporate roll-overs, and optimal TFSA/RRSP caps.</p>
+                <div class="mt-6 text-blue-600 text-xs font-bold uppercase tracking-widest flex items-center gap-2">
+                    Launch Model <i class="fas fa-arrow-right text-[10px] transition-transform group-hover:translate-x-1.5"></i>
                 </div>
             </a>
 
-            <a href="rrsp-calculator.html" class="tool-card p-10 rounded-[3rem] flex flex-col group">
-                <div class="w-16 h-16 bg-orange-500 rounded-3xl flex items-center justify-center mb-8 shadow-2xl shadow-orange-100 group-hover:scale-110 transition-transform">
-                    <i class="fas fa-calendar-check text-white text-3xl"></i>
+            <!-- Growth Leverage -->
+            <a href="LTI.html" class="tool-card p-8 rounded-[2rem] flex flex-col group">
+                <div class="w-14 h-14 bg-indigo-600 rounded-2xl flex items-center justify-center mb-6 shadow-lg shadow-indigo-100 group-hover:scale-105 transition-transform">
+                    <i class="fas fa-hand-holding-dollar text-white text-2xl"></i>
                 </div>
-                <h3 class="text-xl font-extrabold text-slate-900 mb-3 tracking-tight">Goal Planner</h3>
-                <p class="text-slate-500 text-sm leading-relaxed flex-grow font-medium">Map out retirement income and savings targets.</p>
-                <div class="mt-8 text-orange-600 text-xs font-black uppercase tracking-widest flex items-center gap-3">
-                    Open Toolkit <i class="fas fa-arrow-right transition-transform group-hover:translate-x-2"></i>
+                <h3 class="text-lg font-bold text-slate-900 mb-2 tracking-tight">Growth Leverage</h3>
+                <p class="text-slate-500 text-sm leading-relaxed flex-grow font-medium">Model custom investment loans, leverage risk scenarios, and portfolio spread appreciation yield hurdles.</p>
+                <div class="mt-6 text-indigo-600 text-xs font-bold uppercase tracking-widest flex items-center gap-2">
+                    Launch Model <i class="fas fa-arrow-right text-[10px] transition-transform group-hover:translate-x-1.5"></i>
+                </div>
+            </a>
+
+            <!-- Goal Planner -->
+            <a href="rrsp-calculator.html" class="tool-card p-8 rounded-[2rem] flex flex-col group">
+                <div class="w-14 h-14 bg-slate-700 rounded-2xl flex items-center justify-center mb-6 shadow-lg shadow-slate-200 group-hover:scale-105 transition-transform">
+                    <i class="fas fa-calendar-check text-white text-2xl"></i>
+                </div>
+                <h3 class="text-lg font-bold text-slate-900 mb-2 tracking-tight">Goal Planner</h3>
+                <p class="text-slate-500 text-sm leading-relaxed flex-grow font-medium">Calculate target horizons, post-retirement cash flows, inflation indexing, and estate distributions.</p>
+                <div class="mt-6 text-slate-700 text-xs font-bold uppercase tracking-widest flex items-center gap-2">
+                    Launch Model <i class="fas fa-arrow-right text-[10px] transition-transform group-hover:translate-x-1.5"></i>
                 </div>
             </a>
 
         </div>
 
         <!-- Integrated Workspace -->
-        <div class="grid grid-cols-1 lg:grid-cols-4 gap-10">
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
             
             <!-- Workbench Area (3/4 Width) -->
-            <div class="lg:col-span-3 workbench-panel rounded-[3.5rem] p-12">
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-10 gap-8">
+            <div class="lg:col-span-3 workbench-panel rounded-[2.5rem] p-8 sm:p-10">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-6">
                     <div>
-                        <h3 class="text-3xl font-extrabold text-slate-900 tracking-tight leading-tight">Meeting Workbench</h3>
-                        <p class="text-slate-400 font-semibold mt-1">Document client objectives for future follow-up.</p>
+                        <h3 class="text-2xl font-extrabold text-slate-900 tracking-tight">Meeting Workbench</h3>
+                        <p class="text-slate-400 text-sm font-semibold mt-0.5">Capture client data, strategy configurations, and action items.</p>
                     </div>
-                    <div class="flex gap-4 w-full sm:w-auto">
-                        <button onclick="saveToDrive()" class="flex-1 sm:flex-none bg-slate-900 hover:bg-black text-white px-8 py-5 rounded-[1.5rem] font-bold text-sm shadow-2xl transition-all flex items-center justify-center gap-3">
-                            <i class="fas fa-file-arrow-down text-blue-400"></i> Save Notes for Drive
+                    <div class="flex gap-3 w-full sm:w-auto">
+                        <button onclick="saveToDrive()" class="w-full sm:w-auto bg-slate-900 hover:bg-black text-white px-6 py-4 rounded-xl font-bold text-sm shadow-md transition-all flex items-center justify-center gap-2.5">
+                            <i class="fas fa-file-arrow-down text-slate-400"></i> Save Notes for Drive
                         </button>
                     </div>
                 </div>
 
-                <textarea id="meeting-notes" class="w-full h-[500px] bg-slate-50 border-2 border-slate-100 rounded-[2.5rem] p-10 focus:ring-8 focus:ring-blue-50 focus:border-blue-500 outline-none text-slate-700 placeholder:text-slate-300 transition-all text-xl font-light resize-none leading-relaxed" placeholder="Document client discussion here..."></textarea>
+                <textarea id="meeting-notes" class="w-full h-[450px] bg-slate-50 border border-slate-200 rounded-2xl p-6 focus:ring-4 focus:ring-slate-100 focus:border-slate-400 outline-none text-slate-700 placeholder:text-slate-300 transition-all text-base resize-none leading-relaxed font-normal" placeholder="Document active client profile details, tax scenarios, or deployment pipelines here..."></textarea>
                 
-                <div class="mt-10 flex justify-between items-center border-t border-slate-50 pt-8">
-                    <div class="flex items-center gap-3 text-[10px] text-slate-400 font-black uppercase tracking-[0.3em]">
-                        <i class="fas fa-shield-halved text-blue-500"></i>
-                        Session Privacy: Active Reset
+                <div class="mt-8 flex justify-between items-center border-t border-slate-100 pt-6">
+                    <div class="flex items-center gap-2 text-[10px] text-slate-400 font-bold uppercase tracking-[0.2em]">
+                        <i class="fas fa-user-shield text-slate-400"></i>
+                        Session Isolation: Safe Data Environment
                     </div>
-                    <button onclick="clearWorkspace()" id="clear-btn" class="text-xs font-black text-slate-300 hover:text-red-500 transition-colors uppercase tracking-widest">Purge Workbench</button>
+                    <button onclick="clearWorkspace()" id="clear-btn" class="text-xs font-bold text-slate-300 hover:text-red-500 transition-colors uppercase tracking-widest">Purge Workbench</button>
                 </div>
             </div>
 
             <!-- Intelligent Insights (1/4 Width) -->
-            <div class="space-y-8">
-                <div class="bg-blue-600 rounded-[3rem] p-10 text-white shadow-2xl shadow-blue-200 relative overflow-hidden h-full flex flex-col">
-                    <i class="fas fa-lightbulb absolute -right-8 -bottom-8 text-[12rem] opacity-10 rotate-12"></i>
-                    <div class="relative z-10 flex flex-col h-full">
+            <div class="space-y-6">
+                <div class="bg-gradient-to-br from-slate-900 to-slate-800 rounded-[2.5rem] p-8 text-white shadow-xl relative overflow-hidden h-full flex flex-col min-h-[400px]">
+                    <i class="fas fa-lightbulb absolute -right-6 -bottom-6 text-[10rem] opacity-5 rotate-12 pointer-events-none"></i>
+                    <div class="relative z-10 flex flex-col h-full flex-grow">
                         <div class="mb-8">
-                            <h4 class="font-extrabold text-xl mb-2 flex items-center gap-3">
-                                <i class="fas fa-bolt text-yellow-400"></i> Insight
+                            <h4 class="font-bold text-lg mb-1 flex items-center gap-2.5">
+                                <i class="fas fa-bolt text-amber-400 text-base"></i> Strategic Lens
                             </h4>
-                            <p class="text-[10px] uppercase tracking-widest text-blue-200 font-bold">Client Protocol</p>
+                            <p class="text-[9px] uppercase tracking-widest text-slate-400 font-bold">Canadian Advisory Architecture</p>
                         </div>
                         
-                        <p id="tip-display" class="text-blue-50 text-xl leading-relaxed italic font-light mb-auto">"RRSP contributions reduce current taxable income, while TFSA growth is always tax-free."</p>
+                        <p id="tip-display" class="text-slate-200 text-base leading-relaxed italic font-light mb-auto opacity-100">"An Immediate Financing Arrangement (IFA) optimizes cash flow by leveraging cash-surrender value back into operations or investments."</p>
                         
-                        <button onclick="newTip()" class="mt-12 w-full bg-white/20 hover:bg-white/30 text-white py-5 rounded-2xl font-bold text-xs uppercase tracking-[0.3em] transition-all backdrop-blur-md border border-white/10">Next Insight</button>
+                        <button onclick="newTip()" class="mt-8 w-full bg-white/10 hover:bg-white/15 text-white py-4 rounded-xl font-bold text-xs uppercase tracking-widest transition-all border border-white/10 shadow-sm">Next Insight</button>
                     </div>
                 </div>
             </div>
@@ -183,7 +192,7 @@
     </main>
 
     <script>
-        // Initial Page Reset
+        // Synchronized Initialization
         window.addEventListener('load', () => {
             document.getElementById('meeting-notes').value = '';
             
@@ -192,27 +201,43 @@
             document.getElementById('nav-date-display').innerText = today;
         });
 
-        function showNotif(msg) {
+        // Universal Feedback Notification System
+        function showNotif(msg, isSuccess = true) {
             const notif = document.getElementById('notification');
             const notifText = document.getElementById('notif-text');
+            const notifIcon = document.getElementById('notif-icon');
+            
             notifText.innerText = msg;
+            if (isSuccess) {
+                notifIcon.className = "fas fa-check-circle text-emerald-400";
+            } else {
+                notifIcon.className = "fas fa-circle-exclamation text-amber-400";
+            }
+            
             notif.classList.replace('opacity-0', 'opacity-100');
-            setTimeout(() => notif.classList.replace('opacity-100', 'opacity-0'), 4000);
+            notif.classList.remove('pointer-events-none');
+            
+            setTimeout(() => {
+                notif.classList.replace('opacity-100', 'opacity-0');
+                notif.classList.add('pointer-events-none');
+            }, 3500);
         }
 
         /**
-         * Save to Google Drive Helper
+         * Secure Note Backup System
+         * Generates text downlinks while storing a secondary backup string directly on client clipboard
          */
         function saveToDrive() {
             const content = document.getElementById('meeting-notes').value.trim();
             if (!content) {
-                showNotif("Workspace is empty.");
+                showNotif("Workspace is currently empty.", false);
                 return;
             }
 
             const timestamp = new Date().toISOString().slice(0, 10);
             const filename = `Session_Notes_${timestamp}.txt`;
             
+            // Standard File Asset Generation
             const element = document.createElement('a');
             element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(content));
             element.setAttribute('download', filename);
@@ -221,43 +246,59 @@
             element.click();
             document.body.removeChild(element);
 
-            showNotif("Notes downloaded for Drive upload.");
+            // Redundant Clipboard Backup System
+            navigator.clipboard.writeText(content).then(() => {
+                showNotif("Notes downloaded & cloned to clipboard.");
+            }).catch(() => {
+                showNotif("Notes generated successfully.");
+            });
         }
 
+        // Context-Aware Deletion Protection
         function clearWorkspace() {
             const btn = document.getElementById('clear-btn');
             if (btn.innerText === "PURGE WORKBENCH") {
-                btn.innerText = "CONFIRM?";
-                btn.classList.add('text-red-500');
+                btn.innerText = "CONFIRM PURGE?";
+                btn.classList.add('text-red-500', 'font-black');
                 setTimeout(() => {
                     btn.innerText = "PURGE WORKBENCH";
-                    btn.classList.remove('text-red-500');
-                }, 3000);
+                    btn.classList.remove('text-red-500', 'font-black');
+                }, 4000);
             } else {
                 document.getElementById('meeting-notes').value = '';
                 btn.innerText = "PURGE WORKBENCH";
-                btn.classList.remove('text-red-500');
-                showNotif("Workspace cleared.");
+                btn.classList.remove('text-red-500', 'font-black');
+                showNotif("Workbench cleared.");
             }
         }
 
+        // Advanced Canadian Wealth Advisory Insight Bank
         const tips = [
-            "Leverage interest is strictly deductible when used to purchase income-producing non-registered assets.",
-            "TFSA withdrawals are added back to your contribution room the following calendar year.",
-            "RRSP contributions reduce current taxable income, creating immediate savings.",
-            "A Spousal RRSP helps split future retirement income for tax efficiency.",
-            "The OAS clawback begins at approximately $86,000 of individual income.",
-            "Always verify a client's tax bracket before suggesting TFSA or RRSP.",
-            "An RRSP refund is most effective when re-invested into a TFSA for compounded growth."
+            "An Immediate Financing Arrangement (IFA) optimizes corporate liquidity by keeping capital working while funding critical coverage structures.",
+            "TFSA contribution distributions are re-credited to total personal expansion limits precisely on January 1 of the following calendar year.",
+            "RRSP core contributions scale most effectively when positioned across highest marginal income tranches to capture structural tax variances.",
+            "A structural Spousal RRSP functions cleanly to execute long-horizon retirement income splitting patterns prior to RRIF conversion phases.",
+            "Canadian Old Age Security (OAS) clawbacks activate complex indexing constraints once individual recovery thresholds are passed.",
+            "Corporate passive income thresholds over $50,000 can reduce access to the small business deduction via the 5-to-1 reduction rule.",
+            "Re-routing realized personal tax refunds into direct TFSA allocations accelerates net multi-tier compound growth profiles.",
+            "Investment loan interest claims require verifiable allocation tracks entirely toward income-generating non-registered asset baskets."
         ];
         
+        let lastIdx = -1;
         function newTip() {
             const text = document.getElementById('tip-display');
             text.style.opacity = 0;
+            
             setTimeout(() => {
-                text.innerText = `"${tips[Math.floor(Math.random() * tips.length)]}"`;
+                let nextIdx;
+                do {
+                    nextIdx = Math.floor(Math.random() * tips.length);
+                } while (nextIdx === lastIdx);
+                
+                lastIdx = nextIdx;
+                text.innerText = `"${tips[nextIdx]}"`;
                 text.style.opacity = 1;
-            }, 300);
+            }, 250);
         }
     </script>
 </body>
