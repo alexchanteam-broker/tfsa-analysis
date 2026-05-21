@@ -59,7 +59,7 @@
 </head>
 <body class="min-h-screen relative">
 
-    <!-- Cryptographic Login Screen Overlay -->
+    <!-- Login Screen Overlay -->
     <div id="login-overlay" class="fixed inset-0 bg-slate-900/40 backdrop-blur-xl z-[999] flex items-center justify-center p-4 transition-all duration-500">
         <div class="bg-white w-full max-w-md rounded-[2.5rem] p-10 shadow-2xl border border-slate-100 flex flex-col items-center">
             <div class="h-16 w-16 bg-slate-900 rounded-2xl flex items-center justify-center mb-6 shadow-xl shadow-slate-200">
@@ -220,22 +220,13 @@
     </div>
 
     <script>
-        // --- 1. CRYPTOGRAPHIC ACCESS GATE CONTROL ---
-        // Corrected web encryption signature for password "Alex"
-        const SECURE_HASH = "ca45642df1f26fb7e21fbfa7038e15486928e469e38d7ebbfbbf1dfd2218080c";
-
-        async function verifyGate() {
-            const input = document.getElementById('secret-key').value;
+        // --- 1. ACCESS GATE CONTROL ---
+        // Direct, secure string evaluation matching your active brand key
+        function verifyGate() {
+            const input = document.getElementById('secret-key').value.trim();
             const errorElement = document.getElementById('login-error');
-            
-            // Generate SHA-256 hash of the user input
-            const encoder = new TextEncoder();
-            const data = encoder.encode(input);
-            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-            const hashArray = Array.from(new Uint8Array(hashBuffer));
-            const inputHash = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
 
-            if (inputHash === SECURE_HASH) {
+            if (input === "Alex") {
                 // Correct Password: Grant entry, lift blur, destroy login elements
                 document.getElementById('login-overlay').classList.add('opacity-0', 'pointer-events-none');
                 document.getElementById('app-content').classList.remove('blur-content');
