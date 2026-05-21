@@ -48,155 +48,226 @@
         #tip-display {
             transition: opacity 0.25s ease-in-out;
         }
+
+        /* Prevents interacting with the hub content until logged in */
+        .blur-content {
+            filter: blur(12px);
+            pointer-events: none;
+            user-select: none;
+        }
     </style>
 </head>
-<body class="min-h-screen">
+<body class="min-h-screen relative">
 
-    <!-- Notification Bar -->
-    <div id="notification" class="fixed top-6 left-1/2 -translate-x-1/2 z-[200] bg-slate-900 text-white px-6 py-3 rounded-2xl shadow-xl opacity-0 pointer-events-none flex items-center gap-3 border border-white/10">
-        <i id="notif-icon" class="fas fa-check-circle text-emerald-400"></i>
-        <span id="notif-text" class="text-sm font-semibold tracking-tight"></span>
+    <!-- Cryptographic Login Screen Overlay -->
+    <div id="login-overlay" class="fixed inset-0 bg-slate-900/40 backdrop-blur-xl z-[999] flex items-center justify-center p-4 transition-all duration-500">
+        <div class="bg-white w-full max-w-md rounded-[2.5rem] p-10 shadow-2xl border border-slate-100 flex flex-col items-center">
+            <div class="h-16 w-16 bg-slate-900 rounded-2xl flex items-center justify-center mb-6 shadow-xl shadow-slate-200">
+                <i class="fas fa-lock text-white text-2xl"></i>
+            </div>
+            <h2 class="text-2xl font-extrabold text-slate-900 tracking-tight text-center mb-2">Secure Gateway</h2>
+            <p class="text-slate-400 text-sm font-medium text-center mb-8">Enter your security key to unlock the strategy models.</p>
+            
+            <div class="w-full relative mb-4">
+                <i class="fas fa-key absolute left-5 top-1/2 -translate-y-1/2 text-slate-300"></i>
+                <input type="password" id="secret-key" onkeydown="if(event.key === 'Enter') verifyGate()" class="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl py-4 pl-12 pr-5 outline-none focus:border-slate-900 transition-all font-mono tracking-widest text-slate-800" placeholder="••••••••">
+            </div>
+            
+            <button onclick="verifyGate()" class="w-full bg-slate-900 hover:bg-black text-white py-4 rounded-2xl font-bold text-sm shadow-lg transition-all flex items-center justify-center gap-2">
+                Unlock Workspace <i class="fas fa-arrow-right text-xs"></i>
+            </button>
+            <p id="login-error" class="text-red-500 text-xs font-bold mt-4 opacity-0 transition-opacity uppercase tracking-wider">Access Denied: Invalid Key</p>
+        </div>
     </div>
 
-    <!-- Navigation -->
-    <nav class="bg-white border-b border-slate-100 px-8 py-5 sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto flex justify-between items-center">
-            <div class="flex items-center gap-6">
-                <div class="bg-white border border-slate-100 p-1 rounded-full shadow-sm flex items-center justify-center">
-                    <!-- Kept your original logo image structure exactly as it was -->
-                    <img src="logo.png" alt="Logo" class="h-12 w-12 rounded-logo" onerror="this.style.display='none'; document.getElementById('nav-fallback').classList.remove('hidden')">
-                    <div id="nav-fallback" class="h-12 w-12 bg-blue-600 rounded-full flex items-center justify-center hidden">
-                        <i class="fas fa-shield-halved text-white text-xl"></i>
-                    </div>
-                </div>
-                <div>
-                    <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight leading-none">Strategy Dashboard</h1>
-                    <p id="nav-date-display" class="text-[10px] uppercase tracking-widest text-blue-600 font-black mt-1.5"></p>
-                </div>
-            </div>
-            
-            <div class="flex items-center gap-4">
-                <div class="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-emerald-600 bg-emerald-50 px-4 py-2 rounded-full border border-emerald-100">
-                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                    Live Session
-                </div>
-            </div>
-        </div>
-    </nav>
-
-    <main class="max-w-7xl mx-auto px-8 py-14">
-        
-        <div class="mb-14">
-            <h2 class="text-4xl font-extrabold text-slate-900 tracking-tight mb-3">Hello, Alex.</h2>
-            <p class="text-slate-500 text-lg font-medium leading-relaxed">Modern tools for intelligent client consultations.</p>
+    <!-- Main Dashboard Application Wrapper -->
+    <div id="app-content" class="blur-content transition-all duration-700">
+        <!-- Notification Bar -->
+        <div id="notification" class="fixed top-6 left-1/2 -translate-x-1/2 z-[200] bg-slate-900 text-white px-6 py-3 rounded-2xl shadow-xl opacity-0 pointer-events-none flex items-center gap-3 border border-white/10">
+            <i id="notif-icon" class="fas fa-check-circle text-emerald-400"></i>
+            <span id="notif-text" class="text-sm font-semibold tracking-tight"></span>
         </div>
 
-        <!-- Professional Tool Grid -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
-            
-            <a href="FS.html" class="tool-card p-10 rounded-[3rem] flex flex-col group">
-                <div class="w-16 h-16 bg-blue-600 rounded-3xl flex items-center justify-center mb-8 shadow-2xl shadow-blue-100 group-hover:scale-110 transition-transform">
-                    <i class="fas fa-vault text-white text-3xl"></i>
-                </div>
-                <h3 class="text-xl font-extrabold text-slate-900 mb-3 tracking-tight">Wealth Overview</h3>
-                <p class="text-slate-500 text-sm leading-relaxed flex-grow font-medium">A visual audit of assets, liabilities, and net worth.</p>
-                <div class="mt-8 text-blue-600 text-xs font-black uppercase tracking-widest flex items-center gap-3">
-                    Open Toolkit <i class="fas fa-arrow-right transition-transform group-hover:translate-x-2"></i>
-                </div>
-            </a>
-
-            <a href="index.html" class="tool-card p-10 rounded-[3rem] flex flex-col group">
-                <div class="w-16 h-16 bg-emerald-500 rounded-3xl flex items-center justify-center mb-8 shadow-2xl shadow-emerald-100 group-hover:scale-110 transition-transform">
-                    <i class="fas fa-piggy-bank text-white text-3xl"></i>
-                </div>
-                <h3 class="text-xl font-extrabold text-slate-900 mb-3 tracking-tight">Tax Efficiency</h3>
-                <p class="text-slate-500 text-sm leading-relaxed flex-grow font-medium">Optimize TFSA and RRSP utilization strategies.</p>
-                <div class="mt-8 text-emerald-600 text-xs font-black uppercase tracking-widest flex items-center gap-3">
-                    Open Toolkit <i class="fas fa-arrow-right transition-transform group-hover:translate-x-2"></i>
-                </div>
-            </a>
-
-            <a href="LTI.html" class="tool-card p-10 rounded-[3rem] flex flex-col group">
-                <div class="w-16 h-16 bg-indigo-600 rounded-3xl flex items-center justify-center mb-8 shadow-2xl shadow-indigo-100 group-hover:scale-110 transition-transform">
-                    <i class="fas fa-hand-holding-dollar text-white text-3xl"></i>
-                </div>
-                <h3 class="text-xl font-extrabold text-slate-900 mb-3 tracking-tight">Growth Leverage</h3>
-                <p class="text-slate-500 text-sm leading-relaxed flex-grow font-medium">Analyze borrowing costs against portfolio appreciation.</p>
-                <div class="mt-8 text-indigo-600 text-xs font-black uppercase tracking-widest flex items-center gap-3">
-                    Open Toolkit <i class="fas fa-arrow-right transition-transform group-hover:translate-x-2"></i>
-                </div>
-            </a>
-
-            <a href="rrsp-calculator.html" class="tool-card p-10 rounded-[3rem] flex flex-col group">
-                <div class="w-16 h-16 bg-orange-500 rounded-3xl flex items-center justify-center mb-8 shadow-2xl shadow-orange-100 group-hover:scale-110 transition-transform">
-                    <i class="fas fa-calendar-check text-white text-3xl"></i>
-                </div>
-                <h3 class="text-xl font-extrabold text-slate-900 mb-3 tracking-tight">Goal Planner</h3>
-                <p class="text-slate-500 text-sm leading-relaxed flex-grow font-medium">Map out retirement income and savings targets.</p>
-                <div class="mt-8 text-orange-600 text-xs font-black uppercase tracking-widest flex items-center gap-3">
-                    Open Toolkit <i class="fas fa-arrow-right transition-transform group-hover:translate-x-2"></i>
-                </div>
-            </a>
-
-        </div>
-
-        <!-- Integrated Workspace -->
-        <div class="grid grid-cols-1 lg:grid-cols-4 gap-10">
-            
-            <!-- Workbench Area (3/4 Width) -->
-            <div class="lg:col-span-3 workbench-panel rounded-[3.5rem] p-12">
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-10 gap-8">
-                    <div>
-                        <h3 class="text-3xl font-extrabold text-slate-900 tracking-tight leading-tight">Meeting Workbench</h3>
-                        <p class="text-slate-400 font-semibold mt-1">Document client objectives for future follow-up.</p>
-                    </div>
-                    <div class="flex gap-4 w-full sm:w-auto">
-                        <button onclick="saveToDrive()" class="flex-1 sm:flex-none bg-slate-900 hover:bg-black text-white px-8 py-5 rounded-[1.5rem] font-bold text-sm shadow-2xl transition-all flex items-center justify-center gap-3">
-                            <i class="fas fa-file-arrow-down text-blue-400"></i> Save Notes for Drive
-                        </button>
-                    </div>
-                </div>
-
-                <textarea id="meeting-notes" class="w-full h-[500px] bg-slate-50 border-2 border-slate-100 rounded-[2.5rem] p-10 focus:ring-8 focus:ring-blue-50 focus:border-blue-500 outline-none text-slate-700 placeholder:text-slate-300 transition-all text-xl font-light resize-none leading-relaxed" placeholder="Document client discussion here..."></textarea>
-                
-                <div class="mt-10 flex justify-between items-center border-t border-slate-50 pt-8">
-                    <div class="flex items-center gap-3 text-[10px] text-slate-400 font-black uppercase tracking-[0.3em]">
-                        <i class="fas fa-shield-halved text-blue-500"></i>
-                        Session Privacy: Active Reset
-                    </div>
-                    <button onclick="clearWorkspace()" id="clear-btn" class="text-xs font-black text-slate-300 hover:text-red-500 transition-colors uppercase tracking-widest">Purge Workbench</button>
-                </div>
-            </div>
-
-            <!-- Intelligent Insights (1/4 Width) -->
-            <div class="space-y-8">
-                <div class="bg-blue-600 rounded-[3rem] p-10 text-white shadow-2xl shadow-blue-200 relative overflow-hidden h-full flex flex-col">
-                    <i class="fas fa-lightbulb absolute -right-8 -bottom-8 text-[12rem] opacity-10 rotate-12 pointer-events-none"></i>
-                    <div class="relative z-10 flex flex-col h-full">
-                        <div class="mb-8">
-                            <h4 class="font-extrabold text-xl mb-2 flex items-center gap-3">
-                                <i class="fas fa-bolt text-yellow-400"></i> Insight
-                            </h4>
-                            <p class="text-[10px] uppercase tracking-widest text-blue-200 font-bold">Client Protocol</p>
+        <!-- Navigation -->
+        <nav class="bg-white border-b border-slate-100 px-8 py-5 sticky top-0 z-50">
+            <div class="max-w-7xl mx-auto flex justify-between items-center">
+                <div class="flex items-center gap-6">
+                    <div class="bg-white border border-slate-100 p-1 rounded-full shadow-sm flex items-center justify-center">
+                        <img src="logo.png" alt="Logo" class="h-12 w-12 rounded-logo" onerror="this.style.display='none'; document.getElementById('nav-fallback').classList.remove('hidden')">
+                        <div id="nav-fallback" class="h-12 w-12 bg-blue-600 rounded-full flex items-center justify-center hidden">
+                            <i class="fas fa-shield-halved text-white text-xl"></i>
                         </div>
-                        
-                        <p id="tip-display" class="text-blue-50 text-xl leading-relaxed italic font-light mb-auto opacity-100">"An Immediate Financing Arrangement (IFA) optimizes cash flow by leveraging cash-surrender value back into investments."</p>
-                        
-                        <button onclick="newTip()" class="mt-12 w-full bg-white/20 hover:bg-white/30 text-white py-5 rounded-2xl font-bold text-xs uppercase tracking-[0.3em] transition-all backdrop-blur-md border border-white/10">Next Insight</button>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight leading-none">Strategy Dashboard</h1>
+                        <p id="nav-date-display" class="text-[10px] uppercase tracking-widest text-blue-600 font-black mt-1.5"></p>
+                    </div>
+                </div>
+                
+                <div class="flex items-center gap-4">
+                    <div class="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-emerald-600 bg-emerald-50 px-4 py-2 rounded-full border border-emerald-100">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                        Live Session
                     </div>
                 </div>
             </div>
-        </div>
-    </main>
+        </nav>
+
+        <main class="max-w-7xl mx-auto px-8 py-14">
+            
+            <div class="mb-14">
+                <h2 class="text-4xl font-extrabold text-slate-900 tracking-tight mb-3">Hello, Alex.</h2>
+                <p class="text-slate-500 text-lg font-medium leading-relaxed">Modern tools for intelligent client consultations.</p>
+            </div>
+
+            <!-- Professional Tool Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
+                
+                <a href="FS.html" class="tool-card p-10 rounded-[3rem] flex flex-col group">
+                    <div class="w-16 h-16 bg-blue-600 rounded-3xl flex items-center justify-center mb-8 shadow-2xl shadow-blue-100 group-hover:scale-110 transition-transform">
+                        <i class="fas fa-vault text-white text-3xl"></i>
+                    </div>
+                    <h3 class="text-xl font-extrabold text-slate-900 mb-3 tracking-tight">Wealth Overview</h3>
+                    <p class="text-slate-500 text-sm leading-relaxed flex-grow font-medium">A visual audit of assets, liabilities, and net worth.</p>
+                    <div class="mt-8 text-blue-600 text-xs font-black uppercase tracking-widest flex items-center gap-3">
+                        Open Toolkit <i class="fas fa-arrow-right transition-transform group-hover:translate-x-2"></i>
+                    </div>
+                </a>
+
+                <a href="index.html" class="tool-card p-10 rounded-[3rem] flex flex-col group">
+                    <div class="w-16 h-16 bg-emerald-500 rounded-3xl flex items-center justify-center mb-8 shadow-2xl shadow-emerald-100 group-hover:scale-110 transition-transform">
+                        <i class="fas fa-piggy-bank text-white text-3xl"></i>
+                    </div>
+                    <h3 class="text-xl font-extrabold text-slate-900 mb-3 tracking-tight">Tax Efficiency</h3>
+                    <p class="text-slate-500 text-sm leading-relaxed flex-grow font-medium">Optimize TFSA and RRSP utilization strategies.</p>
+                    <div class="mt-8 text-emerald-600 text-xs font-black uppercase tracking-widest flex items-center gap-3">
+                        Open Toolkit <i class="fas fa-arrow-right transition-transform group-hover:translate-x-2"></i>
+                    </div>
+                </a>
+
+                <a href="LTI.html" class="tool-card p-10 rounded-[3rem] flex flex-col group">
+                    <div class="w-16 h-16 bg-indigo-600 rounded-3xl flex items-center justify-center mb-8 shadow-2xl shadow-indigo-100 group-hover:scale-110 transition-transform">
+                        <i class="fas fa-hand-holding-dollar text-white text-3xl"></i>
+                    </div>
+                    <h3 class="text-xl font-extrabold text-slate-900 mb-3 tracking-tight">Growth Leverage</h3>
+                    <p class="text-slate-500 text-sm leading-relaxed flex-grow font-medium">Analyze borrowing costs against portfolio appreciation.</p>
+                    <div class="mt-8 text-indigo-600 text-xs font-black uppercase tracking-widest flex items-center gap-3">
+                        Open Toolkit <i class="fas fa-arrow-right transition-transform group-hover:translate-x-2"></i>
+                    </div>
+                </a>
+
+                <a href="rrsp-calculator.html" class="tool-card p-10 rounded-[3rem] flex flex-col group">
+                    <div class="w-16 h-16 bg-orange-500 rounded-3xl flex items-center justify-center mb-8 shadow-2xl shadow-orange-100 group-hover:scale-110 transition-transform">
+                        <i class="fas fa-calendar-check text-white text-3xl"></i>
+                    </div>
+                    <h3 class="text-xl font-extrabold text-slate-900 mb-3 tracking-tight">Goal Planner</h3>
+                    <p class="text-slate-500 text-sm leading-relaxed flex-grow font-medium">Map out retirement income and savings targets.</p>
+                    <div class="mt-8 text-orange-600 text-xs font-black uppercase tracking-widest flex items-center gap-3">
+                        Open Toolkit <i class="fas fa-arrow-right transition-transform group-hover:translate-x-2"></i>
+                    </div>
+                </a>
+
+            </div>
+
+            <!-- Integrated Workspace -->
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-10">
+                
+                <!-- Workbench Area (3/4 Width) -->
+                <div class="lg:col-span-3 workbench-panel rounded-[3.5rem] p-12">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-10 gap-8">
+                        <div>
+                            <h3 class="text-3xl font-extrabold text-slate-900 tracking-tight leading-tight">Meeting Workbench</h3>
+                            <p class="text-slate-400 font-semibold mt-1">Document client objectives for future follow-up.</p>
+                        </div>
+                        <div class="flex gap-4 w-full sm:w-auto">
+                            <button onclick="saveToDrive()" class="flex-1 sm:flex-none bg-slate-900 hover:bg-black text-white px-8 py-5 rounded-[1.5rem] font-bold text-sm shadow-2xl transition-all flex items-center justify-center gap-3">
+                                <i class="fas fa-file-arrow-down text-blue-400"></i> Save Notes for Drive
+                            </button>
+                        </div>
+                    </div>
+
+                    <textarea id="meeting-notes" class="w-full h-[500px] bg-slate-50 border-2 border-slate-100 rounded-[2.5rem] p-10 focus:ring-8 focus:ring-blue-50 focus:border-blue-500 outline-none text-slate-700 placeholder:text-slate-300 transition-all text-xl font-light resize-none leading-relaxed" placeholder="Document client discussion here..."></textarea>
+                    
+                    <div class="mt-10 flex justify-between items-center border-t border-slate-50 pt-8">
+                        <div class="flex items-center gap-3 text-[10px] text-slate-400 font-black uppercase tracking-[0.3em]">
+                            <i class="fas fa-shield-halved text-blue-500"></i>
+                            Session Privacy: Active Reset
+                        </div>
+                        <button onclick="clearWorkspace()" id="clear-btn" class="text-xs font-black text-slate-300 hover:text-red-500 transition-colors uppercase tracking-widest">Purge Workbench</button>
+                    </div>
+                </div>
+
+                <!-- Intelligent Insights (1/4 Width) -->
+                <div class="space-y-8">
+                    <div class="bg-blue-600 rounded-[3rem] p-10 text-white shadow-2xl shadow-blue-200 relative overflow-hidden h-full flex flex-col">
+                        <i class="fas fa-lightbulb absolute -right-8 -bottom-8 text-[12rem] opacity-10 rotate-12 pointer-events-none"></i>
+                        <div class="relative z-10 flex flex-col h-full">
+                            <div class="mb-8">
+                                <h4 class="font-extrabold text-xl mb-2 flex items-center gap-3">
+                                    <i class="fas fa-bolt text-yellow-400"></i> Insight
+                                </h4>
+                                <p class="text-[10px] uppercase tracking-widest text-blue-200 font-bold">Client Protocol</p>
+                            </div>
+                            
+                            <p id="tip-display" class="text-blue-50 text-xl leading-relaxed italic font-light mb-auto opacity-100">"An Immediate Financing Arrangement (IFA) optimizes cash flow by leveraging cash-surrender value back into investments."</p>
+                            
+                            <button onclick="newTip()" class="mt-12 w-full bg-white/20 hover:bg-white/30 text-white py-5 rounded-2xl font-bold text-xs uppercase tracking-[0.3em] transition-all backdrop-blur-md border border-white/10">Next Insight</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
 
     <script>
-        // Initial Page Reset
-        window.addEventListener('load', () => {
-            document.getElementById('meeting-notes').value = '';
+        // --- 1. CRYPTOGRAPHIC ACCESS GATE CONTROL ---
+        // This is a secure SHA-256 hash of your desired password. 
+        // The password can NOT be guessed simply by looking at this code.
+        // CURRENT TEMP PASSWORD: "Alex" (case-sensitive)
+        const SECURE_HASH = "9a75661b60166687483788be4fbf01f80df8e763806be4448fb8488bc1f1917f";
+
+        async function verifyGate() {
+            const input = document.getElementById('secret-key').value;
+            const errorElement = document.getElementById('login-error');
             
+            // Generate SHA-256 hash of the user input
+            const encoder = new TextEncoder();
+            const data = encoder.encode(input);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            const inputHash = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+
+            if (inputHash === SECURE_HASH) {
+                // Correct Password: Grant entry, lift blur, destroy login elements
+                document.getElementById('login-overlay').classList.add('opacity-0', 'pointer-events-none');
+                document.getElementById('app-content').classList.remove('blur-content');
+                
+                setTimeout(() => {
+                    document.getElementById('login-overlay').remove();
+                }, 500);
+                
+                // Active workspace initialized post-verification
+                document.getElementById('meeting-notes').value = '';
+                showNotif("Access Authorized. Welcome Alex.");
+            } else {
+                // Failed Attempt
+                errorElement.classList.remove('opacity-0');
+                errorElement.classList.add('opacity-100');
+                document.getElementById('secret-key').value = '';
+                setTimeout(() => {
+                    errorElement.classList.replace('opacity-100', 'opacity-0');
+                }, 3000);
+            }
+        }
+
+        // --- 2. REGULAR INTERACTION CONTROL ---
+        window.addEventListener('load', () => {
             const options = { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' };
             const today = new Date().toLocaleDateString('en-US', options);
             document.getElementById('nav-date-display').innerText = today;
+            
+            // Set focus straight to the key field on load
+            document.getElementById('secret-key').focus();
         });
 
         function showNotif(msg, isSuccess = true) {
@@ -220,9 +291,6 @@
             }, 3500);
         }
 
-        /**
-         * Save to Google Drive Helper & Clipboard Backup
-         */
         function saveToDrive() {
             const content = document.getElementById('meeting-notes').value.trim();
             if (!content) {
@@ -241,7 +309,6 @@
             element.click();
             document.body.removeChild(element);
 
-            // Backs up the content safely to your clipboard in case downloads are blocked
             navigator.clipboard.writeText(content).then(() => {
                 showNotif("Notes downloaded and copied to clipboard!");
             }).catch(() => {
@@ -266,7 +333,6 @@
             }
         }
 
-        // Updated clean insights focusing on core Canadian wealth rules and IFAs
         const tips = [
             "An Immediate Financing Arrangement (IFA) optimizes corporate liquidity by keeping capital working while funding coverage structures.",
             "TFSA withdrawals are added back to your total contribution room on January 1 of the following calendar year.",
